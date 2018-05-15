@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Models\EquType;
+
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -9,7 +11,7 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 
-class ExampleController extends Controller
+class EquTypeController extends Controller
 {
     use ModelForm;
 
@@ -22,8 +24,8 @@ class ExampleController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('设备型号管理');
+            $content->description('设备型号列表');
 
             $content->body($this->grid());
         });
@@ -55,8 +57,8 @@ class ExampleController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('添加设备型号');
+            $content->description('');
 
             $content->body($this->form());
         });
@@ -69,12 +71,10 @@ class ExampleController extends Controller
      */
     protected function grid()
     {
-        return Admin::grid(YourModel::class, function (Grid $grid) {
-
-            $grid->id('ID')->sortable();
-
-            $grid->created_at();
-            $grid->updated_at();
+        return Admin::grid(EquType::class, function (Grid $grid) {
+            $grid->Name('设备型号');
+            $grid->Price('单价');
+            $grid->GiftTime('赠送时长');
         });
     }
 
@@ -85,11 +85,11 @@ class ExampleController extends Controller
      */
     protected function form()
     {
-        return Admin::form(YourModel::class, function (Form $form) {
-
-            $form->display('id', 'ID');
-            $form->display('created_at', 'Created At');
-            $form->display('updated_at', 'Updated At');
+        return Admin::form(EquType::class, function (Form $form) {
+            $form->display('ID', 'ID');
+            $form->text('Name', '设备型号');
+            $form->number('Price', '单价');
+            $form->number('GiftTime', '赠送时长');
         });
     }
 }

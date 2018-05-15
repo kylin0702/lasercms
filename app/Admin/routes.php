@@ -11,5 +11,6 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index');
-
+    #设备类型
+    $router->resource('equtypes', EquTypeController::class);
 });
