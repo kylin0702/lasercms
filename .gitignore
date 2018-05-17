@@ -12,3 +12,4 @@ npm-debug.log
 yarn-error.log
 .env
 !/vendor/encore/laravel-admin/src/Auth/Database/Menu.php
+!/vendor/encore/laravel-admin/src/Traits/ModelTree.php
