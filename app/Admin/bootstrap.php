@@ -1,5 +1,6 @@
 <?php
-
+use Encore\Admin\Grid\Column;
+use App\Admin\Extensions\Popover;
 /**
  * Laravel-admin - admin builder based on Laravel.
  * @author z-song <https://github.com/z-song>
@@ -19,3 +20,4 @@
  */
 
 Encore\Admin\Form::forget(['map', 'editor']);
+Column::extend('popover', Popover::class);

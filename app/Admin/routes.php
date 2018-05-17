@@ -11,14 +11,16 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index');
-    #设备类型
+    #设备类型路由
     $router->resource('equtypes', EquTypeController::class);
-    #客户管理
+    #客户管理路由
     $router->resource('clients', ClientController::class);
-    #光源管理
+    #光源管理路由
     $router->resource('equipments', EquipmentController::class);
-    #光源状态
+    #光源状态路由
     $router->resource('equstatuss', EquStatusController::class);
     $router->get('equstatuss/{sn}/show', "EquStatusController@show");
+    #区域设置路由
+    $router->resource('areas', AreaController::class);
 
 });

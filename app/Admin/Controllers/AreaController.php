@@ -2,19 +2,15 @@
 
 namespace App\Admin\Controllers;
 
-use App\admin\Models\EquStatus;
+use App\Admin\Models\Area;
 
+use App\Http\Controllers\Controller;
 use Encore\Admin\Form;
-use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
-use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
-use Encore\Admin\Widgets\Alert;
-use Encore\Admin\Widgets\Table;
-use function foo\func;
 
-class EquStatusController extends Controller
+class AreaController extends Controller
 {
     use ModelForm;
 
@@ -27,26 +23,16 @@ class EquStatusController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('区域设置');
+            $content->description('区域列表');
+
+            $content->body(Area::tree(function($area){
+                $area->branch(function ($branch) {
+                    return "{$branch['AreaCode']}-{$branch['AreaName']}";
+                });
+            }));
         });
     }
-
-    /**
-     * Show interface.
-     *
-     * @param $id
-     * @return Content
-     */
-    public function show($sn)
-    {
-        return Admin::content(function (Content $content) use ($sn) {
-        $content->header('header');
-        $content->description('description');
-        $content->body($this->view()->view($sn));
-        });
-    }
-
 
     /**
      * Edit interface.
@@ -60,6 +46,7 @@ class EquStatusController extends Controller
 
             $content->header('header');
             $content->description('description');
+
             $content->body($this->form()->edit($id));
         });
     }
@@ -87,12 +74,14 @@ class EquStatusController extends Controller
      */
     protected function grid()
     {
-        return Admin::grid(EquStatus::class, function (Grid $grid) {
-            $grid->model()->where('id', '<', 100);
+        return Admin::grid(Area::class, function (Grid $grid) {
+
             $grid->id('ID')->sortable();
+
+            $grid->created_at();
+            $grid->updated_at();
         });
     }
-
 
     /**
      * Make a form builder.
@@ -101,25 +90,12 @@ class EquStatusController extends Controller
      */
     protected function form()
     {
-        return Admin::form(EquStatus::class, function (Form $form) {
+        return Admin::form(Area::class, function (Form $form) {
+
             $form->display('id', 'ID');
-            $form->display('sNU', 'sNU');
+
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');
-        });
-    }
-
-    /**
-     * Make a form builder.
-     *
-     * @return Form
-     */
-    protected function view()
-    {
-        return Admin::form(EquStatus::class, function (Form $form) {
-            $form->display('sNU', 'sNU')->with(function($v){
-
-            });
         });
     }
 }
