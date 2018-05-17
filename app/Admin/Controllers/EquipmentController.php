@@ -10,6 +10,7 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Encore\Admin\Widgets\InfoBox;
 
 class EquipmentController extends Controller
 {
@@ -26,10 +27,10 @@ class EquipmentController extends Controller
 
             $content->header('光源管理');
             $content->description('光源信息列表');
-
             $content->body($this->grid());
         });
     }
+
 
     /**
      * Edit interface.
@@ -79,7 +80,11 @@ class EquipmentController extends Controller
                 #$grid->EquType()->Price('单价');
                #$grid->EquType()->GiftTime('赠送时长');
                $grid->RemainTime('剩余时长');
-               $grid-> EquNum('光源编号');
+               #$grid-> EquNum('光源编号');
+               $grid-> EquNum('光源编号')->display(function($v){
+                   #to be continue..
+                   return "<a href='equstatus/$v/show'>$v</a>";
+               });
                $grid->EquStatus('光源状态');
                $grid->Review('审核状态');
                $grid->ISBuy('是否购买');
@@ -93,8 +98,6 @@ class EquipmentController extends Controller
                $grid->IsEnabled('是否记用');
                $grid->IsDelay('延迟充值');
                $grid->IsDelay('延迟充值');
-
-
         });
     }
 

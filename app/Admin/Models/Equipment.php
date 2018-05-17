@@ -20,4 +20,10 @@ class Equipment extends Model
     {
         return $this->belongsTo(Client::class,'ClientID');
     }
+
+    #关联EquStatus模型
+    public function EquStatus()
+    {
+        return $this->belongsTo(Client::class,'sNU');
+    }
 }

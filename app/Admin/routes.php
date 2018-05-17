@@ -17,4 +17,8 @@ Route::group([
     $router->resource('clients', ClientController::class);
     #光源管理
     $router->resource('equipments', EquipmentController::class);
+    #光源状态
+    $router->resource('equstatuss', EquStatusController::class);
+    $router->get('equstatuss/{sn}/show', "EquStatusController@show");
+
 });
