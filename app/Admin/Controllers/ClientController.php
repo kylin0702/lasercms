@@ -74,16 +74,30 @@ class ClientController extends Controller
         return Admin::grid(Client::class, function (Grid $grid) {
 
             $grid->ClientNum('客户编号');
-            $grid->ClientName('影城名称');
+            $grid->ClientName('影城名称')->display(function ($v){
+                $id=$this->getKey();
+                return  "<a href='equipments/$id/clientshow'>$v</a>";
+            });
             $grid->Adress('影城地址');
             #$grid->JoinHotline('加盟热线');
             $grid->VideoNum('影厅数量');
             $grid->Owner('影城法人');
             $grid->Phone('联系方式');
-            $grid->UpdateTime('合作时间');
-            $grid->AreaID('所属区域ID ');
-            $grid->Review('审核状态');
-            $grid->EntryPer('审核人');
+            $grid->UpdateTime('合作时间')->display(function ($v){
+                return date("Y-m-d",strtotime($v));
+            });
+            $grid->area()->AreaCode("区域代码");
+            $grid->area()->AreaName("区域名称");
+
+            $grid->Review('审核状态')->display(function ($v){
+                if($v=="已审核"){
+                    return "<label class='label label-success'>$v</label>";
+                }
+                else{
+                    return "<label class='label label-warning'>$v</label>";
+                }
+            });
+            $grid->auditor()->name("审核人");
             $grid->Remark('备注');
         });
     }

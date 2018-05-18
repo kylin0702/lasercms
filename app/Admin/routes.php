@@ -17,6 +17,7 @@ Route::group([
     $router->resource('clients', ClientController::class);
     #光源管理路由
     $router->resource('equipments', EquipmentController::class);
+    $router->get('equipments/{clientid}/clientshow', "EquipmentController@clientshow");//按ClientID显示光源
     #光源状态路由
     $router->resource('equstatuss', EquStatusController::class);
     $router->get('equstatuss/{sn}/show', "EquStatusController@show");

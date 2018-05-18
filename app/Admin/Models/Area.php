@@ -11,6 +11,7 @@ class Area extends Model
     use ModelTree, AdminBuilder;
     protected $table = 'Area';
     protected $primaryKey="ID";
+    public  $timestamps=false;
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
