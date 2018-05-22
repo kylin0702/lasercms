@@ -19,4 +19,12 @@ class Client extends Model
     public function  auditor(){
         return $this->belongsTo("Encore\Admin\Auth\Database\Administrator" ,"EntryPer");
     }
+
+    public function hasManyRecharge()
+
+    {
+
+        return $this->hasMany(Recharge::class, 'ClientID', 'ID');
+
+    }
 }

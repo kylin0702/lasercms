@@ -8,6 +8,7 @@ class Recharge extends Model
 {
     protected $table = 'Recharge';
     protected $primaryKey="ID";
+    public $timestamps=false;
 
     public $casts=[
             "Amount"=>"integer",

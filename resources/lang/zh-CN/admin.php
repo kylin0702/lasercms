@@ -57,7 +57,7 @@ return [
     'choose_file'  => '选择文件',
     'choose_image' => '选择图片',
 
-    'more' => '更多',
+    'more' => '查看详情',
     'deny' => '无权访问',
 
     'administrator' => '管理员',

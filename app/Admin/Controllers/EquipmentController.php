@@ -170,7 +170,7 @@ class EquipmentController extends Controller
                 $grid->actions(function ($a) {
                     $cid=105;
                     $eid=123;
-                    $href="/admin/recharges/add/$cid,$eid";
+                    $href="/admin/recharges/create?cid=$cid&eid=$eid";
                     $a->append("<a href='$href' class='btn btn-xs btn-warning'>充值 <i class='fa fa-rmb'></i></a>");
                 });
             }

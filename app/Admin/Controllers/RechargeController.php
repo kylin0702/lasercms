@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Models\Client;
 use App\Admin\Models\Equipment;
+use App\Admin\Models\EquType;
 use App\admin\Models\Recharge;
 
 use Encore\Admin\Form;
@@ -12,6 +13,9 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\MessageBag;
 
 class RechargeController extends Controller
 {
@@ -79,7 +83,7 @@ class RechargeController extends Controller
             $content->header('充值');
             $content->description('');
 
-            $content->body($this->form($cid,$eid));
+            $content->body($this->form1($cid,$eid));
         });
     }
 
@@ -119,20 +123,38 @@ class RechargeController extends Controller
      *
      * @return Form
      */
-    protected function form($cid,$eid)
+    protected function form()
     {
-        return Admin::form(Recharge::class, function (Form $form) use($cid,$eid) {
+        return Admin::form(Recharge::class, function (Form $form) {
+            $cid=Input::get("cid");
+            $eid=Input::get("eid");
+
             //客户Model
-            $client=Client::find($cid);
+            $client=Client::findOrFail($cid);
             //设备Model
-            $equipment=Equipment::find($eid);
+            $equipment=Equipment::findOrFail($eid);
+            //设备类型
+            $typeid=$equipment->EquTypeID;
+            $equtype=EquType::findOrFail($typeid);
             $form->setTitle($client->ClientName);
             $form->hidden("ClientID")->value($cid);
             $form->hidden("EquID")->value($eid);
+            $form->hidden("SerialNumber")->default(function(){
+               return date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+            });
             $form->html("<span class='form-control no-border'>$equipment->NumBer</span>","厅号");
-            $form->html("<span class='form-control no-border'>$equipment->EquNum</span>","设备序列号");
+            $form->html("<span class='form-control no-border'>$equipment->EquNum</span>","光源序列号");
+            $form->html("<span class='form-control no-border'>$equtype->Name</span>","光源类型");
+            $form->html("<span class='form-control no-border'>$equtype->Price</span>","单价");
+            $form->radio("Method","充值方式")->options([0 => '网上充值', 1=> '系统赠送'])->default(0);
+            $form->currency("Amount","充值金额")->symbol('￥');
+            $form->saving(function (Form $form) {
 
+                var_dump($form);
+
+            });
         });
     }
+
 
 }
