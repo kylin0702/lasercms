@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Models\Client;
+use App\Admin\Models\Equipment;
 use App\admin\Models\Recharge;
 
 use Encore\Admin\Form;
@@ -65,6 +67,23 @@ class RechargeController extends Controller
     }
 
     /**
+     * Create interface.
+     *@param $cid
+     * *@param $eid
+     * @return Content
+     */
+    public function add($cid,$eid)
+    {
+        return Admin::content(function (Content $content) use($cid,$eid) {
+
+            $content->header('充值');
+            $content->description('');
+
+            $content->body($this->form($cid,$eid));
+        });
+    }
+
+    /**
      * Make a grid builder.
      *
      * @return Grid
@@ -100,14 +119,20 @@ class RechargeController extends Controller
      *
      * @return Form
      */
-    protected function form()
+    protected function form($cid,$eid)
     {
-        return Admin::form(Recharge::class, function (Form $form) {
+        return Admin::form(Recharge::class, function (Form $form) use($cid,$eid) {
+            //客户Model
+            $client=Client::find($cid);
+            //设备Model
+            $equipment=Equipment::find($eid);
+            $form->setTitle($client->ClientName);
+            $form->hidden("ClientID")->value($cid);
+            $form->hidden("EquID")->value($eid);
+            $form->html("<span class='form-control no-border'>$equipment->NumBer</span>","厅号");
+            $form->html("<span class='form-control no-border'>$equipment->EquNum</span>","设备序列号");
 
-            $form->display('id', 'ID');
-
-            $form->display('created_at', 'Created At');
-            $form->display('updated_at', 'Updated At');
         });
     }
+
 }

@@ -25,5 +25,6 @@ Route::group([
     $router->resource('areas', AreaController::class);
     #充值记录
     $router->resource('recharges', RechargeController::class);
+    $router->get('recharges/add/{ClientID},{EquID}', "RechargeController@add");
 
 });
