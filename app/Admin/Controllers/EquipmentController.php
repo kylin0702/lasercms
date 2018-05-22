@@ -168,8 +168,10 @@ class EquipmentController extends Controller
                 $grid->EntryPer('录入人');
                 $grid->Auditor('是否审核');
                 $grid->actions(function ($a) {
-                    // prepend一个操作
-                    $a->append('<a href="" class="btn btn-xs btn-warning">充值 <i class="fa fa-rmb"></i></a>');
+                    $cid=105;
+                    $eid=123;
+                    $href="/admin/recharges/add/$cid,$eid";
+                    $a->append("<a href='$href' class='btn btn-xs btn-warning'>充值 <i class='fa fa-rmb'></i></a>");
                 });
             }
         });
