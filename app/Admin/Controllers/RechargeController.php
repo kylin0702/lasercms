@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\MessageBag;
+use Symfony\Component\Debug\Debug;
 
 class RechargeController extends Controller
 {
@@ -148,9 +149,19 @@ class RechargeController extends Controller
                return $equtype->Price;
             });
             $form->radio("Method","充值方式")->options([0 => '网上充值', 1=> '系统赠送'])->default(0);
-            $form->number("RechTime","充值小时数")->default(100);
-
-
+            $form->text("RechTime","充值小时数")->default(0);
+            $form->html("<span class='form-control no-border totle '>0元</span>","总计");
+            $form->hidden("Amount")->default(0);
+            Admin::script(
+                <<<EOT
+                $('#RechTime').on('input propertychange',function(){
+                    var price=$('.UnitPrice').val()
+                    var totle=$('#RechTime').val()*price;
+                    $('.totle').html(totle+'元');
+                    $('.Amount').val(totle);
+                });      
+EOT
+            );
         });
     }
 
