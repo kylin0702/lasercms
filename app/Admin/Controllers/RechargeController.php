@@ -15,12 +15,12 @@ use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\MessageBag;
 
 class RechargeController extends Controller
 {
     use ModelForm;
-
     /**
      * Index interface.
      *
@@ -63,29 +63,13 @@ class RechargeController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('光源充值');
+            $content->description('');
 
             $content->body($this->form());
         });
     }
 
-    /**
-     * Create interface.
-     *@param $cid
-     * *@param $eid
-     * @return Content
-     */
-    public function add($cid,$eid)
-    {
-        return Admin::content(function (Content $content) use($cid,$eid) {
-
-            $content->header('充值');
-            $content->description('');
-
-            $content->body($this->form1($cid,$eid));
-        });
-    }
 
     /**
      * Make a grid builder.
@@ -106,6 +90,7 @@ class RechargeController extends Controller
                 return $method[$v];
             });
             $grid->Amount("充值金额")->display(function ($v){return "<i class='fa fa-rmb'></i> ".$v;});
+            $grid->RechTime("充值小时数")->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v;});
             $grid->IP("充值IP");
             $grid->UpdateTime("充值时间");
             $grid->Results("充值状态")->display(function ($v){
@@ -125,9 +110,14 @@ class RechargeController extends Controller
      */
     protected function form()
     {
-        return Admin::form(Recharge::class, function (Form $form) {
-            $cid=Input::get("cid");
-            $eid=Input::get("eid");
+        $cid=Input::get("cid");
+        $eid=Input::get("eid");
+
+        return Admin::form(Recharge::class, function (Form $form) use($cid,$eid) {
+            //把cid,eid保存到form,因为store操作也是调用这个form,但url参数会被忽略掉
+            $form->hidden("cid")->value($cid);
+            $form->hidden("eid")->value($eid);
+            $form->ignore(["cid","eid"]);//不参与数据库操作
 
             //客户Model
             $client=Client::findOrFail($cid);
@@ -142,19 +132,26 @@ class RechargeController extends Controller
             $form->hidden("SerialNumber")->default(function(){
                return date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
             });
+            $form->hidden("IP")->default(function (){
+                return \Illuminate\Support\Facades\Request::ip();
+            });
+            $form->hidden("UpdateTime")->default(function (){
+                return date("Y-m-d H:i:s.000");
+            });
+            $form->hidden("Results")->default(0);
+            $form->hidden("AccountID")->default(0);
             $form->html("<span class='form-control no-border'>$equipment->NumBer</span>","厅号");
             $form->html("<span class='form-control no-border'>$equipment->EquNum</span>","光源序列号");
             $form->html("<span class='form-control no-border'>$equtype->Name</span>","光源类型");
-            $form->html("<span class='form-control no-border'>$equtype->Price</span>","单价");
-            $form->radio("Method","充值方式")->options([0 => '网上充值', 1=> '系统赠送'])->default(0);
-            $form->currency("Amount","充值金额")->symbol('￥');
-            $form->saving(function (Form $form) {
-
-                var_dump($form);
-
+            $form->html("<span class='form-control no-border'>$equtype->Price/小时</span>","光源单价");
+            $form->hidden("UnitPrice")->default(function() use($equtype){
+               return $equtype->Price;
             });
+            $form->radio("Method","充值方式")->options([0 => '网上充值', 1=> '系统赠送'])->default(0);
+            $form->number("RechTime","充值小时数")->default(100);
+
+
         });
     }
-
 
 }

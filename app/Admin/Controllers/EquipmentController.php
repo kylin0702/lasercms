@@ -11,6 +11,8 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use function foo\func;
+use Illuminate\Support\Facades\Input;
+use Symfony\Component\Console\Output\Output;
 
 class EquipmentController extends Controller
 {
@@ -168,8 +170,8 @@ class EquipmentController extends Controller
                 $grid->EntryPer('录入人');
                 $grid->Auditor('是否审核');
                 $grid->actions(function ($a) {
-                    $cid=105;
-                    $eid=123;
+                    $cid=$a->row->ClientID;
+                    $eid=$a->row->ID;
                     $href="/admin/recharges/create?cid=$cid&eid=$eid";
                     $a->append("<a href='$href' class='btn btn-xs btn-warning'>充值 <i class='fa fa-rmb'></i></a>");
                 });
