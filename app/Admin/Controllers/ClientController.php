@@ -73,6 +73,9 @@ class ClientController extends Controller
     protected function grid()
     {
         return Admin::grid(Client::class, function (Grid $grid) {
+            /***禁用批量操作***/
+            $grid->disableRowSelector();
+            $grid->tools->disableBatchActions();
 
             $grid->ClientNum('客户编号');
             $grid->ClientName('影城名称')->display(function ($v){
@@ -111,8 +114,13 @@ class ClientController extends Controller
     protected function form()
     {
         return Admin::form(Client::class, function (Form $form) {
-            $form->ignore(["Superior"]);
-            $form->text('ClientNum', '客户编号')->setWidth(5);
+            $user=Admin::user();
+
+            $form->ignore(["Superior","MaxID"]);
+            $form->hidden('ClientNum');
+            $form->hidden("MaxID")->default(function() {
+                return Client::max("ID");
+            });
             $form->text('ClientName', '影城名称')->setWidth(5);
             $form->text('Adress', '影城地址');
             #$form->mobile('JoinHotline', '加盟热线');
@@ -120,21 +128,59 @@ class ClientController extends Controller
             $form->text('Owner', '影城法人')->setWidth(2);
             $form->mobile('Phone', '联系方式');
             $form->date('UpdateTime', '合作时间');
-            $form->select('area.Superior', '父级区域')->options(function (){
+
+            /****区域-省二级联动 Start****/
+            $form->select('area.Superior', '父级区域')->setElementName("Superior")->options(function (){
                 $data=[];
                 $superior=Area::where("Superior","=",0)->get();
                 foreach ($superior as $item){
                     $data[$item["ID"]]=$item["AreaName"];
                 }
                 return $data;
-            })->load("AreaID","/admin/areas/getSonArea","ID","AreaName");
-            $form->select('AreaID', '区域名称');
-            $states = [
-                'on'  => ['value' => '已审核', 'text' => '已审核', 'color' => 'success'],
-                'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
-            ];
-            $form->switch('Review','审核状态')->states($states);
-            $form->text('EntryPer', '审核人');
+            })->load("AreaID","/admin/areas/getSonArea","ID","AreaName")->setWidth(2);
+            $form->select('AreaID', '区域名称')->options(function($v){
+                if(!empty($v)) {
+                    $sid = Area::find($v)->Superior;
+                    $data = [];
+                    $superior = Area::where("Superior", "=", $sid)->get();
+                    foreach ($superior as $item) {
+                        $data[$item["ID"]] = $item["AreaCode"].$item["AreaName"];
+                    }
+                    return $data;
+                }
+
+            })->setWidth(2);
+            /****区域-省二级联动 End****/
+
+            /****让有审核权限的人进行审核****/
+            if($user->inRoles(['administrator'])) {
+                $states = [
+                    'on' => ['value' => '已审核', 'text' => '已审核', 'color' => 'success'],
+                    'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
+                ];
+                $form->switch('Review', '审核状态')->states($states)->default("未审核");
+            }
+
+            $form->hidden('EntryPer')->default(function() use($user){
+                return $user->id;
+            });
+
+            /******根据区域代码生成客户编号*******/
+            Admin::script(
+                <<<EOT
+                $(".AreaID").on("change",function(){
+                    var code="CN"+$(this).find("option:selected").text().substring(0,2)+"-";
+                    var max=parseInt($('.MaxID').val())+1;
+                    var clientnum=GenClientNum(code,max.toString());
+                    $(".ClientNum").val(clientnum);
+                });
+                function GenClientNum(code,str) {  
+                    var pad = "00000"  
+                    return code+pad.substring(0, pad.length - str.length) + str  
+                }  
+EOT
+
+            );
         });
     }
 }

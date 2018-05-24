@@ -95,6 +95,6 @@ class AreaController extends Controller
     //通过父级区域代码查询子区域,用于二级联动
     public function getSonArea(\Illuminate\Http\Request $request){
         $sid = $request->get('q');
-        return Area::where('Superior',"=", $sid)->get(["ID","AreaName"]);
+        return Area::where('Superior',"=", $sid)->get(["ID",DB::raw("AreaCode+AreaName as AreaName")]);
     }
 }
