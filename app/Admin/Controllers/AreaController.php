@@ -9,6 +9,8 @@ use Encore\Admin\Form;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 
 class AreaController extends Controller
 {
@@ -27,6 +29,7 @@ class AreaController extends Controller
             $content->description('区域列表');
 
             $content->body(Area::tree(function($area){
+                $area->disableSave();
                 $area->branch(function ($branch) {
                     return "{$branch['AreaCode']}-{$branch['AreaName']}";
                 });
@@ -44,8 +47,8 @@ class AreaController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('修改区域');
+            $content->description('');
 
             $content->body($this->form()->edit($id));
         });
@@ -60,28 +63,13 @@ class AreaController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('新增区域');
+            $content->description('');
 
             $content->body($this->form());
         });
     }
 
-    /**
-     * Make a grid builder.
-     *
-     * @return Grid
-     */
-    protected function grid()
-    {
-        return Admin::grid(Area::class, function (Grid $grid) {
-
-            $grid->id('ID')->sortable();
-
-            $grid->created_at();
-            $grid->updated_at();
-        });
-    }
 
     /**
      * Make a form builder.
@@ -91,11 +79,22 @@ class AreaController extends Controller
     protected function form()
     {
         return Admin::form(Area::class, function (Form $form) {
-
-            $form->display('id', 'ID');
-
-            $form->display('created_at', 'Created At');
-            $form->display('updated_at', 'Updated At');
+                $form->text("AreaName","区域名称")->setWidth(2);
+                $form->text("AreaCode","区域代码")->setWidth(2);
+                $form->select("Superior","所属区域")->setWidth(2)->options(function (){
+                    $superior=Area::where("Superior","=",0)->get();
+                    $data=[0=>"根级区域"];
+                    foreach ($superior as $item){
+                        $data[$item["ID"]]=$item["AreaName"];
+                    }
+                    return $data;
+                });
         });
+    }
+
+    //通过父级区域代码查询子区域,用于二级联动
+    public function getSonArea(\Illuminate\Http\Request $request){
+        $sid = $request->get('q');
+        return Area::where('Superior',"=", $sid)->get(["ID","AreaName"]);
     }
 }

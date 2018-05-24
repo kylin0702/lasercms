@@ -13,7 +13,7 @@ class Client extends Model
 
 
     public function  area(){
-        return $this->belongsTo(Area::class,"AreaID");
+        return $this->belongsTo(Area::class,"AreaID","ID");
     }
 
     public function  auditor(){
@@ -21,10 +21,7 @@ class Client extends Model
     }
 
     public function hasManyRecharge()
-
     {
-
         return $this->hasMany(Recharge::class, 'ClientID', 'ID');
-
     }
 }

@@ -15,13 +15,15 @@ class Recharge extends Model
             "UpdateTime"=>"DateTime"
     ];
 
-    public function client()
+    //关联Client表
+    public function hasOneClient()
     {
-        return $this->belongsTo(Client::class,"ClientID");
+        return $this->hasOne(Client::class,"ID","ClientID");
     }
 
-    public function equ()
+    //关联Equipment表
+    public function hasOneEqu()
     {
-        return $this->belongsTo(Equipment::class,"EquID");
+        return $this->hasOne(Equipment::class,"ID","EquID");
     }
 }

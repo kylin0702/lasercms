@@ -22,6 +22,7 @@ Route::group([
     $router->resource('equstatuss', EquStatusController::class);
     $router->get('equstatuss/{sn}/show', "EquStatusController@show");
     #区域设置路由
+    $router->get('areas/getSonArea', "AreaController@getSonArea");
     $router->resource('areas', AreaController::class);
     #充值记录
     $router->resource('recharges', RechargeController::class);

@@ -8,6 +8,7 @@ class Equipment extends Model
 {
     protected $table = 'Equipment';
     protected $primaryKey="ID";
+    public $timestamps=false;
 
     protected $casts=[
         "RemainTime"=>"integer",

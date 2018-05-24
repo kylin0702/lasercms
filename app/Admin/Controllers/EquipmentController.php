@@ -170,10 +170,14 @@ class EquipmentController extends Controller
                 $grid->EntryPer('录入人');
                 $grid->Auditor('是否审核');
                 $grid->actions(function ($a) {
+                    $a->disableDelete();
+                    $a->disableEdit();
                     $cid=$a->row->ClientID;
                     $eid=$a->row->ID;
-                    $href="/admin/recharges/create?cid=$cid&eid=$eid";
-                    $a->append("<a href='$href' class='btn btn-xs btn-warning'>充值 <i class='fa fa-rmb'></i></a>");
+                    $href1="/admin/recharges/create?cid=$cid&eid=$eid&method=0";
+                    $href2="/admin/recharges/create?cid=$cid&eid=$eid&method=1";
+                    $a->append("<a href='$href1' class='btn btn-xs btn-warning'>充值 <i class='fa fa-rmb'></i></a> ");
+                    $a->append("<a href='$href2' class='btn btn-xs btn-danger'>赠送 <i class='fa fa-gift'></i></a>");
                 });
             }
         });

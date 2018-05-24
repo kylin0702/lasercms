@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Models\Area;
 use App\admin\Models\Client;
 
 use Encore\Admin\Form;
@@ -110,7 +111,7 @@ class ClientController extends Controller
     protected function form()
     {
         return Admin::form(Client::class, function (Form $form) {
-
+            $form->ignore(["Superior"]);
             $form->text('ClientNum', '客户编号')->setWidth(5);
             $form->text('ClientName', '影城名称')->setWidth(5);
             $form->text('Adress', '影城地址');
@@ -119,15 +120,21 @@ class ClientController extends Controller
             $form->text('Owner', '影城法人')->setWidth(2);
             $form->mobile('Phone', '联系方式');
             $form->date('UpdateTime', '合作时间');
-            $form->divide();
-            $form->text('AreaID', '所属区域ID');
+            $form->select('area.Superior', '父级区域')->options(function (){
+                $data=[];
+                $superior=Area::where("Superior","=",0)->get();
+                foreach ($superior as $item){
+                    $data[$item["ID"]]=$item["AreaName"];
+                }
+                return $data;
+            })->load("AreaID","/admin/areas/getSonArea","ID","AreaName");
+            $form->select('AreaID', '区域名称');
             $states = [
                 'on'  => ['value' => '已审核', 'text' => '已审核', 'color' => 'success'],
                 'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
             ];
             $form->switch('Review','审核状态')->states($states);
             $form->text('EntryPer', '审核人');
-            $form->text('Remark', '备注');
         });
     }
 }
