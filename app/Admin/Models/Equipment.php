@@ -17,15 +17,15 @@ class Equipment extends Model
 
 
     #关联EquType模型
-    public function EquType()
+    public function hasOneEquType()
     {
-        return $this->belongsTo(EquType::class,'EquTypeID');
+        return $this->hasOne(EquType::class,'ID',"EquTypeID");
     }
 
     #关联EquType模型
-    public function Client()
+    public function hasOneClient()
     {
-        return $this->belongsTo(Client::class,'ClientID');
+        return $this->hasOne(Client::class,'ID',"ClientID");
     }
 
 

@@ -29,7 +29,6 @@ class AreaController extends Controller
             $content->description('区域列表');
 
             $content->body(Area::tree(function($area){
-                $area->disableSave();
                 $area->branch(function ($branch) {
                     return "{$branch['AreaCode']}-{$branch['AreaName']}";
                 });

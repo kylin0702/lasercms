@@ -26,5 +26,7 @@ Route::group([
     $router->resource('areas', AreaController::class);
     #充值记录
     $router->resource('recharges', RechargeController::class);
+    #异常记录
+    $router->resource('abnormas', AbnormaController::class);
 
 });

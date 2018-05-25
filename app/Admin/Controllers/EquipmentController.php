@@ -88,10 +88,10 @@ class EquipmentController extends Controller
     protected function grid()
     {
         return Admin::grid(Equipment::class, function (Grid $grid) {
-              $grid->Client()->ClientNum('客户编号');
-               $grid->Client()->ClientName('客户名称');
+              $grid->hasOneClient()->ClientNum('客户编号');
+               $grid->hasOneClient()->ClientName('客户名称');
                $grid->NumBer('影厅号');
-               $grid->EquType()->Name('光源类型');
+               $grid->hasOneEquType()->Name('光源类型');
                 #$grid->EquType()->Price('单价');
                #$grid->EquType()->GiftTime('赠送时长');
                $grid->EquNum("设备编号")->display(function ($v) {
@@ -124,12 +124,12 @@ class EquipmentController extends Controller
             $user=Admin::user();
 
             $grid->model()->where("ClientID","=",$clientid);
-            $grid->Client()->ClientNum('客户编号');
-            $grid->Client()->ClientName('客户名称');
+            $grid->hasOneClient()->ClientNum('客户编号');
+            $grid->hasOneClient()->ClientName('客户名称');
             $grid->NumBer('影厅号');
-            $grid->EquType()->Name('光源类型');
-            $grid->EquType()->Price('单价');
-            $grid->EquType()->GiftTime('赠送时长');
+            $grid->hasOneEquType()->Name('光源类型');
+            $grid->hasOneEquType()->Price('单价');
+            $grid->hasOneEquType()->GiftTime('赠送时长');
             $grid->EquNum("设备编号")->display(function ($v) {
                 return $v;
             });
