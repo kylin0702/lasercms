@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Models\Equipment;
 use App\admin\Models\EquStatus;
+use App\Admin\Models\EquType;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use function foo\func;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\MessageBag;
 use Symfony\Component\Console\Output\Output;
 
 class EquipmentController extends Controller
@@ -73,8 +75,8 @@ class EquipmentController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('添加光源');
+            $content->description('');
 
             $content->body($this->form());
         });
@@ -191,11 +193,51 @@ class EquipmentController extends Controller
     protected function form()
     {
         return Admin::form(Equipment::class, function (Form $form) {
+            $form->text("EquNum","光源编号")->setWidth(2)->rules("required",['required'=>'请输入光源编号']);
+            $form->select("EquTypeID","光源类型")->options(function(){
+                $data=[];
+                $models=EquType::all();
+                foreach ($models as $item){
+                    $data[$item["ID"]]=$item["Name"]." |赠送时长:".$item["GiftTime"];
+                }
+                return $data;
+            })->setWidth(2)->rules('required',['required'=>'请选择光源类型']);
+            $form->hidden("GiftTime")->default(0);
+            $form->hidden("EquStatus")->default("UnActive");
+            $states = [
+                'on' => ['value' => '已审核', 'text' => '已审核', 'color' => 'success'],
+                'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
+            ];
+            $form->switch('Review', '审核状态')->states($states)->default("未审核");
+            $isbuy= [
+                'on' => ['value' => '是', 'text' => '是', 'color' => 'success'],
+                'off' => ['value' => '否', 'text' => '否', 'color' => 'danger'],
+            ];
+            $form->switch('IsBuy', '是否购买')->states($isbuy)->default("否");
+            $form->hidden("EntryPer")->default(function (){
+               return Admin::user()->ID;
+            });
+            //
+            $form->saving(function ($form) {
+                $error = new MessageBag([
+                    'title'   => '添加失败',
+                    'message' => '光源序号已存在',
+                ]);
+                return back()->with(compact('error'));
 
-            $form->display('id', 'ID');
+            });
+            //根据所选光源类型取得赠送时长
+            Admin::script(
+                <<<EOT
+            $(".EquTypeID").on("change",function(){
+                    var str=$(this).find("option:selected").text();
+                    var index=str.indexOf(':');
+                    var gift= str.substring(index+1);
+                    $(".GiftTime").val(gift);
+                });
+EOT
 
-            $form->display('created_at', 'Created At');
-            $form->display('updated_at', 'Updated At');
+            );
         });
     }
 }
