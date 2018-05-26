@@ -5,7 +5,7 @@ return [
     /*
      * Laravel-admin name.
      */
-    'name' => '中科创激光放映计费系统',
+    'name' => '中科创放映计费系统',
 
     /*
      * Logo in admin panel header.
@@ -37,7 +37,7 @@ return [
     /*
      * Laravel-admin html title.
      */
-    'title' => '中科创激光放映计费系统',
+    'title' => '中科创放映计费系统',
 
     /*
      * Use `https`.
