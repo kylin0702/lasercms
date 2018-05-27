@@ -17,8 +17,8 @@ class Client extends Model
         return $this->belongsTo(Area::class,"AreaID","ID");
     }
 
-    public function  auditor(){
-        return $this->belongsTo("Encore\Admin\Auth\Database\Administrator" ,"EntryPer");
+    public function  hasOneAuditor(){
+        return $this->hasOne("Encore\Admin\Auth\Database\Administrator" ,"id","EntryPer");
     }
 
     public function hasManyRecharge()

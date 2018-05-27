@@ -78,10 +78,7 @@ class ClientController extends Controller
             $grid->tools->disableBatchActions();
 
             $grid->ClientNum('客户编号');
-            $grid->ClientName('影城名称')->display(function ($v){
-                $id=$this->getKey();
-                return  "<a href='equipments/$id/clientshow'>$v</a>";
-            });
+            $grid->ClientName('影城名称');
             $grid->Adress('影城地址');
             #$grid->JoinHotline('加盟热线');
             $grid->VideoNum('影厅数量');
@@ -90,7 +87,7 @@ class ClientController extends Controller
             $grid->UpdateTime('合作时间')->display(function ($v){
                 return date("Y-m-d",strtotime($v));
             });
-            $grid->area()->AreaCode("区域代码");
+            //$grid->area()->AreaCode("区域代码");
             $grid->area()->AreaName("区域名称");
 
             $grid->Review('审核状态')->display(function ($v){
@@ -101,8 +98,15 @@ class ClientController extends Controller
                     return "<label class='label label-warning'>$v</label>";
                 }
             });
-            $grid->auditor()->name("审核人");
+            $grid->hasOneAuditor()->name("审核人");
             $grid->Remark('备注');
+            Admin::script("");
+            $grid->actions(function ($actions) {
+                $id=$actions->getKey();
+                $actions->disableDelete();
+                $actions->append("<a href='/admin/equipments/$id/clientshow'><i class='fa fa-camera-retro'></i></a>");
+            });
+
         });
     }
 
