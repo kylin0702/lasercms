@@ -247,17 +247,9 @@ EOT;
             ];
             $form->switch('IsBuy', '是否购买')->states($isbuy)->default("否");
             $form->hidden("EntryPer")->default(function (){
-               return Admin::user()->ID;
+               return Admin::user()->id;
             });
-            /*
-            $form->saving(function ($form) {
-                $error = new MessageBag([
-                    'title'   => '添加失败',
-                    'message' => '光源编号已存在',
-                ]);
-                return back()->with(compact('error'));
 
-            });*/
             //根据所选光源类型取得赠送时长
             Admin::script(
                 <<<EOT
