@@ -84,13 +84,13 @@ class AbnormaController extends Controller
             $grid->ProDesc("故障现象");
             $grid->Livephotos("现场图片1")->display(function ($v){
                 $html=<<<EOT
-                <button type="button" class="btn btn-warning"  data-html="true" data-toggle="popover" title="现场图片2" data-content="<image src='/uploads/$v' />">查看 <i class="fa fa-image"></i></button>
+                <a tabindex="0" data-trigger="focus" data-placement="left"  class="btn btn-warning"  data-html="true" data-toggle="popover" title="现场图片1" data-content="<image class='img-responsive' src='/uploads/$v' />">查看 <i class="fa fa-image "></i></a>
 EOT;
                 return $html;
             });
             $grid->Livephotos2("现场图片1")->display(function ($v){
                 $html=<<<EOT
-                <button type="button" class="btn btn-warning"  data-html="true" data-toggle="popover" title="现场图片2" data-content="<image src='/uploads/$v' />">查看 <i class="fa fa-image"></i></button>
+                <a a tabindex="0" data-trigger="focus"  class="btn btn-warning" data-placement="right"  data-html="true" data-toggle="popover" title="现场图片2" data-content="<image class='img-responsive' src='/uploads/$v' />">查看 <i class="fa fa-image"></i></a>
 EOT;
                 return $html;
             });
