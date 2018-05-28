@@ -88,13 +88,23 @@ class AbnormaController extends Controller
 EOT;
                 return $html;
             });
-            $grid->Livephotos2("现场图片1")->display(function ($v){
+            $grid->Livephotos2("现场图片2")->display(function ($v){
                 $html=<<<EOT
                 <a a tabindex="0" data-trigger="focus"  class="btn btn-warning" data-placement="right"  data-html="true" data-toggle="popover" title="现场图片2" data-content="<image class='img-responsive' src='/uploads/$v' />">查看 <i class="fa fa-image"></i></a>
 EOT;
                 return $html;
             });
-            $grid->MainteDesc("处理过程");
+            $grid->MainteDesc("处理过程")->display(function($v){
+                if(!empty($v)){
+                    $html=<<<EOT
+                <a a tabindex="0" data-trigger="focus"  class="btn btn-warning" data-placement="right"  data-html="true" data-toggle="popover" title="处理过程" data-content="$v">查看 <i class="fa fa-user-md"></i></a>
+EOT;
+                    return $html;
+                }
+                else{
+                    return "";
+                }
+            });
             $grid->Remark("备注");
             $grid->Serious("严重程度")->display(function($v){
                 $serios=["一般"=>"primary","严重"=>"warning","特别严重"=>"danger"];
