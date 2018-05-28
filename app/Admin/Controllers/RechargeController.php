@@ -99,6 +99,11 @@ class RechargeController extends Controller
                 $style=[0=>"danger",1=>"success",2=>"warning",3=>"default"];
                 return "<label class='label label-$style[$v]'>$results[$v]</label>";
             });
+            $grid->filter(function ($filter) {
+                $filter->disableIdFilter();
+                $filter->between('UpdateTime', "充值时间")->date();
+                $filter->equal('ClientID', '客户名称')->select(Client::all()->pluck('ClientName',"ID"));
+            });
         });
     }
 

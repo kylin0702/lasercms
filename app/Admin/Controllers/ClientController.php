@@ -106,6 +106,11 @@ class ClientController extends Controller
                 $actions->disableDelete();
                 $actions->append("<a href='/admin/equipments/$id/clientshow'><i class='fa fa-camera-retro'></i></a>");
             });
+            $grid->filter(function ($filter) {
+                $filter->disableIdFilter();
+                $filter->equal('ClientName', '客户名称')->select(Client::all()->pluck('ClientName',"ClientName"));
+                $filter->equal('AreaID', '区域')->select(Area::all()->pluck('AreaName',"ID"));
+            });
 
         });
     }

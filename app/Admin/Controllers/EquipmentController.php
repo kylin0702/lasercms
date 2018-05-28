@@ -92,6 +92,11 @@ class EquipmentController extends Controller
     protected function grid()
     {
         return Admin::grid(Equipment::class, function (Grid $grid) {
+                $grid->disableRowSelector();
+                $grid->tools->disableBatchActions();
+               $grid->actions(function ($actions){
+                   $actions->disableEdit();
+               });
               $grid->hasOneClient()->ClientNum('客户编号');
                $grid->hasOneClient()->ClientName('客户名称');
                $grid->NumBer('影厅号');
@@ -117,7 +122,19 @@ class EquipmentController extends Controller
                     return "<label class='label label-default'>$status[$v]</label>";
                 }
             });
-               $grid->Review('审核状态');
+            $states = [
+                'on'  => ['value' => "已审核", 'text' => '已审核', 'color' => 'primary'],
+                'off' => ['value' => "未审核", 'text' => '未审核', 'color' => 'default'],
+            ];
+            $grid->Review("审核状态")->switch($states);
+            $grid->filter(function ($filter) {
+                $filter->disableIdFilter();
+                $filter->equal('EquTypeID', '光源类型')->select(EquType::all()->pluck('Name',"ID"));
+                $filter->where(function ($query) {
+                    $query->whereRaw("ClientID is {$this->input}");
+                }, '是否绑定')->select(["null"=>"未绑定","not null"=>"已绑定"]);
+                $filter->equal('ClientID', '客户名称')->select(Client::all()->pluck('ClientName',"ID"));
+            });
 
         });
     }
@@ -308,6 +325,7 @@ EOT
         return $table->render();
     }
 
+    //客户绑定光源操作
     public function bind(Request $request,$ID)
     {
 
@@ -317,6 +335,12 @@ EOT
         $equipment->save();
 
         return response()->json($equipment, 200);
+    }
+    //
+    //通过客户ID返回厅号
+    public function getRoom(Request $request){
+        $clientid = $request->get('q');
+        return Equipment::where('ClientID',"=", $clientid)->get(["ID","NumBer"]);
     }
 
 }

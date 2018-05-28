@@ -16,6 +16,7 @@ Route::group([
     #客户管理路由
     $router->resource('clients', ClientController::class);
     #光源管理路由
+    $router->get('equipments/getRoom', "EquipmentController@getRoom");//通过客户ID获取厅号
     $router->resource('equipments', EquipmentController::class);
     $router->get('equipments/{clientid}/clientshow', "EquipmentController@clientshow");//按ClientID显示光源
     $router->post('equipments/{ID}/bind', "EquipmentController@bind");//按ClientID显示光源
@@ -23,7 +24,7 @@ Route::group([
     $router->resource('equstatuss', EquStatusController::class);
     $router->get('equstatuss/{sn}/show', "EquStatusController@show");
     #区域设置路由
-    $router->get('areas/getSonArea', "AreaController@getSonArea");
+    $router->get('areas/getSonArea', "AreaController@getSonArea");//通过大区ID获取子区域
     $router->resource('areas', AreaController::class);
     #充值记录
     $router->resource('recharges', RechargeController::class);
