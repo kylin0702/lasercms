@@ -123,7 +123,6 @@ class RechargeController extends Controller
             $form->hidden("eid")->value($eid);
             $form->hidden("Method")->value($Method);
             $form->ignore(["cid","eid","Phone1","Phone2","Phone3"]);//不参与数据库操作
-            $this->sms();
             //客户Model
             $client=Client::findOrFail($cid);
             //设备Model
@@ -162,11 +161,9 @@ class RechargeController extends Controller
             }
             $form->hidden("Results")->default(1);
             $form->text("RechTime","充值小时数")->default(0)->attribute("type","number")->setWidth(2);
-            $form->text("Phone1","验证码1")->setWidth(2);
-            $form->text("Phone2","验证码2")->setWidth(2);
-            $form->text("Phone3","验证码3")->setWidth(2);
-            $phones=[0=>config("phone1"),1=>"phone2",2=>config("phone3")];
-            $form->html("<button type='button' class='btn btn-primary sms'>发送验证码</button>(暂不可用)","");
+            $form->html("<input class='form-control' id='phone1'/>","验证码1")->setWidth(1);
+            $form->html("<span><input class='form-control hidden' id='phone2'/></span>","验证码2")->setWidth(1);
+            $form->html("<button type='button' class='btn btn-primary sms'>发送验证码</button>","");
             $form->html("<span class='form-control no-border totle' style='color: #9f191f;font-size: 18px'>0元</span>","总计");
             $form->hidden("Amount")->default(0);
             //写入Equipment表预充值
@@ -178,7 +175,8 @@ class RechargeController extends Controller
                 <<<EOT
                 var precharge=parseFloat($('.Precharge').val());
                 var method=$("[name='Method']").val();
-               
+                var codes=[];
+                $("button[type='submit']").attr("disabled","disabled");
                 $('#RechTime').on('input propertychange',function(){
                     var price=$('.UnitPrice').val();
                     var rechtime=parseFloat($('#RechTime').val());
@@ -192,8 +190,49 @@ class RechargeController extends Controller
                     $('.Precharge').val(precharge+rechtime);
                 });
                 $('.sms').on('click',function(){
-                    var code1=Math.random(1,9999);
-                    
+                    $.get('/admin/recharges/sms',{},function(data){
+                        if(data){
+                            for(var key in data){
+                                codes.push(data[key]);
+                            }
+                            alert("验证码为"+codes[0]+","+codes[1]+","+codes[2]);
+                        }
+                        else{
+                            alert("发送失败!");
+                        }
+                        
+                    });
+                });
+                 $('#phone1').on('input propertychange',function(){
+                       if(!codes.length==0){
+                             codes=$.map(codes,function(n){
+                                if( $('#phone1').val()==n) {
+                                    $('.check1').removeClass('hidden');
+                                    $('#phone1').attr('disabled',"disabled");
+                                    $('#phone2').removeClass('hidden');
+                                    return null;
+                                }
+                                else{
+                                  return n;
+                                }
+                               
+                             });
+                       };
+                });
+                 $('#phone2').on('input propertychange',function(){
+                       if(!codes.length==0){
+                             codes=$.map(codes,function(n){
+                                if($('#phone2').val()==n) {
+                                    $('#phone2').attr('disabled',"disabled");
+                                   $("button[type='submit']").removeAttr("disabled");
+                                    return null;
+                                }
+                                else{
+                                  return n;
+                                }
+                             
+                             });
+                       }
                 });
 EOT
             );
@@ -201,19 +240,23 @@ EOT
     }
     public function sms(){
         header('Content-Type:text/html;charset=utf-8');
-        $code = rand(100000,999999);
-        $data ="您好，您的验证码是" . $code."五分钟内有效。【麦讯通】" ;
-        $post_data = array (
-            'UserID' =>"999595",
-            'Account'=>'admin',
-            'Password' =>"FW9NQ9",
-            'Content'=> urlencode($data),
-            'Phones' =>"18607541870",
-            'SendType' => 1  //true or false
-        );
-        $url='http://www.mxtong.net.cn/Services.asmx?op=DirectSend';
-        $res=$this->http_request($url,http_build_query($post_data));
-        dd($res);
+        $codes = [config("phone1")=>rand(1000,9999),config("phone2")=>rand(1000,9999),config("phone3")=>rand(1000,9999)];
+        /*foreach ($codes as $phone=>$code) {
+            $data = "您好，您的验证码是" . $code . "五分钟内有效。【中科创激光】";
+            $post_data = array(
+                'UserID' => "999595",
+                'Account' => 'admin',
+                'Password' => "FW9NQ9",
+                'Content' => urlencode($data),
+                'Phones' => $phone,
+                'SendType' => 1,  //true or false,
+                'SendTime' => '',
+                'PostFixNumber' => ''
+            );
+            $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+            $res = $this->http_request($url, http_build_query($post_data));;
+        }*/
+        return $codes;
     }
     public function http_request($url,$data = null){
         if(function_exists('curl_init')){
@@ -232,7 +275,7 @@ EOT
             $result=preg_split("/[,\r\n]/",$output);
 
             if($result[1]==0){
-                return "curl success";
+                return "success";
             }else{
                 return "curl error".$result[1];
             }

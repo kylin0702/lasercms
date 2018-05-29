@@ -27,6 +27,7 @@ Route::group([
     $router->get('areas/getSonArea', "AreaController@getSonArea");//通过大区ID获取子区域
     $router->resource('areas', AreaController::class);
     #充值记录
+    $router->get('recharges/sms', "RechargeController@sms");
     $router->resource('recharges', RechargeController::class);
     #异常记录
     $router->resource('abnormas', AbnormaController::class);
