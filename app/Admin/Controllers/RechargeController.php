@@ -123,7 +123,7 @@ class RechargeController extends Controller
             $form->hidden("eid")->value($eid);
             $form->hidden("Method")->value($Method);
             $form->ignore(["cid","eid","Phone1","Phone2","Phone3"]);//不参与数据库操作
-
+            $this->sms();
             //客户Model
             $client=Client::findOrFail($cid);
             //设备Model
@@ -165,7 +165,8 @@ class RechargeController extends Controller
             $form->text("Phone1","验证码1")->setWidth(2);
             $form->text("Phone2","验证码2")->setWidth(2);
             $form->text("Phone3","验证码3")->setWidth(2);
-            $form->html("<button type='button' class='btn btn-primary disabled'>发送验证码</button>(暂不可用)","");
+            $phones=[0=>config("phone1"),1=>"phone2",2=>config("phone3")];
+            $form->html("<button type='button' class='btn btn-primary sms'>发送验证码</button>(暂不可用)","");
             $form->html("<span class='form-control no-border totle' style='color: #9f191f;font-size: 18px'>0元</span>","总计");
             $form->hidden("Amount")->default(0);
             //写入Equipment表预充值
@@ -190,10 +191,64 @@ class RechargeController extends Controller
                     }
                     $('.Precharge').val(precharge+rechtime);
                 });
-                
+                $('.sms').on('click',function(){
+                    var code1=Math.random(1,9999);
+                    
+                });
 EOT
             );
         });
     }
+    public function sms(){
+        header('Content-Type:text/html;charset=utf-8');
+        $code = rand(100000,999999);
+        $data ="您好，您的验证码是" . $code."五分钟内有效。【麦讯通】" ;
+        $post_data = array (
+            'UserID' =>"999595",
+            'Account'=>'admin',
+            'Password' =>"FW9NQ9",
+            'Content'=> urlencode($data),
+            'Phones' =>"18607541870",
+            'SendType' => 1  //true or false
+        );
+        $url='http://www.mxtong.net.cn/Services.asmx?op=DirectSend';
+        $res=$this->http_request($url,http_build_query($post_data));
+        dd($res);
+    }
+    public function http_request($url,$data = null){
+        if(function_exists('curl_init')){
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
 
+            if (!empty($data)){
+                curl_setopt($curl, CURLOPT_POST, 1);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            }
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            $output = curl_exec($curl);
+            curl_close($curl);
+
+
+            $result=preg_split("/[,\r\n]/",$output);
+
+            if($result[1]==0){
+                return "curl success";
+            }else{
+                return "curl error".$result[1];
+            }
+        }elseif(function_exists('file_get_contents')){
+
+            $output=file_get_contents($url.$data);
+            $result=preg_split("/[,\r\n]/",$output);
+
+            if($result[1]==0){
+                return "success";
+            }else{
+                return "error".$result[1];
+            }
+        }else{
+            return false;
+        }
+
+    }
 }

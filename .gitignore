@@ -14,3 +14,4 @@ yarn-error.log
 !/vendor/encore/laravel-admin/src/Auth/Database/Menu.php
 !/vendor/encore/laravel-admin/src/Traits/ModelTree.php
 !/vendor/encore/laravel-admin/resources/views/partials/footer.blade.php
+!/vendor/laravel-admin-ext/config/
