@@ -51,8 +51,16 @@ class HomeController extends Controller
                     $column->append($box);
                 });
             });
-            $content->row($this->abnormaGrid());
-            $content->row($this->equGrid());
+            $content->row(function(Row $row){
+                $row->column(6,function (Column $column){
+                    $column->append($this->abnormaGrid());
+                    $column->append($this->clientGrid());
+                });
+                $row->column(6,function (Column $column){
+                    $column->append($this->equGrid());
+                });
+            });
+
         });
     }
     protected function abnormaGrid()
@@ -68,8 +76,6 @@ class HomeController extends Controller
             $grid->hasOneClient()->Phone("联系方式");
             $grid->hasOneEquipment()->NumBer("厅号");
             $grid->ProDesc("故障现象");
-            $grid->Livephotos("现场图片1");
-            $grid->Livephotos2("现场图片1");
             $grid->Serious("严重程度");
             $grid->UpdateTime("登记时间");
         });
@@ -89,21 +95,26 @@ class HomeController extends Controller
             $grid->hasOneClient()->Phone('联系方式');
             $grid->NumBer('影厅号');
             $grid->RemainTime('剩余时长')->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v."小时";});
-            $grid->EquStatus('光源状态')->display(function($v){
-                $status=["LampOn"=>"正在放映","Standby"=>"待机中","UnActive"=>"未激活"];
-                if($v=="LampOn"){
-                    return "<label class='label label-success'>$status[$v]</label> <i class='fa fa-cog fa-spin'></i>";
-                }
-                elseif ($v="Standby"){
-                    return "<label class='label label-primary'>$status[$v]</label>";
-                }
-                elseif($v=="UnActive"){
-                    return "<label class='label label-danger'>$status[$v]</label>";
-                }
-                else{
-                    return "<label class='label label-default'>$status[$v]</label>";
-                }
+        });
+    }
+
+    protected function clientGrid()
+    {
+        return Admin::grid(Client::class, function (Grid $grid) {
+            $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableActions()->disableFilter();
+            $grid->tools->disableBatchActions();
+            $grid->tools->disableRefreshButton();
+            $grid->tools->append(" <label class='label label-success'><i class='fa fa-spin fa-star'></i> 最新客户</label>");
+            $grid->disableRowSelector();
+            $grid->model()->orderby("ID","desc")->take(10);
+            $grid->ClientName('影城名称');
+            $grid->VideoNum('影厅数量');
+            $grid->Owner('影城法人');
+            $grid->Phone('联系方式');
+            $grid->UpdateTime('合作时间')->display(function ($v){
+                return date("Y-m-d",strtotime($v));
             });
+
         });
     }
     public function welcome(){
