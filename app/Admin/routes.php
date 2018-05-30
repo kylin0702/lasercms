@@ -19,7 +19,8 @@ Route::group([
     $router->get('equipments/getRoom', "EquipmentController@getRoom");//通过客户ID获取厅号
     $router->resource('equipments', EquipmentController::class);
     $router->get('equipments/{clientid}/clientshow', "EquipmentController@clientshow");//按ClientID显示光源
-    $router->post('equipments/{ID}/bind', "EquipmentController@bind");//按ClientID显示光源
+    $router->post('equipments/{ID}/bind', "EquipmentController@bind");//绑定光源到客户
+    $router->post('equipments/{ID}/unbind', "EquipmentController@unbind");//解绑光源
     #光源状态路由
     $router->resource('equstatuss', EquStatusController::class);
     $router->get('equstatuss/{sn}/show', "EquStatusController@show");

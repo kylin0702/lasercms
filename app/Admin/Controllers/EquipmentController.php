@@ -143,8 +143,6 @@ class EquipmentController extends Controller
     {
         return Admin::grid(Equipment::class, function (Grid $grid) use($clientid) {
             $user=Admin::user();
-            $token=$user->getRememberToken();
-
             $grid->model()->where("ClientID","=",$clientid);
             $grid->NumBer('影厅号');
             $grid->hasOneEquType()->Name('光源类型');
@@ -187,9 +185,7 @@ class EquipmentController extends Controller
             }
             //管理员权限
             if($user->inRoles(['administrator'])) {
-                $grid->disableCreateButton()->disableRowSelector();
                 $grid->tools->disableBatchActions();
-
                 //输出可以选择的光源
                 $table=$this->getUnbindEqu($clientid);
                 $scrip=<<<EOT
@@ -216,7 +212,6 @@ class EquipmentController extends Controller
 </div>
 EOT;
                 $grid->tools->append($scrip);
-
                 $grid->EntryPer('录入人');
                 $grid->Auditor('是否审核');
                 $grid->actions(function ($a) {
@@ -228,8 +223,24 @@ EOT;
                     $href2="/admin/recharges/create?cid=$cid&eid=$eid&method=1";
                     $a->append("<a href='$href1' class='btn btn-xs btn-warning'>充值 <i class='fa fa-rmb'></i></a> ");
                     $a->append("<a href='$href2' class='btn btn-xs btn-danger'>赠送 <i class='fa fa-gift'></i></a> ");
-                    $a->append("<a href='' class='btn btn-xs btn-yahoo'>解绑 <i class='fa fa-share-alt'></i></a>");
+                    $a->append("<button  class='btn btn-xs btn-yahoo unbind' data-eid='$eid' >解绑 <i class='fa fa-share-alt'></i></button>");
                 });
+                Admin::script(
+                    <<<EOT
+              $('.unbind').on('click',function(){
+                var eid=$(this).attr('data-eid');
+                if(confirm("是否解除光源与客户的绑定")){
+                     $(this).find('i').addClass('fa-spin');
+                     $.post('/admin/equipments/'+eid+'/unbind',{},function(data){
+                          if(data.ClientID==0){
+                                alert("解绑成功！");
+                                window.location.reload();
+                          }
+                    });
+                }              
+                });
+EOT
+                );
             }
         });
     }
@@ -282,7 +293,7 @@ EOT
         });
     }
     public function getUnbindEqu($clientid){
-       $unbinder=Equipment::where('ClientID','=',null)->leftJoin('EquType','Equipment.EquTypeID','=','EquType.ID')->get(['Equipment.ID','EquNum','EquType.Name','EquType.Price'])->toArray();
+       $unbinder=Equipment::where('ClientID','=',0)->leftJoin('EquType','Equipment.EquTypeID','=','EquType.ID')->get(['Equipment.ID','EquNum','EquType.Name','EquType.Price'])->toArray();
         $headers = ['ID','光源编号','光源类型','单价','绑定'];
         $rows =[];
         foreach ($unbinder as $row){
@@ -320,7 +331,6 @@ EOT
                   
                 });
 EOT
-
         );
         return $table->render();
     }
@@ -328,12 +338,24 @@ EOT
     //客户绑定光源操作
     public function bind(Request $request,$ID)
     {
-
         $equipment=Equipment::find($ID);
         $equipment->ClientID=$request->input("ClientID");
         $equipment->NumBer=$request->input("NumBer");
         $equipment->save();
 
+        return response()->json($equipment, 200);
+    }
+    public function unbind($ID)
+    {
+        $equipment=Equipment::find($ID);
+        $equipment->ClientID=0;
+        $equipment->NumBer="";
+        $equipment->RemainTime=0;
+        $equipment->ReviewTime=0;
+        $equipment->Precharge=0;
+        $equipment->IsPre="N";
+        $equipment->IsSend="N";
+        $equipment->save();
         return response()->json($equipment, 200);
     }
     //
