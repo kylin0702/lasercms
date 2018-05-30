@@ -5,12 +5,15 @@ namespace App\Admin\Controllers;
 use App\Admin\Models\Area;
 use App\admin\Models\Client;
 
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 
 class ClientController extends Controller
 {
@@ -81,14 +84,14 @@ class ClientController extends Controller
             $grid->ClientName('影城名称');
             $grid->Adress('影城地址');
             #$grid->JoinHotline('加盟热线');
-            $grid->VideoNum('影厅数量');
+            #$grid->VideoNum('影厅数量');
             $grid->Owner('影城法人');
             $grid->Phone('联系方式');
             $grid->UpdateTime('合作时间')->display(function ($v){
                 return date("Y-m-d",strtotime($v));
             });
             //$grid->area()->AreaCode("区域代码");
-            $grid->area()->AreaName("区域名称");
+            //$grid->area()->AreaName("区域名称");
 
             $grid->Review('审核状态')->display(function ($v){
                 if($v=="已审核"){
@@ -98,6 +101,7 @@ class ClientController extends Controller
                     return "<label class='label label-warning'>$v</label>";
                 }
             });
+            $grid->username("绑定用户")->editable('text');
             $grid->hasOneAuditor()->name("审核人");
             $grid->Remark('备注');
             Admin::script("");
@@ -124,6 +128,7 @@ class ClientController extends Controller
     {
         return Admin::form(Client::class, function (Form $form) {
             $user=Admin::user();
+            $method=request()->route()->getActionMethod();//获取路由方法,判断是增加还是修改
 
             $form->ignore(["Superior","MaxID"]);
             $form->hidden('ClientNum');
@@ -136,7 +141,12 @@ class ClientController extends Controller
             $form->number('VideoNum', '影厅数量');
             $form->text('Owner', '影城法人')->setWidth(2);
             $form->mobile('Phone', '联系方式');
-            $form->date('UpdateTime', '合作时间');
+            if($method=="create") {
+                $form->date('UpdateTime', '合作时间');
+            }
+            else{
+                $form->display('UpdateTime', '合作时间')->setWidth(2);
+            }
 
             /****区域-省二级联动 Start****/
             $form->select('area.Superior', '父级区域')->setElementName("Superior")->options(function (){

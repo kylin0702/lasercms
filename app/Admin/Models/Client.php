@@ -2,6 +2,7 @@
 
 namespace App\Admin\Models;
 
+use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -24,5 +25,10 @@ class Client extends Model
     public function hasManyRecharge()
     {
         return $this->hasMany(Recharge::class, 'ClientID', 'ID');
+    }
+
+    public function hasOneUser()
+    {
+        return $this->hasOne(Administrator::class, 'username', 'username');
     }
 }
