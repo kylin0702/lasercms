@@ -14,8 +14,8 @@ class Client extends Model
     public  $timestamps=false;
 
 
-    public function  area(){
-        return $this->belongsTo(Area::class,"AreaID","ID");
+    public function  hasOneArea(){
+        return $this->hasOne(Area::class,"ID","AreaID");
     }
 
     public function  hasOneAuditor(){

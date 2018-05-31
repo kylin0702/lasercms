@@ -14,6 +14,9 @@ use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Encore\Admin\Widgets\Collapse;
+use Encore\Admin\Widgets\Table;
+use Encore\Admin\Widgets\Box;
 
 class ClientController extends Controller
 {
@@ -30,9 +33,53 @@ class ClientController extends Controller
 
             $content->header('客户管理');
             $content->description('客户信息列表');
-
-            $content->body($this->grid());
+            $content->body($this->collapse());
+            Admin::script(
+                <<<EOT
+            $(".panel").removeClass('box-primary').css("margin-bottom","10px");
+            $(".panel-collapse").find(".box-header").addClass("hidden");
+EOT
+            );
         });
+    }
+
+    /**
+     * Make a CollapseGrid builder.
+     *折叠样式数据
+     * @return CollapseGrid
+     */
+    public  function  collapse(){
+        $collapse = new Collapse();
+        $clients=Client::all();
+
+        foreach ($clients as $v){
+            $area=json_decode($v->hasOneArea)->AreaName;
+            $updatetime=date("Y-m-d",strtotime($v->UpdateTime));
+            $html=<<<EOT
+<div class="row">
+<div class="col-lg-3">法人名称:$v->Owner</div>
+<div class="col-lg-3">联系方式:$v->Phone</div>
+<div class="col-lg-3">所属区域:$area</div>
+<div class="col-lg-3">注册时间:$updatetime</div>
+</div>
+<div class="row">
+<div class="col-lg-6">客户地址:$v->Adress</div>
+<div class="col-lg-6">审核状态:$v->Review</div>
+</div>
+EOT;
+            $box = new Box('客户详情', $html);
+            $headers = ['Id', 'Email', 'Name', 'Company'];
+            $rows = [
+                [1, 'labore21@yahoo.com', 'Ms. Clotilde Gibson', 'Goodwin-Watsica'],
+                [2, 'omnis.in@hotmail.com', 'Allie Kuhic', 'Murphy, Koepp and Morar'],
+                [3, 'quia65@hotmail.com', 'Prof. Drew Heller', 'Kihn LLC'],
+                [4, 'xet@yahoo.com', 'William Koss', 'Becker-Raynor'],
+                [5, 'ipsa.aut@gmail.com', 'Ms. Antonietta Kozey Jr.'],
+            ];
+            $table = new Table($headers, $rows);
+            $collapse->add($v->ClientName, $box.$table);
+        }
+        return  $collapse->render();
     }
 
     /**
@@ -70,7 +117,7 @@ class ClientController extends Controller
 
     /**
      * Make a grid builder.
-     *
+     *网格样式数据
      * @return Grid
      */
     protected function grid()
