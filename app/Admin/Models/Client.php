@@ -31,4 +31,9 @@ class Client extends Model
     {
         return $this->hasOne(Administrator::class, 'username', 'username');
     }
+
+    public function hasManyEquipment()
+    {
+        return $this->hasMany(Equipment::class,"ClientID","ID");
+    }
 }

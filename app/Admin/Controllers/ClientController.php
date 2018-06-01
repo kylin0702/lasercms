@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Models\Area;
 use App\admin\Models\Client;
+use App\admin\Models\Equipment;
 
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Form;
@@ -38,6 +39,9 @@ class ClientController extends Controller
                 <<<EOT
             $(".panel").removeClass('box-primary').css("margin-bottom","10px");
             $(".panel-collapse").find(".box-header").addClass("hidden");
+            $("[data-toggle='collapse']").on('click',function(){
+                alert(1);
+            });
 EOT
             );
         });
@@ -53,10 +57,12 @@ EOT
         $clients=Client::all();
 
         foreach ($clients as $v){
+            $clientid=$v->ID;
             $area=json_decode($v->hasOneArea)->AreaName;
             $updatetime=date("Y-m-d",strtotime($v->UpdateTime));
             $html=<<<EOT
 <div class="row">
+<input type="hidden" class="ClientID" value="$clientid">
 <div class="col-lg-3">法人名称:$v->Owner</div>
 <div class="col-lg-3">联系方式:$v->Phone</div>
 <div class="col-lg-3">所属区域:$area</div>
@@ -68,16 +74,10 @@ EOT
 </div>
 EOT;
             $box = new Box('客户详情', $html);
-            $headers = ['Id', 'Email', 'Name', 'Company'];
-            $rows = [
-                [1, 'labore21@yahoo.com', 'Ms. Clotilde Gibson', 'Goodwin-Watsica'],
-                [2, 'omnis.in@hotmail.com', 'Allie Kuhic', 'Murphy, Koepp and Morar'],
-                [3, 'quia65@hotmail.com', 'Prof. Drew Heller', 'Kihn LLC'],
-                [4, 'xet@yahoo.com', 'William Koss', 'Becker-Raynor'],
-                [5, 'ipsa.aut@gmail.com', 'Ms. Antonietta Kozey Jr.'],
-            ];
-            $table = new Table($headers, $rows);
-            $collapse->add($v->ClientName, $box.$table);
+            //$header=["ID","NumBer"];
+            //$rows=$equipment;
+            //$table=new Table($header,$rows);
+            $collapse->add($v->ClientName, $box);
         }
         return  $collapse->render();
     }
@@ -247,6 +247,86 @@ EOT;
 EOT
 
             );
+        });
+    }
+
+    protected function equipmentGrid($clientid)
+    {
+        return Admin::grid(Equipment::class, function (Grid $grid) use($clientid) {
+            $user=Admin::user();
+            $grid->model()->where("ClientID","=",$clientid);
+            $grid->NumBer('影厅号');
+            $grid->hasOneEquType()->Name('光源类型');
+            $grid->hasOneEquType()->Price('单价');
+            $grid->hasOneEquType()->GiftTime('赠送时长');
+            $grid->EquNum("设备编号")->display(function ($v) {
+                return $v;
+            });
+            $grid->RemainTime('剩余时长')->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v."小时";});
+            $grid->EquStatus('光源状态')->display(function($v){
+                $status=["LampOn"=>"正在放映","Standby"=>"待机中","UnActive"=>"未激活"];
+                if($v=="LampOn"){
+                    return "<label class='label label-success'>$status[$v]</label> <i class='fa fa-cog fa-spin'></i>";
+                }
+                elseif ($v="Standby"){
+                    return "<label class='label label-primary'>$status[$v]</label>";
+                }
+                elseif($v=="UnActive"){
+                    return "<label class='label label-danger'>$status[$v]</label>";
+                }
+                else{
+                    return "<label class='label label-default'>$status[$v]</label>";
+                }
+            });
+
+            $grid->ISBuy('是否购买');
+            $grid->ReviewTime('审核时间')->display(function($v){return date("Y-m-d H:i:s",strtotime($v)); });
+            #$grid->Precharge('是否预充值');
+            #$grid->PreGift('是否预赠送时长');
+            # $grid->IsPre('是否已充充值成功');
+            #$grid->IsSend('是否发送短信');
+            #$grid->IsEnabled('是否启用');
+            #$grid->IsDelay('延迟充值');
+
+            //非权限内角色隐藏工作栏
+            if(!$user->inRoles(['administrator'])) {
+                $grid->disableActions()->disableCreateButton()->disableRowSelector()->disableFilter()->disableExport();
+                $grid->tools->disableBatchActions();
+                $grid->Review('审核状态');
+            }
+            //管理员权限
+            if($user->inRoles(['administrator'])) {
+                $grid->tools->disableBatchActions();
+                $grid->EntryPer('录入人');
+                $grid->Auditor('是否审核');
+                $grid->actions(function ($a) {
+                    $a->disableDelete();
+                    $a->disableEdit();
+                    $cid=$a->row->ClientID;
+                    $eid=$a->row->ID;
+                    $href1="/admin/recharges/create?cid=$cid&eid=$eid&method=0";
+                    $href2="/admin/recharges/create?cid=$cid&eid=$eid&method=1";
+                    $a->append("<a href='$href1' class='btn btn-xs btn-warning'>充值 <i class='fa fa-rmb'></i></a> ");
+                    $a->append("<a href='$href2' class='btn btn-xs btn-danger'>赠送 <i class='fa fa-gift'></i></a> ");
+                    $a->append("<button  class='btn btn-xs btn-yahoo unbind' data-eid='$eid' >解绑 <i class='fa fa-share-alt'></i></button>");
+                });
+                Admin::script(
+                    <<<EOT
+              $('.unbind').on('click',function(){
+                var eid=$(this).attr('data-eid');
+                if(confirm("是否解除光源与客户的绑定")){
+                     $(this).find('i').addClass('fa-spin');
+                     $.post('/admin/equipments/'+eid+'/unbind',{},function(data){
+                          if(data.ClientID==0){
+                                alert("解绑成功！");
+                                window.location.reload();
+                          }
+                    });
+                }              
+                });
+EOT
+                );
+            }
         });
     }
 }
