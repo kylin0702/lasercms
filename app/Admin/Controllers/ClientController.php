@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Models\Area;
 use App\admin\Models\Client;
 
+use App\Admin\Models\Equipment;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -30,16 +31,16 @@ class ClientController extends Controller
     public function index()
     {
         return Admin::content(function (Content $content) {
-
+            $clients=Client::with('hasOneArea')->get();
             $content->header('客户管理');
             $content->description('客户信息列表');
-            $content->body($this->collapse());
-            Admin::script(
+            $content->body(view("admin.client",["clients"=>$clients]));
+            /*Admin::script(
                 <<<EOT
             $(".panel").removeClass('box-primary').css("margin-bottom","10px");
             $(".panel-collapse").find(".box-header").addClass("hidden");
 EOT
-            );
+            );*/
         });
     }
 
