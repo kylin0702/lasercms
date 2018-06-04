@@ -365,4 +365,10 @@ EOT
         return Equipment::where('ClientID',"=", $clientid)->get(["ID","NumBer"]);
     }
 
+    //通过客户ID返回光源
+    public function getEquipment(Request $request){
+        $clientid = $request->get('ClientID');
+        return Equipment::with("hasOneEquType")->where('ClientID',"=", $clientid)->get();
+    }
+
 }

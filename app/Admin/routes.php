@@ -17,6 +17,7 @@ Route::group([
     $router->resource('clients', ClientController::class);
     #光源管理路由
     $router->get('equipments/getRoom', "EquipmentController@getRoom");//通过客户ID获取厅号
+    $router->get('equipments/getEquipment', "EquipmentController@getEquipment");//通过客户ID获取拥有的光源信息
     $router->resource('equipments', EquipmentController::class);
     $router->get('equipments/{clientid}/clientshow', "EquipmentController@clientshow");//按ClientID显示光源
     $router->post('equipments/{ID}/bind', "EquipmentController@bind");//绑定光源到客户

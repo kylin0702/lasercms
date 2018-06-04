@@ -5,20 +5,16 @@ namespace App\Admin\Controllers;
 use App\Admin\Models\Area;
 use App\admin\Models\Client;
 use App\admin\Models\Equipment;
-
-use App\Admin\Models\Equipment;
-use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
 use Encore\Admin\Widgets\Collapse;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Widgets\Box;
+use http\Env\Request;
 
 class ClientController extends Controller
 {
@@ -32,7 +28,11 @@ class ClientController extends Controller
     public function index()
     {
         return Admin::content(function (Content $content) {
-            $clients=Client::with('hasOneArea')->get();
+
+            $clients=Client::with('hasOneArea')
+                    ->where("ClientName","like",'%'.request("cname").'%')
+                    ->where("Phone","like",'%'.request("cphone").'%')
+                    ->paginate(10);
             $content->header('客户管理');
             $content->description('客户信息列表');
             $content->body(view("admin.client",["clients"=>$clients]));
