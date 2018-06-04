@@ -107,7 +107,8 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
-                equipment += "<td><a href='"+href1+"' class='btn btn-sm btn-success'>充值 <i class='fa fa-rmb'></i></a> <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送 <i class='fa fa-gift'></i></a></td>";
+                equipment += "<td><a href='"+href1+"' class='btn btn-sm btn-success'>充值 <i class='fa fa-rmb'></i></a>" +
+                                " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送 <i class='fa fa-gift'></i></a></td>";
                 equipment += "</tr>";
             });
             content.html(equipment);
