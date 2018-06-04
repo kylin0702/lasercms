@@ -32,5 +32,8 @@ Route::group([
     $router->resource('recharges', RechargeController::class);
     #异常记录
     $router->resource('abnormas', AbnormaController::class);
+    #统计报表
+    $router->resource('durt', YearDurtReptController::class);
+    $router->resource('cost', YearCostReptController::class);
 
 });
