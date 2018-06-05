@@ -255,7 +255,7 @@ EOT
     {
         return Admin::form(Equipment::class, function (Form $form) {
 
-            $form->text("EquNum","光源编号")->setWidth(2)->rules("required",['required'=>'请输入光源编号']);
+            $form->text("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum",['required'=>'请输入光源编号']);
             $clientid=request("cid");
             $form->select("ClientID","客户名称")->options(Client::all()->pluck("ClientName","ID"))->default($clientid)->setWidth(2);
             $form->text("NumBer","厅号")->setWidth(2);
