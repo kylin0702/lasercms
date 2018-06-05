@@ -53,7 +53,8 @@
             </div>
             <div class="row">
                 <div class="col-lg-6"><i class="fa fa-map-marker"></i> 客户地址:{{$v->Adress}}</div>
-                <div class="col-lg-6"><i class="fa fa-check"></i>审核状态:{{$v->Review}}</div>
+                <div class="col-lg-3"><i class="fa fa-check"></i>审核状态:{{$v->Review}}</div>
+                <div class="col-lg-3"><i class="fa fa-cog"></i>绑定修改:<a href="/admin/clients/{{$v->ID}}/edit" class="btn btn-sm btn-info">修改信息 <i class="fa fa-edit"></i></a> <a href="/admin/equipments/create?cid={{$v->ID}}" class="btn btn-sm btn-success">添加光源 <i class="fa fa-plus"></i></a></div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
@@ -107,8 +108,8 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
-                equipment += "<td><a href='"+href1+"' class='btn btn-sm btn-success'>充值 <i class='fa fa-rmb'></i></a>" +
-                                " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送 <i class='fa fa-gift'></i></a></td>";
+                equipment += "<td><a href='"+href1+"' class='btn btn-sm btn-success'>充值 </a>" +
+                                " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送 </a></td>";
                 equipment += "</tr>";
             });
             content.html(equipment);
