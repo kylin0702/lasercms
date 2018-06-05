@@ -54,12 +54,22 @@
                 <div class="col-lg-2"><i class="fa fa-check"></i>审核状态:{{$v->Review}}</div>
             </div>
             <div class="row">
-                <div class="col-lg-6"><i class="fa fa-map-marker"></i> 客户地址:{{$v->Adress}}</div>
-                <div class="col-lg-6">
-                    <i class="fa fa-cog"></i>操作:
+                <div class="col-lg-4"><i class="fa fa-map-marker"></i> 客户地址:{{$v->Adress}}</div>
+                <div class="col-lg-2"><i class="fa fa-user-md"></i> 负责工程师:</div>
+                <div class="col-lg-2">
                     <a href="/admin/clients/{{$v->ID}}/edit" class="btn btn-sm btn-info">修改信息</a>
                     <a href="/admin/equipments/create?cid={{$v->ID}}" class="btn btn-sm btn-success">添加光源</a>
-                    <button class="btn btn-sm btn-default" disabled>绑定工程师(未完成)</button>
+                </div>
+                <div class="col-lg-4">
+                    <a  class="btn btn-sm btn-outline-success btn-engineer">绑定工程师</a>
+                    <span class="span-engineer hidden">
+                    <select>
+                        @foreach ($engineer as $v)
+                        <option value={{$v->username}}>{{$v->name}}</option>
+                        @endforeach
+                    </select>
+                     <button type="button" class="btn btn-sm btn-warning">绑定</button>
+                    </span>
                 </div>
             </div>
             <div class="row">
@@ -114,12 +124,16 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
-                equipment += "<td><a href='"+href1+"' class='btn btn-sm btn-success'>充值 </a>" +
-                                " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送 </a></td>";
+                equipment += "<td><a href='"+href1+"' class='btn btn-sm btn-success'>充值</a> " +
+                                " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a></td>"+
+                                " <a href='' class='btn btn-sm btn-danger'>删除</a></td>";
                 equipment += "</tr>";
             });
             content.html(equipment);
         }, "json");
     }
 });
+$(".btn-engineer").on('click',function () {
+    $('.span-engineer').removeClass("hidden");
+})
 </script>
