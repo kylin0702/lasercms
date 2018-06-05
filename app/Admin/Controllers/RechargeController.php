@@ -195,7 +195,8 @@ class RechargeController extends Controller
                             for(var key in data){
                                 codes.push(data[key]);
                             }
-                            alert("验证码为"+codes[0]+","+codes[1]+","+codes[2]);
+                            //alert("验证码为"+codes[0]+","+codes[1]+","+codes[2]);
+                             alert("验证码已发送");
                         }
                         else{
                             alert("发送失败!");
@@ -241,7 +242,7 @@ EOT
     public function sms(){
         header('Content-Type:text/html;charset=utf-8');
         $codes = [config("phone1")=>rand(1000,9999),config("phone2")=>rand(1000,9999),config("phone3")=>rand(1000,9999)];
-        /*foreach ($codes as $phone=>$code) {
+        foreach ($codes as $phone=>$code) {
             $data = "您好，您的验证码是" . $code . "五分钟内有效。【中科创激光】";
             $post_data = array(
                 'UserID' => "999595",
@@ -254,8 +255,8 @@ EOT
                 'PostFixNumber' => ''
             );
             $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
-            $res = $this->http_request($url, http_build_query($post_data));;
-        }*/
+            $this->http_request($url, http_build_query($post_data));
+        }
         return $codes;
     }
     public function http_request($url,$data = null){

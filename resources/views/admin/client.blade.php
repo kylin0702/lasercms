@@ -46,7 +46,7 @@
         </div><!-- /.box-header -->
         <div class="box-body">
             <div class="row">
-                <div class="col-lg-2"><i class="fa fa-user"></i> 用户编号:{{$v->ClientNum}}</div>
+                <div class="col-lg-2"><i class="fa fa-star"></i> 用户编号:{{$v->ClientNum}}</div>
                 <div class="col-lg-2"><i class="fa fa-user"></i> 法人名称:{{$v->Owner}}</div>
                 <div class="col-lg-2"><i class="fa fa-mobile"></i> 联系方式:{{$v->Phone}}</div>
                 <div class="col-lg-2"><i class="fa fa-sitemap"></i> 所属区域:{{$v->hasOneArea->AreaName}}</div>
