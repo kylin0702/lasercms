@@ -243,7 +243,7 @@ EOT
         header('Content-Type:text/html;charset=utf-8');
         $codes = [config("phone1")=>rand(1000,9999),config("phone2")=>rand(1000,9999),config("phone3")=>rand(1000,9999)];
         foreach ($codes as $phone=>$code) {
-            $data = "您好，您的验证码是" . $code . "五分钟内有效。【中科创激光】";
+            $data = "您好，您的验证码是" . $code . "【中科创激光】";
             $post_data = array(
                 'UserID' => "999595",
                 'Account' => 'admin',
