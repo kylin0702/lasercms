@@ -18,7 +18,6 @@ use Encore\Admin\Widgets\Collapse;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Widgets\Box;
 use http\Env\Request;
-
 class ClientController extends Controller
 {
     use ModelForm;
@@ -32,14 +31,15 @@ class ClientController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $clients=Client::with('hasOneArea')
+            $clients=Client::with(['hasOneArea','hasOneEngineer'])
                     ->where("ClientName","like",'%'.request("cname").'%')
                     ->where("Phone","like",'%'.request("cphone").'%')
                     ->paginate(10);
             $engineer=Role::with("administrators")->where("slug","=","engineer")->first()->administrators;
+            $user=Role::with("administrators")->where("slug","=","client")->first()->administrators;
             $content->header('客户管理');
             $content->description('客户信息列表');
-            $content->body(view("admin.client",["clients"=>$clients,"engineer"=>$engineer]));
+            $content->body(view("admin.client",["clients"=>$clients,"user"=>$user,"engineer"=>$engineer]));
             /*Admin::script(
                 <<<EOT
             $(".panel").removeClass('box-primary').css("margin-bottom","10px");
@@ -333,5 +333,21 @@ EOT
                 );
             }
         });
+    }
+    //客户绑定工程师操作
+    public function bindEngineer(\Illuminate\Http\Request $request,$ID)
+    {
+        $client=Client::find($ID);
+        $client->engineer=$request->input("username");
+        $client->save();
+        return response()->json($client, 200);
+    }
+    //客户绑定系统操作用户操作
+    public function bindUser(\Illuminate\Http\Request $request,$ID)
+    {
+        $client=Client::find($ID);
+        $client->username=$request->input("username");
+        $client->save();
+        return response()->json($client, 200);
     }
 }

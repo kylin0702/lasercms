@@ -55,20 +55,42 @@
             </div>
             <div class="row">
                 <div class="col-lg-4"><i class="fa fa-map-marker"></i> 客户地址:{{$v->Adress}}</div>
-                <div class="col-lg-2"><i class="fa fa-user-md"></i> 负责工程师:</div>
+                <div class="col-lg-2"><i class="fa fa-link"></i> 关联用户:{{empty($v->username)?"未关联":$v->username}}</div>
+                <div class="col-lg-2"><i class="fa fa-user-md"></i> 负责工程师:{{empty($v->hasOneEngineer)?"未绑定":$v->hasOneEngineer->name}}</div>
                 <div class="col-lg-2">
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
                     <a href="/admin/clients/{{$v->ID}}/edit" class="btn btn-sm btn-info">修改信息</a>
                     <a href="/admin/equipments/create?cid={{$v->ID}}" class="btn btn-sm btn-success">添加光源</a>
                 </div>
                 <div class="col-lg-4">
                     <a  class="btn btn-sm btn-outline-success btn-engineer">绑定工程师</a>
                     <span class="span-engineer hidden">
-                    <select>
-                        @foreach ($engineer as $v)
-                        <option value={{$v->username}}>{{$v->name}}</option>
+                        <label>选择工程师:</label>
+                    <select class="select-engineer">
+                        @foreach ($engineer as $e)
+                            <option value={{$e->username}}>{{$e->name}}</option>
                         @endforeach
                     </select>
-                     <button type="button" class="btn btn-sm btn-warning">绑定</button>
+                     <button type="button" class="btn btn-sm btn-warning btn-bindEngineer" data-clientid="{{$v->ID}}">绑定 <i class="fa fa-spin fa-spinner hidden"></i></button>
+                        <button type="button" class="btn btn-sm btn-danger btn-bindEngineerCancel">取消</button>
+                    </span>
+                </div>
+                <div class="col-lg-4">
+                    <a  class="btn btn-sm btn-outline-success btn-user">关联用户</a>
+                    <span class="span-user hidden">
+                        <label>选择用户:</label>
+                    <select class="select-user">
+                        @foreach ($user as $u)
+                            <option value={{$u->username}}>{{$u->username}}</option>
+                        @endforeach
+                    </select>
+                     <button type="button" class="btn btn-sm btn-warning btn-bindUser" data-clientid="{{$v->ID}}">关联 <i class="fa fa-spin fa-spinner hidden"></i></button>
+                        <button type="button" class="btn btn-sm btn-danger btn-bindUserCancel">取消</button>
                     </span>
                 </div>
             </div>
@@ -133,7 +155,40 @@ $("[data-widget='collapse']").on('click',function(){
         }, "json");
     }
 });
+//显示绑定工程师选择框
 $(".btn-engineer").on('click',function () {
     $('.span-engineer').removeClass("hidden");
+});
+//隐藏绑定工程师选择框
+$(".btn-bindEngineerCancel").on('click',function () {
+    $('.span-engineer').addClass("hidden");
+});
+
+//显示绑定工程师选择框
+$(".btn-user").on('click',function () {
+    $('.span-user').removeClass("hidden");
+});
+//隐藏绑定用户选择框
+$(".btn-bindUserCancel").on('click',function () {
+    $('.span-user').addClass("hidden");
+});
+
+//绑定工程师操作
+$(".btn-bindEngineer").on('click',function () {
+    var clientid=$(this).attr("data-clientid");
+    var engineer=$(".select-engineer").val();
+    $(this).find("i").removeClass("hidden");
+    $.post("/admin/clients/"+clientid+"/bindEngineer",{username:engineer},function(data){
+        if(data.engineer==engineer){
+            alert("绑定成功!");
+            window.location.reload();
+        }
+    },"json");
 })
+//绑定用户操作
+$(".btn-bindUser").on('click',function () {
+    var clientid=$(this).attr("data-clientid");
+    var user=$(".select-user").val();
+    $.post("/admin/clients/"+clientid+"/bindUser",{username:user})
+},"json")
 </script>
