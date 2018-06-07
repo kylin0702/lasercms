@@ -17,7 +17,7 @@ use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Widgets\Collapse;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Widgets\Box;
-use http\Env\Request;
+use Illuminate\Support\MessageBag;
 class ClientController extends Controller
 {
     use ModelForm;
@@ -105,6 +105,22 @@ EOT;
     }
 
     /**
+     * Audit interface.
+     *
+     * @param $id
+     * @return Content
+     */
+    public function audit($id)
+    {
+        return Admin::content(function (Content $content) use ($id) {
+
+            $content->header('审核客户信息');
+            $content->description('');
+            $content->body($this->form()->edit($id));
+        });
+    }
+
+    /**
      * Create interface.
      *
      * @return Content
@@ -179,6 +195,7 @@ EOT;
     protected function form()
     {
         return Admin::form(Client::class, function (Form $form) {
+
             $user=Admin::user();
             $method=request()->route()->getActionMethod();//获取路由方法,判断是增加还是修改
 
@@ -224,18 +241,23 @@ EOT;
             /****区域-省二级联动 End****/
 
             /****让有审核权限的人进行审核****/
-            if($user->inRoles(['administrator'])) {
+            if($method=="audit") {
+                $form->disableReset();
                 $states = [
                     'on' => ['value' => '已审核', 'text' => '已审核', 'color' => 'success'],
                     'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
                 ];
                 $form->switch('Review', '审核状态')->states($states)->default("未审核");
+                $form->hidden('EntryPer')->default(function () use ($user) {
+                    return $user->id;
+                });
+
             }
+            $form->saved(function (Form $form) {
+                $phone=$form->model()->Phone;
+                $this->sms("18607541870");
 
-            $form->hidden('EntryPer')->default(function() use($user){
-                return $user->id;
             });
-
             /******根据区域代码生成客户编号*******/
             Admin::script(
                 <<<EOT
@@ -349,5 +371,59 @@ EOT
         $client->username=$request->input("username");
         $client->save();
         return response()->json($client, 200);
+    }
+    //发送短信
+    public function sms($username){
+        header('Content-Type:text/html;charset=utf-8');
+        $data = "您好，您的用户名" . $username . "密码123456,请登陆信息系统查询光源信息【中科创激光】";
+        $post_data = array(
+            'UserID' => "999595",
+            'Account' => 'admin',
+            'Password' => "FW9NQ9",
+            'Content' => urlencode($data),
+            'Phones' => $username,
+            'SendType' => 1,  //true or false,
+            'SendTime' => '',
+            'PostFixNumber' => ''
+        );
+        $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+        $result=$this->http_request($url, http_build_query($post_data));
+        return $result;
+    }
+    public function http_request($url,$data = null){
+        if(function_exists('curl_init')){
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+
+            if (!empty($data)){
+                curl_setopt($curl, CURLOPT_POST, 1);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            }
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            $output = curl_exec($curl);
+            curl_close($curl);
+
+
+            $result=preg_split("/[,\r\n]/",$output);
+
+            if($result[1]==0){
+                return $result;
+            }else{
+                return "curl error".$result[1];
+            }
+        }elseif(function_exists('file_get_contents')){
+
+            $output=file_get_contents($url.$data);
+            $result=preg_split("/[,\r\n]/",$output);
+
+            if($result[1]==0){
+                return $result;
+            }else{
+                return "error".$result[1];
+            }
+        }else{
+            return false;
+        }
+
     }
 }

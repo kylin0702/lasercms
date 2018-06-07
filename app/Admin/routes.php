@@ -14,6 +14,7 @@ Route::group([
     #设备类型路由
     $router->resource('equtypes', EquTypeController::class);
     #客户管理路由
+    $router->get('clients/{ID}/audit', "ClientController@audit");//客户绑定工程师
     $router->post('clients/{ID}/bindEngineer', "ClientController@bindEngineer");//客户绑定工程师
     $router->post('clients/{ID}/bindUser', "ClientController@bindUsername");//客户绑定工程师
     $router->resource('clients', ClientController::class);

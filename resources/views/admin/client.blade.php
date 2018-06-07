@@ -43,7 +43,12 @@
     <div class="box box-default collapsed-box">
         <div class="box-header with-border">
            <h4 class="box-title" ><a data-widget="collapse" data-clientid="{{$v->ID}}">{{$v->ClientName}}</a></h4>
-        </div><!-- /.box-header -->
+            @if ($v->Review!="已审核")
+            <div class="box-tools pull-right">
+                <a href="/admin/clients/{{$v->ID}}/audit" class="btn btn-sm btn-success" type="button">审核</a>
+            </div>
+             @endif
+        </div>
         <div class="box-body">
             <div class="row">
                 <div class="col-lg-2"><i class="fa fa-star"></i> 用户编号:{{$v->ClientNum}}</div>
