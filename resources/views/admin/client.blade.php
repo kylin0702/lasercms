@@ -29,12 +29,18 @@
     <div class="box-body">
         <form class="form-inline" action="/admin/clients" method="get">
             <div class="form-group">
-                <label for="cname"><i class="fa fa-user"></i>客户名称</label>
-                <input type="text" class="form-control" name="cname" placeholder="请输入客户名称">
-                <label for="cphone"><i class="fa fa-phone"></i>联系电话</label>
-                <input type="text" class="form-control" name="cphone" placeholder="请输入联系电话">
+                <label for="name"><i class="fa fa-user"></i>客户名称</label>
+                <input type="text" class="form-control" name="name" placeholder="请输入客户名称">&nbsp;&nbsp;
+                <label for="phone"><i class="fa fa-phone"></i>联系电话</label>
+                <input type="text" class="form-control" name="phone" placeholder="请输入联系电话">&nbsp;&nbsp;
+                <label for="review"><i class="fa fa-check"></i>审核状态</label>
+                <select name="review">
+                    <option value="">全部</option>
+                    <option value="未审核">未审核</option>
+                    <option value="已审核">已审核</option>
+                </select>&nbsp;&nbsp;
             </div>
-            <button type="submit" class="btn btn-success">搜索</button>
+            <button type="submit" class="btn btn-success">搜索</button>&nbsp;
             <a href="/admin/clients" type="button" class="btn btn-default">取消</a>
         </form>
     </div>
@@ -60,8 +66,10 @@
             </div>
             <div class="row">
                 <div class="col-lg-4"><i class="fa fa-map-marker"></i> 客户地址:{{$v->Adress}}</div>
-                <div class="col-lg-2"><i class="fa fa-link"></i> 关联用户:{{empty($v->username)?"未关联":$v->username}}</div>
                 <div class="col-lg-2"><i class="fa fa-user-md"></i> 负责工程师:{{empty($v->hasOneEngineer)?"未绑定":$v->hasOneEngineer->name}}</div>
+                <div class="col-lg-2">
+                    <i class="fa fa-sitemap"></i>  代理商:{{empty($v->hasOneAgent)?"未绑定":$v->hasOneAgent->name}}
+                </div>
                 <div class="col-lg-2">
                 </div>
                 <div class="col-lg-2">
@@ -86,16 +94,16 @@
                     </span>
                 </div>
                 <div class="col-lg-4">
-                    <a  class="btn btn-sm btn-outline-success btn-user">关联用户</a>
-                    <span class="span-user hidden">
-                        <label>选择用户:</label>
-                    <select class="select-user">
-                        @foreach ($user as $u)
-                            <option value={{$u->username}}>{{$u->username}}</option>
+                    <a  class="btn btn-sm btn-outline-success btn-agent">关联代理商</a>
+                    <span class="span-agent hidden">
+                        <label>选择代理商:</label>
+                    <select class="select-agent">
+                        @foreach ($agent as $a)
+                            <option value={{$a->username}}>{{$a->username}}</option>
                         @endforeach
                     </select>
-                     <button type="button" class="btn btn-sm btn-warning btn-bindUser" data-clientid="{{$v->ID}}">关联 <i class="fa fa-spin fa-spinner hidden"></i></button>
-                        <button type="button" class="btn btn-sm btn-danger btn-bindUserCancel">取消</button>
+                     <button type="button" class="btn btn-sm btn-warning btn-bindAgent" data-clientid="{{$v->ID}}">关联 <i class="fa fa-spin fa-spinner hidden"></i></button>
+                        <button type="button" class="btn btn-sm btn-danger btn-bindAgentCancel">取消</button>
                     </span>
                 </div>
             </div>
@@ -169,13 +177,13 @@ $(".btn-bindEngineerCancel").on('click',function () {
     $('.span-engineer').addClass("hidden");
 });
 
-//显示绑定工程师选择框
-$(".btn-user").on('click',function () {
-    $('.span-user').removeClass("hidden");
+//显示绑定代理商选择框
+$(".btn-agent").on('click',function () {
+    $('.span-agent').removeClass("hidden");
 });
-//隐藏绑定用户选择框
-$(".btn-bindUserCancel").on('click',function () {
-    $('.span-user').addClass("hidden");
+//隐藏绑定代理商选择框
+$(".btn-bindAgentCancel").on('click',function () {
+    $('.span-agent').addClass("hidden");
 });
 
 //绑定工程师操作
@@ -191,9 +199,9 @@ $(".btn-bindEngineer").on('click',function () {
     },"json");
 })
 //绑定用户操作
-$(".btn-bindUser").on('click',function () {
+$(".btn-bindAgent").on('click',function () {
     var clientid=$(this).attr("data-clientid");
-    var user=$(".select-user").val();
-    $.post("/admin/clients/"+clientid+"/bindUser",{username:user})
+    var agent=$(".select-agent").val();
+    $.post("/admin/clients/"+clientid+"/bindAgent",{username:agent})
 },"json")
 </script>

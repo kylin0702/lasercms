@@ -6,6 +6,7 @@ use App\admin\Models\Abnorma;
 use App\Admin\Models\Client;
 use App\Admin\Models\Equipment;
 use App\Http\Controllers\Controller;
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Grid;
@@ -22,45 +23,54 @@ class HomeController extends Controller
     public function index()
     {
         return Admin::content(function (Content $content) {
-
             $content->header('信息面板');
             $content->description('');
-            $content->row(function(Row $row){
-                $row->column(3,function (Column $column){
-                    $model=new Client();
-                    $count=$model->count();
-                    $box=new InfoBox("客户数量","user","info","/admin/clients","$count");
-                    $column->append($box);
+            //超级管理员显示内容
+            if(Admin::user()->inRoles(['administrator'])) {
+                $content->row(function (Row $row) {
+                    $row->column(3, function (Column $column) {
+                        $model = new Client();
+                        $count = $model->count();
+                        $box = new InfoBox("客户数量", "user", "info", "/admin/clients", "$count");
+                        $column->append($box);
+                    });
+                    $row->column(3, function (Column $column) {
+                        $model = new Equipment();
+                        $count = $model->count();
+                        $box = new InfoBox("光源数量", "camera-retro", "warning", "/admin/equipments", "$count");
+                        $column->append($box);
+                    });
+                    $row->column(3, function (Column $column) {
+                        $model = new Abnorma();
+                        $count = $model->count();
+                        $box = new InfoBox("异常数量", "bolt", "danger", "/admin/abnormas", "$count");
+                        $column->append($box);
+                    });
+                    $row->column(3, function (Column $column) {
+                        $model = new Equipment();
+                        $count = $model->where('RemainTime', '<', '500')->count();
+                        $box = new InfoBox("小于500小时", "clock-o", "success", "/admin/equipments", "$count");
+                        $column->append($box);
+                    });
                 });
-                $row->column(3,function (Column $column){
-                    $model=new Equipment();
-                    $count=$model->count();
-                    $box=new InfoBox("光源数量","camera-retro","warning","/admin/equipments","$count");
-                    $column->append($box);
+                $content->row(function (Row $row) {
+                    $row->column(6, function (Column $column) {
+                        $column->append($this->abnormaGrid());
+                        $column->append($this->clientGrid());
+                    });
+                    $row->column(6, function (Column $column) {
+                        $column->append($this->equGrid());
+                    });
                 });
-                $row->column(3,function (Column $column){
-                    $model=new Abnorma();
-                    $count=$model->count();
-                    $box=new InfoBox("异常数量","bolt","danger","/admin/abnormas","$count");
-                    $column->append($box);
+            }
+            //客户显示内容
+            elseif (Admin::user()->inRoles(['client'])){
+                $content->row(function (Row $row) {
+                    $row->column(12, function (Column $column) {
+                        $column->append($this->equGridForClient());
+                    });
                 });
-                $row->column(3,function (Column $column){
-                    $model=new Equipment();
-                    $count=$model->where('RemainTime','<','500')->count();
-                    $box=new InfoBox("小于500小时","clock-o","success","/admin/equipments","$count");
-                    $column->append($box);
-                });
-            });
-            $content->row(function(Row $row){
-                $row->column(6,function (Column $column){
-                    $column->append($this->abnormaGrid());
-                    $column->append($this->clientGrid());
-                });
-                $row->column(6,function (Column $column){
-                    $column->append($this->equGrid());
-                });
-            });
-
+            }
         });
     }
     protected function abnormaGrid()
@@ -117,7 +127,24 @@ class HomeController extends Controller
 
         });
     }
-    public function welcome(){
-        return view("admin.index");
+
+    protected function equGridForClient()
+    {
+        return Admin::grid(Equipment::class, function (Grid $grid) {
+            $phone=Admin::user()->username;//用户登陆帐号为手机号码
+            $client=Client::where("Phone","=",$phone)->first();
+            $grid->model()->where("ClientID","=",$client->ID);
+            $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableActions()->disableFilter();
+            $grid->tools->disableBatchActions();
+            $grid->tools->disableRefreshButton();
+            $grid->tools->append(" <i class='fa fa-camera'></i> 光源信息");
+            $grid->disableRowSelector();
+            $grid->NumBer('影厅号');
+            $grid->hasOneEquType()->Name('光源型号');
+            $grid->hasOneEquType()->Price('单价')->display(function($v){return $v."元/小时";});
+            $grid->RemainTime('剩余时长')->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v."小时";});
+        });
     }
+
+
 }

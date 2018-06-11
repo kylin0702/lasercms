@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Models\Area;
 use App\admin\Models\Client;
 use App\admin\Models\Equipment;
+use App\User;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Auth\Database\Permission;
 use Encore\Admin\Auth\Database\Role;
@@ -32,14 +33,19 @@ class ClientController extends Controller
         return Admin::content(function (Content $content) {
 
             $clients=Client::with(['hasOneArea','hasOneEngineer'])
-                    ->where("ClientName","like",'%'.request("cname").'%')
-                    ->where("Phone","like",'%'.request("cphone").'%')
+                    ->where("ClientName","like",'%'.request("name").'%')
+                    ->where("Phone","like",'%'.request("phone").'%')
+                    ->where(function($q){
+                        if(!empty(request("review"))){
+                            $q->where('Review','=',request("review"));
+                        }
+                    })
                     ->paginate(10);
             $engineer=Role::with("administrators")->where("slug","=","engineer")->first()->administrators;
-            $user=Role::with("administrators")->where("slug","=","client")->first()->administrators;
+            $user=Role::with("administrators")->where("slug","=","agent")->first()->administrators;
             $content->header('客户管理');
             $content->description('客户信息列表');
-            $content->body(view("admin.client",["clients"=>$clients,"user"=>$user,"engineer"=>$engineer]));
+            $content->body(view("admin.client",["clients"=>$clients,"agent"=>$user,"engineer"=>$engineer]));
             /*Admin::script(
                 <<<EOT
             $(".panel").removeClass('box-primary').css("margin-bottom","10px");
@@ -243,21 +249,30 @@ EOT;
             /****让有审核权限的人进行审核****/
             if($method=="audit") {
                 $form->disableReset();
-                $states = [
-                    'on' => ['value' => '已审核', 'text' => '已审核', 'color' => 'success'],
-                    'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
-                ];
-                $form->switch('Review', '审核状态')->states($states)->default("未审核");
+                $form->hidden('Review')->default("已审核");
                 $form->hidden('EntryPer')->default(function () use ($user) {
                     return $user->id;
                 });
+                $form->saved(function (Form $form) {
+                    $user=new Administrator();
+                    $user->username=$form->model()->Phone;
+                    $user->name=$form->model()->ClientName;
+                    $user->password=bcrypt('123456');
+                    $user->avatar="images/591f45f3bbc80ea03adafbef2e65822c.jpg";
+                    $user->save();
+                    $user->roles()->attach(4);
+                    //$this->sms($user->username);
+                });
+                //更改表单头部和尾部信息
+                Admin::script(
+                    <<<EOT
+$('.box-title').html('<i class="fa fa-exclamation-circle"></i>通过审核将会发送登陆帐号给用户,用户为客户手机号码，默认密码为123456');
+$('button[type="submit"]').html('<i class="fa fa-check"></i>通过审核');
+EOT
 
+                );
             }
-            $form->saved(function (Form $form) {
-                $phone=$form->model()->Phone;
-                $this->sms("18607541870");
 
-            });
             /******根据区域代码生成客户编号*******/
             Admin::script(
                 <<<EOT
@@ -365,7 +380,7 @@ EOT
         return response()->json($client, 200);
     }
     //客户绑定系统操作用户操作
-    public function bindUser(\Illuminate\Http\Request $request,$ID)
+    public function bindAgent(\Illuminate\Http\Request $request,$ID)
     {
         $client=Client::find($ID);
         $client->username=$request->input("username");
@@ -375,7 +390,7 @@ EOT
     //发送短信
     public function sms($username){
         header('Content-Type:text/html;charset=utf-8');
-        $data = "您好，您的用户名" . $username . "密码123456,请登陆信息系统查询光源信息【中科创激光】";
+        $data = "您好，您的用户名" . $username . "密码123456,请登陆我司系统查询光源信息【中科创激光】";
         $post_data = array(
             'UserID' => "999595",
             'Account' => 'admin',
@@ -426,4 +441,5 @@ EOT
         }
 
     }
+
 }

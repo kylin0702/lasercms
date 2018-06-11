@@ -27,14 +27,19 @@ class Client extends Model
         return $this->hasMany(Recharge::class, 'ClientID', 'ID');
     }
 
-    public function hasOneUser()
+    public function hasOneAgent()
     {
-        return $this->hasOne(Administrator::class, 'username', 'username');
+        return $this->hasOne(Administrator::class, 'username', 'agent');
     }
 
     public function hasOneEngineer()
     {
         return $this->hasOne(Administrator::class, 'username', 'engineer');
+    }
+
+    public function hasOneUser()
+    {
+        return $this->hasOne(Administrator::class, 'username', 'Phone');
     }
 
     public function hasManyEquipment()
