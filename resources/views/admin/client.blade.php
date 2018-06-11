@@ -129,9 +129,9 @@
 
 <script>
 $("[data-widget='collapse']").on('click',function(){
+    var collapse=$(this);
     var ClientID=$(this).attr("data-clientid");
     var content=$(this).parents('.collapsed-box').find('.equipment');
-    if(content.text()=="") {
         content.html("<tr><td colspan='6'><span class='shake'> 数据加载中... </span></td></tr>");
         $.get("/admin/equipments/getEquipment", {ClientID: ClientID}, function (data) {
             var equipment = "";
@@ -160,13 +160,31 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
                 equipment += "<td><a href='"+href1+"' class='btn btn-sm btn-success'>充值</a> " +
-                                " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a></td>"+
-                                " <a href='' class='btn btn-sm btn-danger'>删除</a></td>";
+                                " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>"+
+                                " <a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a></td>";
                 equipment += "</tr>";
             });
             content.html(equipment);
+            //删除光源
+            $('.btn-del').on('click',function(){
+                var eid=$(this).attr("data-eid");
+                if(confirm("是否确定删除本台光源")){
+                    $.ajax({
+                        url:"/admin/equipments/"+eid,
+                        method:"delete",
+                        success:function (data) {
+                            if(data.status){
+                                alert(data.message);
+                                collapse.trigger('click');
+                                window.setTimeout(function () {
+                                    collapse.trigger('click');
+                                },1000);
+                            }
+                        }
+                    });
+                }
+            });
         }, "json");
-    }
 });
 //显示绑定工程师选择框
 $(".btn-engineer").on('click',function () {

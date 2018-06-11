@@ -94,10 +94,7 @@ class EquipmentController extends Controller
         return Admin::grid(Equipment::class, function (Grid $grid) {
                 $grid->disableRowSelector()->disableCreateButton();
                 $grid->tools->disableBatchActions();
-               $grid->actions(function ($actions){
-                   $actions->disableEdit();
-                   $actions->disableDelete();
-               });
+               $grid->disableActions();
               $grid->hasOneClient()->ClientNum('客户编号');
                $grid->hasOneClient()->ClientName('客户名称');
                $grid->NumBer('影厅号');
