@@ -122,7 +122,7 @@ class RechargeController extends Controller
             $form->hidden("cid")->value($cid);
             $form->hidden("eid")->value($eid);
             $form->hidden("Method")->value($Method);
-            $form->ignore(["cid","eid","Phone1","Phone2","Phone3"]);//不参与数据库操作
+            $form->ignore(["cid","eid","Phone1","Phone2","Phone3","ClientName"]);//不参与数据库操作
             //客户Model
             $client=Client::findOrFail($cid);
             //设备Model
@@ -132,6 +132,8 @@ class RechargeController extends Controller
             $equtype=EquType::findOrFail($typeid);
             $form->setTitle($client->ClientName);
             $form->hidden("ClientID")->value($cid);
+            $form->hidden("ClientName")->value($client->ClientName);
+            $form->hidden("NumBer")->value($equipment->NumBer);
             $form->hidden("EquID")->value($eid);
             $form->hidden("SerialNumber")->default(function(){
                return date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
@@ -174,15 +176,15 @@ class RechargeController extends Controller
             Admin::script(
                 <<<EOT
                 var precharge=parseFloat($('.Precharge').val());
-                var method=$("[name='Method']").val();
+                var clientname=$('[name="ClientName"]').val();
+                var room=$('[name="NumBer"]').val();
+                var method=$("[name='Method']").val();        
                 var codes=[];
                 $("button[type='submit']").attr("disabled","disabled");
                 $('#RechTime').on('input propertychange',function(){
-                    var price=$('.UnitPrice').val();
-                    var rechtime=parseFloat($('#RechTime').val());
-                    var totle=rechtime*price;
-                    
-                     console.log(method);
+                    var price=$('.UnitPrice').val();  
+                    var rechtime=parseFloat($('#RechTime').val());                 
+                    var totle=rechtime*price;  
                     if(method==0){
                          $('.totle').html(totle+'元');
                          $('.Amount').val(totle);
@@ -190,7 +192,8 @@ class RechargeController extends Controller
                     $('.Precharge').val(precharge+rechtime);
                 });
                 $('.sms').on('click',function(){
-                    $.get('/admin/recharges/sms',{},function(data){
+                    var rechtime=parseFloat($('#RechTime').val());  
+                    $.get('/admin/recharges/sms',{clientname:clientname,rechtime:rechtime,room:room},function(data){
                         if(data){
                             for(var key in data){
                                 codes.push(data[key]);
@@ -240,10 +243,13 @@ EOT
         });
     }
     public function sms(){
+        $clientname=request("clientname");
+        $rechtime=request("rechtime");
+        $room=request("room");
         header('Content-Type:text/html;charset=utf-8');
         $codes = [config("phone1")=>rand(1000,9999),config("phone2")=>rand(1000,9999),config("phone3")=>rand(1000,9999)];
         foreach ($codes as $phone=>$code) {
-            $data = "您好，您的验证码是" . $code . "【中科创激光】";
+            $data = $clientname.$room."充值".$rechtime."小时,验证码" . $code . "【中科创激光】";
             $post_data = array(
                 'UserID' => "999595",
                 'Account' => 'admin',
