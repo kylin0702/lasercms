@@ -140,19 +140,29 @@ $("[data-widget='collapse']").on('click',function(){
                 var status="";
                 var href1="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=0";
                 var href2="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=1";
-                switch (e.EquStatus) {
-                    case "LampOn":
-                        status="<label class='label label-success'>放映中</label><i class='fa fa-spin fa-cog'></i>";
-                        break;
-                    case "Unactive":
-                        status="<label class='label label-default'>未激活</label>";
-                        break;
-                    case "Standby":
-                        status="<label class='label label-info'>待机中</label>";
-                        break;
-                    default:
-                        status="<label class='label label-info'>待机中</label>";
-                        break;
+                var reviewtime=new Date(e.ReviewTime);//最后通讯时间
+                var now=new Date();
+                reviewtime=reviewtime.getTime();//转时间戳
+                now=now.getTime();
+                isOvertime=(reviewtime+600000)<now;//10分钟不通讯显示超时
+                if(!isOvertime){
+                    switch (e.EquStatus) {
+                        case "LampOn":
+                            status="<label class='label label-success'>放映中</label><i class='fa fa-spin fa-cog'></i>";
+                            break;
+                        case "Unactive":
+                            status="<label class='label label-default'>未激活</label>";
+                            break;
+                        case "Standby":
+                            status="<label class='label label-info'>待机中</label>";
+                            break;
+                        default:
+                            status="<label class='label label-info'>待机中</label>";
+                            break;
+                    }
+                }
+                else{
+                    status="<label class='label label-default'>离线</label>";
                 }
                 equipment += "<tr>";
                 equipment += "<td>" + e.NumBer + "</td>";

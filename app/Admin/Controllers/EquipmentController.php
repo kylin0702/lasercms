@@ -13,6 +13,7 @@ use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Widgets\Table;
+use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\MessageBag;
@@ -264,13 +265,18 @@ EOT
                 }
                 return $data;
             })->setWidth(2)->rules('required',['required'=>'请选择光源类型']);
+            $form->hidden("RemainTime")->default(0);
             $form->hidden("GiftTime")->default(0);
-            $form->hidden("EquStatus")->default("UnActive");
+            $form->hidden("EquStatus")->default("Standby");
+            $form->hidden("IsPre")->default("F");
+            $form->hidden("ReviewTime")->default(function(){
+                return date("Y-m-d h:i:s");
+            });
             $states = [
                 'on' => ['value' => '已审核', 'text' => '已审核', 'color' => 'success'],
                 'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
             ];
-            $form->switch('Review', '审核状态')->states($states)->default("未审核");
+            $form->switch('Review', '审核状态')->states($states)->default("已审核");
             $isbuy= [
                 'on' => ['value' => '是', 'text' => '是', 'color' => 'success'],
                 'off' => ['value' => '否', 'text' => '否', 'color' => 'danger'],
@@ -279,7 +285,17 @@ EOT
             $form->hidden("EntryPer")->default(function (){
                return Admin::user()->id;
             });
-
+            $form->hidden("Auditor")->default(function (){
+                return Admin::user()->id;
+            });
+            //保存后回调
+            $form->saved(function (Form $form) {
+                $success = new MessageBag([
+                    'title'   => '添加光源成功',
+                    'message' => '你可以继续添加光源或返回客户列表',
+                ]);
+                return back()->with(compact('success'));
+            });
             //根据所选光源类型取得赠送时长
             Admin::script(
                 <<<EOT
@@ -289,12 +305,14 @@ EOT
                     var gift= str.substring(index+1);
                     $(".GiftTime").val(gift);
                 });
+           $('.form-history-back').addClass("hidden");
+          $('.fa-list').parent().attr("href","/admin/clients");
 EOT
 
             );
         });
     }
-    public function getUnbindEqu($clientid){
+    /*public function getUnbindEqu($clientid){
        $unbinder=Equipment::where('ClientID','=',0)->leftJoin('EquType','Equipment.EquTypeID','=','EquType.ID')->get(['Equipment.ID','EquNum','EquType.Name','EquType.Price'])->toArray();
         $headers = ['ID','光源编号','光源类型','单价','绑定'];
         $rows =[];
@@ -310,7 +328,7 @@ EOT
         Admin::script(
             <<<EOT
           $(".bind").on("click",function(){
-                   var equid=$(this).attr('data-equid'); 
+                   var equid=$(this).attr('data-equid');
                    var clientid=$(this).attr('data-clientid');
                    var room=$("[name='NumBer']").val();
                     if($('input[name="NumBer"]').val()==""){
@@ -328,16 +346,16 @@ EOT
                                 window.location.reload();
                                }
                         },
-                      });                
+                      });
                     }
-                  
+
                 });
 EOT
         );
         return $table->render();
-    }
+    }*/
 
-    //客户绑定光源操作
+/*    //客户绑定光源操作
     public function bind(Request $request,$ID)
     {
         $equipment=Equipment::find($ID);
@@ -360,7 +378,7 @@ EOT
         $equipment->save();
         return response()->json($equipment, 200);
     }
-    //
+    //*/
     //通过客户ID返回厅号
     public function getRoom(Request $request){
         $clientid = $request->get('q');
