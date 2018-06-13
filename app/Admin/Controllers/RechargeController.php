@@ -122,7 +122,7 @@ class RechargeController extends Controller
             $form->hidden("cid")->value($cid);
             $form->hidden("eid")->value($eid);
             $form->hidden("Method")->value($Method);
-            $form->ignore(["cid","eid","Phone1","Phone2","Phone3","ClientName"]);//不参与数据库操作
+            $form->ignore(["cid","eid","Phone1","Phone2","Phone3","ClientName","NumBer"]);//不参与数据库操作
             //客户Model
             $client=Client::findOrFail($cid);
             //设备Model
