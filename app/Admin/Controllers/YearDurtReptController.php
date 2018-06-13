@@ -24,8 +24,8 @@ class YearDurtReptController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('时长统计');
+            $content->description('光源放映时长统计');
 
             $content->body($this->grid());
         });
@@ -75,6 +75,7 @@ class YearDurtReptController extends Controller
 
             $grid->disableCreateButton()->disableActions();
             $grid->tools->disableBatchActions();
+            $grid->EquNum('光源序列');
             $grid->Years('年份');
             $grid->January('一月');
             $grid->February('二月');
