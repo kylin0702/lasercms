@@ -26,7 +26,7 @@ class HomeController extends Controller
             $content->header('信息面板');
             $content->description('');
             //超级管理员显示内容
-            if(Admin::user()->inRoles(['administrator'])) {
+            if(Admin::user()->inRoles(['administrator','manager'])) {
                 $content->row(function (Row $row) {
                     $row->column(3, function (Column $column) {
                         $model = new Client();
@@ -68,6 +68,22 @@ class HomeController extends Controller
                 $content->row(function (Row $row) {
                     $row->column(12, function (Column $column) {
                         $column->append($this->equGridForClient());
+                    });
+                });
+            }
+            //工程师显示内容
+            elseif (Admin::user()->inRoles(['engineer'])){
+                $content->row(function (Row $row) {
+                    $row->column(12, function (Column $column) {
+                        $column->append($this->equGridForEngineer());
+                    });
+                });
+            }
+            //代理商显示内容
+            elseif (Admin::user()->inRoles(['agent'])){
+                $content->row(function (Row $row) {
+                    $row->column(12, function (Column $column) {
+                        $column->append($this->equGridForAgent());
                     });
                 });
             }
@@ -133,6 +149,46 @@ class HomeController extends Controller
         return Admin::grid(Equipment::class, function (Grid $grid) {
             $phone=Admin::user()->username;//用户登陆帐号为手机号码
             $client=Client::where("Phone","=",$phone)->first();
+            $grid->model()->where("ClientID","=",$client->ID);
+            $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableActions()->disableFilter();
+            $grid->tools->disableBatchActions();
+            $grid->tools->disableRefreshButton();
+            $grid->tools->append(" <i class='fa fa-camera'></i> 光源信息");
+            $grid->disableRowSelector();
+            $grid->NumBer('影厅号');
+            $grid->hasOneEquType()->Name('光源型号');
+            $grid->hasOneEquType()->Price('单价')->display(function($v){return $v."元/小时";});
+            $grid->RemainTime('剩余时长')->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v."小时";});
+        });
+    }
+    protected function equGridForEngineer()
+    {
+        return Admin::grid(Client::class, function (Grid $grid) {
+            $username=Admin::user()->username;
+            $grid->model()->where("engineer","=",$username);
+            $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableFilter();
+            $grid->tools->disableBatchActions();
+            $grid->tools->disableRefreshButton();
+            $grid->tools->append(" <i class='fa fa-user'></i> 我的客户");
+            $grid->disableRowSelector();
+            $grid->ClientName('客户名称');
+            $grid->Adress('地址');
+            $grid->hasOneArea()->AreaName('所属区域');
+            $grid->Phone('联系人');
+            $grid->VideoNum('影厅数');
+            $grid->actions(function ($actions) {
+                $actions->disableDelete();
+                $actions->disableEdit();
+                $actions->append('<a href=""><i class="fa fa-eye"></i> 查看光源</a>');
+
+            });
+        });
+    }
+    protected function equGridForAgent()
+    {
+        return Admin::grid(Equipment::class, function (Grid $grid) {
+            $username=Admin::user()->username;
+            $client=Client::where("agent","=",$username)->first();
             $grid->model()->where("ClientID","=",$client->ID);
             $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableActions()->disableFilter();
             $grid->tools->disableBatchActions();

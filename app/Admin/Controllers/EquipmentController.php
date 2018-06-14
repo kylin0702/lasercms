@@ -268,9 +268,9 @@ EOT
             $form->hidden("RemainTime")->default(0);
             $form->hidden("GiftTime")->default(0);
             $form->hidden("EquStatus")->default("Standby");
-            $form->hidden("IsPre")->default("F");
+            $form->hidden("IsPre")->default("S");
             $form->hidden("ReviewTime")->default(function(){
-                return date("Y-m-d h:i:s");
+                return date("Y-m-d H:i:s");
             });
             $states = [
                 'on' => ['value' => '已审核', 'text' => '已审核', 'color' => 'success'],

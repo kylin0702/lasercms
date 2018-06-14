@@ -49,7 +49,7 @@
     <div class="box box-default collapsed-box">
         <div class="box-header with-border">
            <h4 class="box-title" ><a data-widget="collapse" data-clientid="{{$v->ID}}">{{$v->ClientName}}</a></h4>
-            @if ($v->Review!="已审核")
+            @if ($v->Review!="已审核"&&Admin::user()->isRole('administrator'));
             <div class="box-tools pull-right">
                 <a href="/admin/clients/{{$v->ID}}/audit" class="btn btn-sm btn-success" type="button">审核</a>
             </div>
@@ -171,9 +171,9 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + e.RemainTime + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
-                equipment += "<td><a href='"+href1+"' class='btn btn-sm btn-success'>充值</a> " +
+                equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a> " +
                                 " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>"+
-                                " <a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a></td>";
+                                " <a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>@endif</td>";
                 equipment += "</tr>";
             });
             content.html(equipment);

@@ -31,7 +31,6 @@ class ClientController extends Controller
     public function index()
     {
         return Admin::content(function (Content $content) {
-
             $clients=Client::with(['hasOneArea','hasOneEngineer'])
                     ->where("ClientName","like",'%'.request("name").'%')
                     ->where("Phone","like",'%'.request("phone").'%')
