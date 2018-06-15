@@ -121,7 +121,7 @@ EOT;
 
             $content->header('审核客户信息');
             $content->description('');
-            $content->body($this->form()->edit($id));
+            $content->body($this->auditform()->edit($id));
         });
     }
 
@@ -201,9 +201,7 @@ EOT;
     {
         return Admin::form(Client::class, function (Form $form) {
 
-            $user=Admin::user();
             $method=request()->route()->getActionMethod();//获取路由方法,判断是增加还是修改
-
             $form->ignore(["Superior","MaxID"]);
             $form->hidden('ClientNum');
             $form->hidden("MaxID")->default(function() {
@@ -243,16 +241,16 @@ EOT;
                 }
 
             })->setWidth(2);
-            /****区域-省二级联动 End****/
 
+            /****区域-省二级联动 End****/
             /****让有审核权限的人进行审核****/
-            if($method=="audit") {
-                $form->disableReset();
-                $form->hidden('Review')->default("已审核");
-                $form->hidden('EntryPer')->default(function () use ($user) {
-                    return $user->id;
+            if(request("audit")==1) {
+                $form->setAction("/admin/clients/97/audit");
+                $form->hidden("Review")->default("已审核");
+                $form->hidden('EntryPer')->default(function (){
+                    return Admin::user()->id;
                 });
-                $form->saved(function (Form $form) {
+                $form->saved(function (Form $form) use ($method) {
                     $user=new Administrator();
                     $user->username=$form->model()->Phone;
                     $user->name=$form->model()->ClientName;
@@ -260,15 +258,16 @@ EOT;
                     $user->avatar="images/591f45f3bbc80ea03adafbef2e65822c.jpg";
                     $user->save();
                     $user->roles()->attach(4);
-                    //$this->sms($user->username);
+                    $this->sms($user->username);
+
                 });
                 //更改表单头部和尾部信息
                 Admin::script(
                     <<<EOT
 $('.box-title').html('<i class="fa fa-exclamation-circle"></i>通过审核将会发送登陆帐号给用户,用户为客户手机号码，默认密码为123456');
 $('button[type="submit"]').html('<i class="fa fa-check"></i>通过审核');
+$("[name='Review']").val("已审核");
 EOT
-
                 );
             }
 
@@ -290,6 +289,52 @@ EOT
             );
         });
     }
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function auditform()
+    {
+
+        return Admin::form(Client::class, function (Form $form) {
+            $form->disableReset();
+            $form->setAction("/admin/clients/97?audit=1");
+            $form->text('ClientName', '影城名称')->setWidth(5);
+            $form->text('Adress', '影城地址');
+            #$form->mobile('JoinHotline', '加盟热线');
+            $form->text('VideoNum', '影厅数量');
+            $form->text('Owner', '影城法人')->setWidth(2);
+            $form->text('Phone', '联系方式');
+            $form->text('UpdateTime', '合作时间')->setWidth(2);
+            $form->hidden("Review");
+            $form->hidden('EntryPer')->default(function (){
+                return Admin::user()->id;
+            });
+            $form->saved(function (Form $form)  {
+                $user=new Administrator();
+                $user->username=$form->model()->Phone;
+                $user->name=$form->model()->ClientName;
+                $user->password=bcrypt('123456');
+                $user->avatar="images/591f45f3bbc80ea03adafbef2e65822c.jpg";
+                $user->save();
+                $user->roles()->attach(4);
+                $this->sms($user->username);
+                admin_toastr('已审核,用户名和密码已发送到客户手机','success');
+                return redirect('/admin/clients');
+            });
+                //更改表单头部和尾部信息
+                Admin::script(
+                    <<<EOT
+$('.box-title').html('<i class="fa fa-exclamation-circle"></i>通过审核将会发送登陆帐号给用户,用户为客户手机号码，默认密码为123456');
+$('button[type="submit"]').html('<i class="fa fa-check"></i>通过审核');
+$("[name='Review']").val("已审核");
+EOT
+                );
+
+        });
+    }
+
 
     protected function equipmentGrid($clientid)
     {
@@ -437,6 +482,17 @@ EOT
             }
         }else{
             return false;
+        }
+    }
+    //改写update,适应审核功能
+    public function update($id)
+    {
+        $audit=request("audit");
+        if($audit==1) {
+            return $this->auditform()->update($id);
+        }
+        else{
+            return $this->form()->update($id);
         }
 
     }
