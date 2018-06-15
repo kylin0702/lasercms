@@ -114,6 +114,7 @@
                         <th>厅号</th>
                         <th>光源序列</th>
                         <th>光源型号</th>
+                        <th>是否购买</th>
                         <th>剩余时长</th>
                         <th>光源状态</th>
                         <th>最后通讯时间</th>
@@ -168,6 +169,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + e.NumBer + "</td>";
                 equipment += "<td>" + e.EquNum + "</td>";
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
+                equipment += "<td>" + e.ISBuy + "</td>"
                 equipment += "<td>" + e.RemainTime + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
