@@ -145,7 +145,7 @@ return [
     /*
      * Version displayed in footer.
      */
-    'version' => 'Demo',
+    'version' => '1.0',
 
     /*
      * Settings for extensions.

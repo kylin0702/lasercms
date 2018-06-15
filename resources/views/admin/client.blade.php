@@ -49,7 +49,7 @@
     <div class="box box-default collapsed-box">
         <div class="box-header with-border">
            <h4 class="box-title" ><a data-widget="collapse" data-clientid="{{$v->ID}}">{{$v->ClientName}}</a></h4>
-            @if ($v->Review!="已审核"&&Admin::user()->isRole('administrator'));
+            @if ($v->Review!="已审核"&&Admin::user()->isRole('administrator'))
             <div class="box-tools pull-right">
                 <a href="/admin/clients/{{$v->ID}}/audit" class="btn btn-sm btn-success" type="button">审核</a>
             </div>
@@ -230,8 +230,14 @@ $(".btn-bindEngineer").on('click',function () {
 })
 //绑定用户操作
 $(".btn-bindAgent").on('click',function () {
-    var clientid=$(this).attr("data-clientid");
-    var agent=$(".select-agent").val();
-    $.post("/admin/clients/"+clientid+"/bindAgent",{username:agent})
-},"json")
+    var clientid = $(this).attr("data-clientid");
+    var agent = $(".select-agent").val();
+    $(this).find("i").removeClass("hidden");
+    $.post("/admin/clients/" + clientid + "/bindAgent", {username: agent}, function (data) {
+        if (data.agent == agent) {
+            alert("绑定成功!");
+            window.location.reload();
+        }
+    }, "json");
+});
 </script>

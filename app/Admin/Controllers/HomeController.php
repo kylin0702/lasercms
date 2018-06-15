@@ -163,43 +163,23 @@ class HomeController extends Controller
     }
     protected function equGridForEngineer()
     {
-        return Admin::grid(Client::class, function (Grid $grid) {
             $username=Admin::user()->username;
-            $grid->model()->where("engineer","=",$username);
-            $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableFilter();
-            $grid->tools->disableBatchActions();
-            $grid->tools->disableRefreshButton();
-            $grid->tools->append(" <i class='fa fa-user'></i> 我的客户");
-            $grid->disableRowSelector();
-            $grid->ClientName('客户名称');
-            $grid->Adress('地址');
-            $grid->hasOneArea()->AreaName('所属区域');
-            $grid->Phone('联系人');
-            $grid->VideoNum('影厅数');
-            $grid->actions(function ($actions) {
-                $actions->disableDelete();
-                $actions->disableEdit();
-                $actions->append('<a href=""><i class="fa fa-eye"></i> 查看光源</a>');
-
-            });
-        });
+            $clients=Client::with(['hasOneArea','hasOneEngineer'])
+                ->where("engineer","=",$username)
+                ->where("ClientName","like",'%'.request("name").'%')
+                ->where("Phone","like",'%'.request("phone").'%')
+                ->paginate(10);
+            return view("admin.engineer",["clients"=>$clients]);
     }
     protected function equGridForAgent()
     {
-        return Admin::grid(Equipment::class, function (Grid $grid) {
-            $username=Admin::user()->username;
-            $client=Client::where("agent","=",$username)->first();
-            $grid->model()->where("ClientID","=",$client->ID);
-            $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableActions()->disableFilter();
-            $grid->tools->disableBatchActions();
-            $grid->tools->disableRefreshButton();
-            $grid->tools->append(" <i class='fa fa-camera'></i> 光源信息");
-            $grid->disableRowSelector();
-            $grid->NumBer('影厅号');
-            $grid->hasOneEquType()->Name('光源型号');
-            $grid->hasOneEquType()->Price('单价')->display(function($v){return $v."元/小时";});
-            $grid->RemainTime('剩余时长')->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v."小时";});
-        });
+        $username=Admin::user()->username;
+        $clients=Client::with(['hasOneArea','hasOneEngineer'])
+            ->where("agent","=",$username)
+            ->where("ClientName","like",'%'.request("name").'%')
+            ->where("Phone","like",'%'.request("phone").'%')
+            ->paginate(10);
+        return view("admin.agent",["clients"=>$clients]);
     }
 
 

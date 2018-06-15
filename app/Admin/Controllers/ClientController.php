@@ -382,7 +382,7 @@ EOT
     public function bindAgent(\Illuminate\Http\Request $request,$ID)
     {
         $client=Client::find($ID);
-        $client->username=$request->input("username");
+        $client->agent=$request->input("username");
         $client->save();
         return response()->json($client, 200);
     }
