@@ -148,13 +148,18 @@ class HomeController extends Controller
     {
         return Admin::grid(Equipment::class, function (Grid $grid) {
             $phone=Admin::user()->username;//用户登陆帐号为手机号码
-            $client=Client::where("Phone","=",$phone)->first();
-            $grid->model()->where("ClientID","=",$client->ID);
+            $client=Client::where("Phone","=",$phone)->get();
+            $ids=[];
+            foreach ($client as $v){
+                array_push($ids,$v->ID);
+            }
+            $grid->model()->whereIn("ClientID",$ids);
             $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableActions()->disableFilter();
             $grid->tools->disableBatchActions();
             $grid->tools->disableRefreshButton();
             $grid->tools->append(" <i class='fa fa-camera'></i> 光源信息");
             $grid->disableRowSelector();
+            $grid->hasOneClient()->ClientName("影城名称");
             $grid->NumBer('影厅号');
             $grid->hasOneEquType()->Name('光源型号');
             $grid->hasOneEquType()->Price('单价')->display(function($v){return $v."元/小时";});

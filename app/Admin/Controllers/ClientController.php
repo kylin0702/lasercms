@@ -243,33 +243,7 @@ EOT;
             })->setWidth(2);
 
             /****区域-省二级联动 End****/
-            /****让有审核权限的人进行审核****/
-            if(request("audit")==1) {
-                $form->setAction("/admin/clients/97/audit");
-                $form->hidden("Review")->default("已审核");
-                $form->hidden('EntryPer')->default(function (){
-                    return Admin::user()->id;
-                });
-                $form->saved(function (Form $form) use ($method) {
-                    $user=new Administrator();
-                    $user->username=$form->model()->Phone;
-                    $user->name=$form->model()->ClientName;
-                    $user->password=bcrypt('123456');
-                    $user->avatar="images/591f45f3bbc80ea03adafbef2e65822c.jpg";
-                    $user->save();
-                    $user->roles()->attach(4);
-                    $this->sms($user->username);
 
-                });
-                //更改表单头部和尾部信息
-                Admin::script(
-                    <<<EOT
-$('.box-title').html('<i class="fa fa-exclamation-circle"></i>通过审核将会发送登陆帐号给用户,用户为客户手机号码，默认密码为123456');
-$('button[type="submit"]').html('<i class="fa fa-check"></i>通过审核');
-$("[name='Review']").val("已审核");
-EOT
-                );
-            }
 
             /******根据区域代码生成客户编号*******/
             Admin::script(
@@ -302,7 +276,6 @@ EOT
             $form->setAction("/admin/clients/97?audit=1");
             $form->text('ClientName', '影城名称')->setWidth(5);
             $form->text('Adress', '影城地址');
-            #$form->mobile('JoinHotline', '加盟热线');
             $form->text('VideoNum', '影厅数量');
             $form->text('Owner', '影城法人')->setWidth(2);
             $form->text('Phone', '联系方式');
@@ -311,16 +284,25 @@ EOT
             $form->hidden('EntryPer')->default(function (){
                 return Admin::user()->id;
             });
+
+
             $form->saved(function (Form $form)  {
+
                 $user=new Administrator();
-                $user->username=$form->model()->Phone;
-                $user->name=$form->model()->ClientName;
-                $user->password=bcrypt('123456');
-                $user->avatar="images/591f45f3bbc80ea03adafbef2e65822c.jpg";
-                $user->save();
-                $user->roles()->attach(4);
-                $this->sms($user->username);
-                admin_toastr('已审核,用户名和密码已发送到客户手机','success');
+                $count=Administrator::where("username","=",$form->model()->Phone)->count();
+                if($count==0) {
+                    $user->username = $form->model()->Phone;
+                    $user->name = $form->model()->ClientName;
+                    $user->password = bcrypt('123456');
+                    $user->avatar = "images/591f45f3bbc80ea03adafbef2e65822c.jpg";
+                    $user->save();
+                    $user->roles()->attach(4);
+                    $this->sms($user->username);
+                    admin_toastr('已审核,用户名和密码已发送到客户手机', 'success');
+                }
+                else{
+                    admin_toastr('已审核,此手机已用于其它影院,不发送短信', 'success');
+                }
                 return redirect('/admin/clients');
             });
                 //更改表单头部和尾部信息

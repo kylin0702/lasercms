@@ -173,6 +173,29 @@ class RechargeController extends Controller
                 return $equipment->Precharge;
             })->setElementClass("Precharge");
             $form->hidden("hasOneEqu.IsPre")->default('Y');
+            //充值后发送短信
+            $form->saved(function (Form $form) use($cid,$eid) {
+                $client=Client::findOrFail($cid);
+                $equipment=Equipment::findOrFail($eid);
+                $clientname=$client->ClientName;
+                $phone=$client->Phone;
+                $room=$equipment->NumBer;
+                $rechtime=$form->RechTime;
+                header('Content-Type:text/html;charset=utf-8');
+                    $data = "您好，您的影院".$clientname.$room."成功充值".$rechtime."小时【中科创激光】";
+                    $post_data = array(
+                        'UserID' => "999595",
+                        'Account' => 'admin',
+                        'Password' => "FW9NQ9",
+                        'Content' => urlencode($data),
+                        'Phones' => $phone,
+                        'SendType' => 1,  //true or false,
+                        'SendTime' => '',
+                        'PostFixNumber' => ''
+                    );
+                    $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+                    $this->http_request($url, http_build_query($post_data));
+            });
             Admin::script(
                 <<<EOT
                 var precharge=parseFloat($('.Precharge').val());

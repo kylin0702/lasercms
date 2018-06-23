@@ -96,8 +96,9 @@ class EquipmentController extends Controller
                 $grid->disableRowSelector()->disableCreateButton();
                 $grid->tools->disableBatchActions();
                $grid->disableActions();
+               $grid->model()->orderby("RemainTime");
               $grid->hasOneClient()->ClientNum('客户编号');
-               $grid->hasOneClient()->ClientName('客户名称');
+               $grid->hasOneClient()->ClientName('客户名称')->sortable();
                $grid->NumBer('影厅号');
                $grid->hasOneEquType()->Name('光源类型');
                 #$grid->EquType()->Price('单价');
@@ -105,7 +106,7 @@ class EquipmentController extends Controller
                $grid->EquNum("设备编号")->display(function ($v) {
                   return $v;
             });
-               $grid->RemainTime('剩余时长');
+               $grid->RemainTime('剩余时长')->sortable();
             $grid->EquStatus('光源状态')->display(function($v){
                 $status=["LampOn"=>"正在放映","Standby"=>"待机中","UnActive"=>"未激活","Active"=>"关机"];
                 if($v=="LampOn"){
