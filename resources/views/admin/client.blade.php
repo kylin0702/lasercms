@@ -118,6 +118,7 @@
                         <th>剩余时长</th>
                         <th>光源状态</th>
                         <th>最后通讯时间</th>
+                        <th>距离当前时长</th>
                         <th>操作</th>
                         </thead>
                         <tbody class="equipment"></tbody>
@@ -145,7 +146,8 @@ $("[data-widget='collapse']").on('click',function(){
                 var now=new Date();
                 reviewtime=reviewtime.getTime();//转时间戳
                 now=now.getTime();
-                isOvertime=(reviewtime+120000)<now;//10分钟不通讯显示超时
+                isOvertime=(reviewtime+240000)<now;//4分钟不通讯显示超时
+                overtime=Math.floor((now-reviewtime)/1000/60);
                 if(!isOvertime){
                     switch (e.EquStatus) {
                         case "LampOn":
@@ -173,6 +175,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + e.RemainTime + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
+                equipment += "<td>" +overtime+"分钟" + "</td>";
                 equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a> " +
                                 " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>"+
                                 " <a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>@endif</td>";
