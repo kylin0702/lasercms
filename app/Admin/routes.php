@@ -32,12 +32,13 @@ Route::group([
     $router->get('areas/getSonArea', "AreaController@getSonArea");//通过大区ID获取子区域
     $router->resource('areas', AreaController::class);
     #充值记录
+    $router->get('recharges/batchCreate', "RechargeController@batchCreate");
     $router->get('recharges/sms', "RechargeController@sms");
+    $router->post('recharges/batchRecharge', "RechargeController@batchRecharge");
     $router->resource('recharges', RechargeController::class);
     #异常记录
     $router->resource('abnormas', AbnormaController::class);
     #统计报表
     $router->resource('durt', YearDurtReptController::class);
     $router->resource('cost', YearCostReptController::class);
-
 });

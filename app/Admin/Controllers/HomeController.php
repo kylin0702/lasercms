@@ -162,7 +162,19 @@ class HomeController extends Controller
             $grid->hasOneClient()->ClientName("影城名称");
             $grid->NumBer('影厅号');
             $grid->hasOneEquType()->Name('光源型号');
-            $grid->hasOneEquType()->Price('单价')->display(function($v){return $v."元/小时";});
+            $grid->EquStatus("光源状态")->display(function($v){
+                $reviewtime=strtotime($this->ReviewTime);
+                $now=time();
+                //4分钟未通讯显示离线
+               if(($reviewtime+240)<$now){
+                   return "<label class='label label-default'>离线</label>";
+               }
+               else{
+                    $styles=["Standby"=>"label-info","LampOn"=>"label-success","UnActive"=>"label-warning"];
+                    $names=["Standby"=>"待机中","LampOn"=>"放映中","UnActive"=>"未激活"];
+                    return "<label class='label $styles[$v]'>$names[$v]</label>";
+                }
+            });
             $grid->RemainTime('剩余时长')->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v."小时";});
         });
     }

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\MessageBag;
 use Symfony\Component\Debug\Debug;
+use Encore\Admin\Widgets\Table;
 
 class RechargeController extends Controller
 {
@@ -68,6 +69,22 @@ class RechargeController extends Controller
             $content->description('');
 
             $content->body($this->form());
+        });
+    }
+
+    /**
+     * BatchCreate interface.
+     *
+     * @return Content
+     */
+    public function batchCreate()
+    {
+        return Admin::content(function (Content $content) {
+
+            $content->header('光源充值/赠送');
+            $content->description('');
+
+            $content->body($this->batchform());
         });
     }
 
@@ -174,7 +191,7 @@ class RechargeController extends Controller
             })->setElementClass("Precharge");
             $form->hidden("hasOneEqu.IsPre")->default('Y');
             //充值后发送短信
-            $form->saved(function (Form $form) use($cid,$eid) {
+           $form->saved(function (Form $form) use($cid,$eid) {
                 $client=Client::findOrFail($cid);
                 $equipment=Equipment::findOrFail($eid);
                 $clientname=$client->ClientName;
@@ -265,6 +282,134 @@ EOT
             );
         });
     }
+
+    /**
+     * Make a form builder.
+     *
+     * @return Form
+     */
+    protected function batchform()
+    {
+        $cid=Input::get("cid");
+        $eids=explode(',',Input::get("eids"));
+        return Admin::form(Recharge::class, function (Form $form) use($cid,$eids) {
+            //客户Model
+            $client=Client::findOrFail($cid);
+            $form->setTitle($client->ClientName);
+            $headers = ['厅号','光源序号', '类源类型','单价','充值金额'];
+            $rooms='';
+            $rows = [
+            ];
+            foreach ($eids as $eid){
+                $equipment=Equipment::findOrFail($eid);
+                $row=[$equipment->NumBer,$equipment->EquNum,$equipment->hasOneEquType->Name,$equipment->hasOneEquType->Price,0];
+                array_push($rows,$row);
+                $rooms=$rooms.$equipment->NumBer.",";
+            }
+            $rooms=trim($rooms,',');
+            $table = new Table($headers, $rows);
+            $form->html($table->render(),"充值光源");
+            $form->hidden("clientname","客户名称")->value($client->ClientName);
+            $form->hidden("rooms","厅号")->value($rooms);
+            $form->hidden("eids","光源")->value(Input::get("eids"));
+            $form->hidden("cid","客户ID")->value($cid);
+            $form->text("time","充值小时数")->default(0)->attribute("type","number")->setWidth(2);
+            $form->html("<input class='form-control' id='phone1'/>","验证码1")->setWidth(1);
+            $form->html("<span><input class='form-control hidden' id='phone2'/></span>","验证码2")->setWidth(1);
+            $form->html("<button type='button' class='btn btn-primary sms'>发送验证码</button>","");
+            //$form->html("<span class='form-control no-border totle' style='color: #9f191f;font-size: 18px'>0元</span>","总计");
+            $form->setAction("/admin/recharges/batchRecharge");
+            //充值后发送短信
+            /* $form->saved(function (Form $form) use($cid,$eid) {
+                 $client=Client::findOrFail($cid);
+                 $equipment=Equipment::findOrFail($eid);
+                 $clientname=$client->ClientName;
+                 $phone=$client->Phone;
+                 $room=$equipment->NumBer;
+                 $rechtime=$form->RechTime;
+                 header('Content-Type:text/html;charset=utf-8');
+                     $data = "您好，您的影院".$clientname.$room."成功充值".$rechtime."小时【中科创激光】";
+                     $post_data = array(
+                         'UserID' => "999595",
+                         'Account' => 'admin',
+                         'Password' => "FW9NQ9",
+                         'Content' => urlencode($data),
+                         'Phones' => $phone,
+                         'SendType' => 1,  //true or false,
+                         'SendTime' => '',
+                         'PostFixNumber' => ''
+                     );
+                     $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+                     $this->http_request($url, http_build_query($post_data));
+             });*/
+            Admin::script(
+                <<<EOT
+                var precharge=parseFloat($('.Precharge').val());
+                var clientname=$('[name="clientname"]').val();
+                var room=$('[name="rooms"]').val();    
+                var codes=[];
+                var totle=0;
+                
+                $("button[type='submit']").attr("disabled","disabled");
+                  $('#time').on('input propertychange',function(){
+                    var rechtime=$(this).val();
+                    $("table>tbody>tr").each(function(i,e){
+                       var price= parseFloat( $(e).find("td:eq(3)").html())*parseInt(rechtime);
+                       $(e).find("td:eq(4)").html(price);
+                    });    
+                });
+                $('.sms').on('click',function(){
+                    var rechtime=parseFloat($('#time').val());  
+                    $.get('/admin/recharges/sms',{clientname:clientname,rechtime:rechtime,room:room},function(data){
+                        if(data){
+                            for(var key in data){
+                                codes.push(data[key]);
+                            }
+                            //alert("验证码为"+codes[0]+","+codes[1]+","+codes[2]);
+                             alert("验证码已发送");
+                        }
+                        else{
+                            alert("发送失败!");
+                        }
+                        
+                    });
+                });
+                 $('#phone1').on('input propertychange',function(){
+                       if(!codes.length==0){
+                             codes=$.map(codes,function(n){
+                                if( $('#phone1').val()==n) {
+                                    $('.check1').removeClass('hidden');
+                                    $('#phone1').attr('disabled',"disabled");
+                                    $('#phone2').removeClass('hidden');
+                                    return null;
+                                }
+                                else{
+                                  return n;
+                                }
+                               
+                             });
+                       };
+                });
+                 $('#phone2').on('input propertychange',function(){
+                       if(!codes.length==0){
+                             codes=$.map(codes,function(n){
+                                if($('#phone2').val()==n) {
+                                    $('#phone2').attr('disabled',"disabled");
+                                   $("button[type='submit']").removeAttr("disabled");
+                                    return null;
+                                }
+                                else{
+                                  return n;
+                                }
+                             
+                             });
+                       }
+                });
+EOT
+            );
+        });
+    }
+
     public function sms(){
         $clientname=request("clientname");
         $rechtime=request("rechtime");
@@ -322,6 +467,35 @@ EOT
         }else{
             return false;
         }
-
+    }
+    //批量充值
+    public  function  batchRecharge(Request $request){
+        $cid=$request->get("cid");
+        $time=$request->get("time");
+        $eids=explode(',',$request->get("eids"));
+        foreach ($eids as $eid){
+            $sn=date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+            $equipment=Equipment::find($eid);
+            $price=$equipment->hasOneEquType->Price;
+            $precharge=$equipment->Precharge;
+            $recharge=new Recharge();
+            $recharge->ClientID=$cid;
+            $recharge->EquID=$eid;
+            $recharge->SerialNumber=$sn;
+            $recharge->Method=0;
+            $recharge->Amount=floatval($price)*intval($time);
+            $recharge->UnitPrice=$price;
+            $recharge->RechTime=$time;
+            $recharge->IP=\Illuminate\Support\Facades\Request::ip();
+            $recharge->UpdateTime=date("Y-m-d H:i:s.000");
+            $recharge->Results=1;
+            $recharge->AccountID=0;
+            $recharge->save();
+            $equipment->Precharge=intval($precharge)+intval($time);
+            $equipment->IsPre="F";
+            $equipment->save();
+        }
+        admin_toastr('充值成功！','success');
+        return redirect("/admin/recharges");
     }
 }
