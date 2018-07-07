@@ -175,7 +175,10 @@ class HomeController extends Controller
                     return "<label class='label $styles[$v]'>$names[$v]</label>";
                 }
             });
-            $grid->RemainTime('剩余时长')->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v."小时";});
+            $grid->RemainTime('剩余时长')->display(function (){
+                    $v=$this->RemainTime+$this->GiftTime;
+                return "<i class='fa fa-clock-o'></i> ".$v."小时";
+            });
         });
     }
     protected function equGridForEngineer()

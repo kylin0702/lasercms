@@ -121,7 +121,7 @@ EOT;
 
             $content->header('审核客户信息');
             $content->description('');
-            $content->body($this->auditform()->edit($id));
+            $content->body($this->auditform($id)->edit($id));
         });
     }
 
@@ -243,7 +243,7 @@ EOT;
             })->setWidth(2);
 
             /****区域-省二级联动 End****/
-
+            $form->hidden('Review')->default('未审核');
 
             /******根据区域代码生成客户编号*******/
             Admin::script(
@@ -268,12 +268,12 @@ EOT
      *
      * @return Form
      */
-    protected function auditform()
+    protected function auditform($id)
     {
 
-        return Admin::form(Client::class, function (Form $form) {
+        return Admin::form(Client::class, function (Form $form) use($id) {
             $form->disableReset();
-            $form->setAction("/admin/clients/97?audit=1");
+            $form->setAction("/admin/clients/".$id."?audit=1");
             $form->text('ClientName', '影城名称')->setWidth(5);
             $form->text('Adress', '影城地址');
             $form->text('VideoNum', '影厅数量');
@@ -287,7 +287,7 @@ EOT
 
 
             $form->saved(function (Form $form)  {
-
+                $clientname=$form->model()->ClientName;
                 $user=new Administrator();
                 $count=Administrator::where("username","=",$form->model()->Phone)->count();
                 if($count==0) {
@@ -297,7 +297,7 @@ EOT
                     $user->avatar = "images/591f45f3bbc80ea03adafbef2e65822c.jpg";
                     $user->save();
                     $user->roles()->attach(4);
-                    $this->sms($user->username);
+                    $this->sms($clientname,$user->username);
                     admin_toastr('已审核,用户名和密码已发送到客户手机', 'success');
                 }
                 else{
@@ -414,9 +414,9 @@ EOT
         return response()->json($client, 200);
     }
     //发送短信
-    public function sms($username){
+    public function sms($clientname,$username){
         header('Content-Type:text/html;charset=utf-8');
-        $data = "您好，您的用户名" . $username . "密码123456,请登陆我司系统查询光源信息【中科创激光】";
+        $data = "您好，您的影城".$clientname.'用户名'. $username . "密码123456,登陆网址为http://119.23.71.36:8080【中科创激光】";
         $post_data = array(
             'UserID' => "999595",
             'Account' => 'admin',
@@ -471,7 +471,7 @@ EOT
     {
         $audit=request("audit");
         if($audit==1) {
-            return $this->auditform()->update($id);
+            return $this->auditform($id)->update($id);
         }
         else{
             return $this->form()->update($id);

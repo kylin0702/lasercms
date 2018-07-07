@@ -95,6 +95,7 @@
                 var status="";
                 var href1="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=0";
                 var href2="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=1";
+                var remainTime=parseInt(e.RemainTime)+parseInt(e.GiftTime);//剩余时间等购买时间与赠送时间
                 var reviewtime=new Date(e.ReviewTime);//最后通讯时间
                 var now=new Date();
                 reviewtime=reviewtime.getTime();//转时间戳
@@ -123,7 +124,7 @@
                 equipment += "<td>" + e.NumBer + "</td>";
                 equipment += "<td>" + e.EquNum + "</td>";
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
-                equipment += "<td>" + e.RemainTime + "</td>"
+                equipment += "<td>" + remainTime + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
                 equipment += "</tr>";

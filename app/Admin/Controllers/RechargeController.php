@@ -319,29 +319,6 @@ EOT
             $form->html("<button type='button' class='btn btn-primary sms'>发送验证码</button>","");
             //$form->html("<span class='form-control no-border totle' style='color: #9f191f;font-size: 18px'>0元</span>","总计");
             $form->setAction("/admin/recharges/batchRecharge");
-            //充值后发送短信
-            /* $form->saved(function (Form $form) use($cid,$eid) {
-                 $client=Client::findOrFail($cid);
-                 $equipment=Equipment::findOrFail($eid);
-                 $clientname=$client->ClientName;
-                 $phone=$client->Phone;
-                 $room=$equipment->NumBer;
-                 $rechtime=$form->RechTime;
-                 header('Content-Type:text/html;charset=utf-8');
-                     $data = "您好，您的影院".$clientname.$room."成功充值".$rechtime."小时【中科创激光】";
-                     $post_data = array(
-                         'UserID' => "999595",
-                         'Account' => 'admin',
-                         'Password' => "FW9NQ9",
-                         'Content' => urlencode($data),
-                         'Phones' => $phone,
-                         'SendType' => 1,  //true or false,
-                         'SendTime' => '',
-                         'PostFixNumber' => ''
-                     );
-                     $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
-                     $this->http_request($url, http_build_query($post_data));
-             });*/
             Admin::script(
                 <<<EOT
                 var precharge=parseFloat($('.Precharge').val());
@@ -473,6 +450,7 @@ EOT
         $cid=$request->get("cid");
         $time=$request->get("time");
         $eids=explode(',',$request->get("eids"));
+        $rooms="";
         foreach ($eids as $eid){
             $sn=date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
             $equipment=Equipment::find($eid);
@@ -494,8 +472,29 @@ EOT
             $equipment->Precharge=intval($precharge)+intval($time);
             $equipment->IsPre="F";
             $equipment->save();
+            $rooms=$rooms. $equipment->NumBer.",";
         }
-        admin_toastr('充值成功！','success');
+        //充值后发送短信
+         $client=Client::findOrFail($cid);
+         $clientname=$client->ClientName;
+         $phone=$client->Phone;
+         $rooms=trim($rooms,',');//去掉最后一个逗号
+         header('Content-Type:text/html;charset=utf-8');
+         $data = "您好，您的影院".$clientname.$rooms."成功充值".$time."小时【中科创激光】";
+         $post_data = array(
+            'UserID' => "999595",
+            'Account' => 'admin',
+            'Password' => "FW9NQ9",
+            'Content' => urlencode($data),
+            'Phones' => $phone,
+            'SendType' => 1,  //true or false,
+            'SendTime' => '',
+            'PostFixNumber' => ''
+        );
+         $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+         $this->http_request($url, http_build_query($post_data));
+         //返回充值列表页
+         admin_toastr('充值成功！','success');
         return redirect("/admin/recharges");
     }
 }

@@ -99,7 +99,7 @@
                         <label>选择代理商:</label>
                     <select class="select-agent">
                         @foreach ($agent as $a)
-                            <option value={{$a->username}}>{{$a->username}}</option>
+                            <option value={{$a->username}}>{{$a->name}}</option>
                         @endforeach
                     </select>
                      <button type="button" class="btn btn-sm btn-warning btn-bindAgent" data-clientid="{{$v->ID}}">关联 <i class="fa fa-spin fa-spinner hidden"></i></button>
@@ -111,6 +111,7 @@
                 <div class="col-lg-12">
                     <table class="table table-responsive table-bordered table-condensed">
                         <thead>
+                        <th><input type="checkbox" class="allcheck"/></th>
                         <th>厅号</th>
                         <th>光源序列</th>
                         <th>光源型号</th>
@@ -142,6 +143,7 @@ $("[data-widget='collapse']").on('click',function(){
                 var status="";
                 var href1="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=0";
                 var href2="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=1";
+                var remainTime=parseInt(e.RemainTime)+parseInt(e.GiftTime);//剩余时间等购买时间与赠送时间
                 var reviewtime=new Date(e.ReviewTime);//最后通讯时间
                 var now=new Date();
                 reviewtime=reviewtime.getTime();//转时间戳
@@ -168,19 +170,22 @@ $("[data-widget='collapse']").on('click',function(){
                     status="<label class='label label-default'>离线</label>";
                 }
                 equipment += "<tr>";
+                equipment+="<td><input type='checkbox' name='eid' value='"+e.ID+"'/></td>";
                 equipment += "<td>" + e.NumBer + "</td>";
                 equipment += "<td>" + e.EquNum + "</td>";
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
                 equipment += "<td>" + e.ISBuy + "</td>"
-                equipment += "<td>" + e.RemainTime + "</td>"
+                equipment += "<td>" + remainTime + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
                 equipment += "<td>" +overtime+"分钟" + "</td>";
-                equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a> " +
-                                " <a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>"+
-                                " <a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>@endif</td>";
+                equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a>&nbsp;&nbsp;" +
+                                "<a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>&nbsp;&nbsp;"+
+                                "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>@endif</td>";
                 equipment += "</tr>";
+
             });
+            equipment+="<tr><td colspan='10'> <a href='javascript:void(0);' class='btn btn-sm btn-danger btn-batchCharge' data-cid="+ClientID+" >批量充值</a></td></tr>";
             content.html(equipment);
             //删除光源
             $('.btn-del').on('click',function(){
@@ -201,7 +206,27 @@ $("[data-widget='collapse']").on('click',function(){
                     });
                 }
             });
+            //获取设备ID,跳转至批量充值界面
+           $('.btn-batchCharge').on('click',function () {
+                var cid=$(this).attr("data-cid");
+                var eids=[];
+                var checks=$(this).parents('table').find('input:checkbox[name="eid"]:checked');
+                $(checks).each(function (i,e) {
+                    eids.push($(e).val());
+                })
+                if(eids.length==0){
+                    alert("请勾选要充值的光源");
+                }
+                else{
+                   window.location.href="/admin/recharges/batchCreate?cid="+cid+"&eids="+eids.join(',');
+                }
+            });
+            //全选全不选
+            $('.allcheck').on('click',function () {
+                $(this).parents('table').find('input:checkbox[name="eid"]').prop("checked",$(this).prop("checked"));
+            });
         }, "json");
+
 });
 //显示绑定工程师选择框
 $(".btn-engineer").on('click',function () {
@@ -245,4 +270,5 @@ $(".btn-bindAgent").on('click',function () {
         }
     }, "json");
 });
+
 </script>
