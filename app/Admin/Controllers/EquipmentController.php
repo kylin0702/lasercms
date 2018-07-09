@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\EquipmentExporter;
 use App\Admin\Models\Client;
 use App\Admin\Models\Equipment;
 use App\admin\Models\EquStatus;
@@ -109,17 +110,22 @@ class EquipmentController extends Controller
                $grid->RemainTime('剩余时长')->sortable();
             $grid->EquStatus('光源状态')->display(function($v){
                 $status=["LampOn"=>"正在放映","Standby"=>"待机中","UnActive"=>"未激活","Active"=>"关机"];
-                if($v=="LampOn"){
-                    return "<label class='label label-success'>$status[$v]</label> <i class='fa fa-cog fa-spin'></i>";
+                $now=time();
+                $reviewtime=strtotime($this->ReviewTime);
+                //超过4分钟没有更新状态显示离线
+                if(($reviewtime+240)<$now){
+                    return "<label class='label label-default'>离线</label>";
                 }
-                elseif ($v="Standby"){
-                    return "<label class='label label-primary'>$status[$v]</label>";
-                }
-                elseif($v="UnActive"){
-                    return "<label class='label label-danger'>$status[$v]</label>";
-                }
-                else{
-                    return "<label class='label label-default'>$status[$v]</label>";
+                else {
+                    if ($v == "LampOn") {
+                        return "<label class='label label-success'>$status[$v]</label> <i class='fa fa-cog fa-spin'></i>";
+                    } elseif ($v = "Standby") {
+                        return "<label class='label label-primary'>$status[$v]</label>";
+                    } elseif ($v = "UnActive") {
+                        return "<label class='label label-danger'>$status[$v]</label>";
+                    } else {
+                        return "<label class='label label-default'>$status[$v]</label>";
+                    }
                 }
             });
             $states = [
@@ -135,8 +141,9 @@ class EquipmentController extends Controller
                 }, '是否绑定')->select(["null"=>"未绑定","not null"=>"已绑定"]);
                 $filter->equal('ClientID', '客户名称')->select(Client::all()->pluck('ClientName',"ID"));
             });
-
+            $grid->exporter(new EquipmentExporter());
         });
+
     }
 
     protected function clientgrid($clientid)

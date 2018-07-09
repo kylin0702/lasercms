@@ -99,7 +99,7 @@
                         <label>选择代理商:</label>
                     <select class="select-agent">
                         @foreach ($agent as $a)
-                            <option value={{$a->username}}>{{$a->name}}</option>
+                            <option value='{{$a->username}}'>{{$a->name}}</option>
                         @endforeach
                     </select>
                      <button type="button" class="btn btn-sm btn-warning btn-bindAgent" data-clientid="{{$v->ID}}">关联 <i class="fa fa-spin fa-spinner hidden"></i></button>
@@ -249,22 +249,23 @@ $(".btn-bindAgentCancel").on('click',function () {
 //绑定工程师操作
 $(".btn-bindEngineer").on('click',function () {
     var clientid=$(this).attr("data-clientid");
-    var engineer=$(".select-engineer").val();
+    var engineer=$(this).parent().find(".select-engineer").val();
     $(this).find("i").removeClass("hidden");
     $.post("/admin/clients/"+clientid+"/bindEngineer",{username:engineer},function(data){
-        if(data.engineer==engineer){
+        if(data==engineer){
             alert("绑定成功!");
             window.location.reload();
         }
     },"json");
 })
-//绑定用户操作
+//绑定代理操作
 $(".btn-bindAgent").on('click',function () {
     var clientid = $(this).attr("data-clientid");
-    var agent = $(".select-agent").val();
+    var agent =$(this).parent().find(".select-agent").val();
     $(this).find("i").removeClass("hidden");
     $.post("/admin/clients/" + clientid + "/bindAgent", {username: agent}, function (data) {
-        if (data.agent == agent) {
+        console.log(data);
+        if (data== agent) {
             alert("绑定成功!");
             window.location.reload();
         }

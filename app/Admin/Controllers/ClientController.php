@@ -400,18 +400,19 @@ EOT
     //客户绑定工程师操作
     public function bindEngineer(\Illuminate\Http\Request $request,$ID)
     {
-        $client=Client::find($ID);
+        $client=Client::findorfail($ID);
         $client->engineer=$request->input("username");
         $client->save();
-        return response()->json($client, 200);
+        return  response()->json($client->engineer);
     }
-    //客户绑定系统操作用户操作
+    //客户绑定代理商操作
     public function bindAgent(\Illuminate\Http\Request $request,$ID)
     {
-        $client=Client::find($ID);
+
+        $client=Client::findorfail($ID);
         $client->agent=$request->input("username");
         $client->save();
-        return response()->json($client, 200);
+         return  response()->json($client->agent);
     }
     //发送短信
     public function sms($clientname,$username){
