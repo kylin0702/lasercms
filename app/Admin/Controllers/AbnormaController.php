@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\AbnormalExporter;
 use App\admin\Models\Abnorma;
 
 use App\Admin\Models\Client;
@@ -112,6 +113,7 @@ EOT;
             });
             $grid->Solve("是否解决");
             $grid->UpdateTime("登记时间");
+            $grid->exporter(new AbnormalExporter());
         });
     }
 

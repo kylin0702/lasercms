@@ -132,7 +132,7 @@ class EquipmentController extends Controller
                 'on'  => ['value' => "已审核", 'text' => '已审核', 'color' => 'primary'],
                 'off' => ['value' => "未审核", 'text' => '未审核', 'color' => 'default'],
             ];
-            $grid->Review("审核状态")->switch($states);
+            //$grid->Review("审核状态")->switch($states);
             $grid->filter(function ($filter) {
                 $filter->disableIdFilter();
                 $filter->equal('EquTypeID', '光源类型')->select(EquType::all()->pluck('Name',"ID"));

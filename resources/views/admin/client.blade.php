@@ -178,7 +178,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + remainTime + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
-                equipment += "<td>" +overtime+"分钟" + "</td>";
+                equipment += "<td>" +formatMinutes(overtime) + "</td>";
                 equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a>&nbsp;&nbsp;" +
                                 "<a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>@endif</td>";
@@ -271,5 +271,26 @@ $(".btn-bindAgent").on('click',function () {
         }
     }, "json");
 });
+//
+
+function formatMinutes(StatusMinute){
+    var day=parseInt(StatusMinute/60/24);
+    var hour=parseInt(StatusMinute/60%24);
+    var min= parseInt(StatusMinute % 60);
+    StatusMinute="";
+    if (day > 0)
+    {
+        StatusMinute= day + "天";
+    }
+    if (hour>0)
+    {
+        StatusMinute += hour + "小时";
+    }
+    if (min>0)
+    {
+        StatusMinute += parseFloat(min) + "分钟";
+    }
+    return StatusMinute;
+}
 
 </script>

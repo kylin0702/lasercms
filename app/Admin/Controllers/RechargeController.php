@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\MessageBag;
 use Symfony\Component\Debug\Debug;
 use Encore\Admin\Widgets\Table;
+use App\Admin\Extensions\RechargeExporter;
 
 class RechargeController extends Controller
 {
@@ -107,7 +108,7 @@ class RechargeController extends Controller
                 $method=[0=>"网上充值",1=>"系统赠送"];
                 return $method[$v];
             });
-            $grid->Amount("充值金额")->display(function ($v){return "<i class='fa fa-rmb'></i> ".$v;});
+           // $grid->Amount("充值金额")->display(function ($v){return "<i class='fa fa-rmb'></i> ".$v;});
             $grid->RechTime("充值小时数")->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v;});
             $grid->IP("充值IP");
             $grid->UpdateTime("充值时间");
@@ -121,6 +122,7 @@ class RechargeController extends Controller
                 $filter->between('UpdateTime', "充值时间")->date();
                 $filter->equal('ClientID', '客户名称')->select(Client::all()->pluck('ClientName',"ID"));
             });
+            $grid->exporter(new RechargeExporter());
         });
     }
 

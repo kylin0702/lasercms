@@ -4,7 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Models\Client;
 use App\Admin\Models\YearDurtRept;
-
+use App\Admin\Extensions\YearDurtExporter;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -101,6 +101,7 @@ class YearDurtReptController extends Controller
                 $filter->equal('EquNum', '光源编号');
                 $filter->equal('ClientName', '客户名称')->select(Client::all()->pluck('ClientName',"ClientName"));
             });
+            $grid->exporter(new YearDurtExporter());
         });
     }
 
