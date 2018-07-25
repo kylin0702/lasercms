@@ -428,7 +428,7 @@ EOT
             'SendTime' => '',
             'PostFixNumber' => ''
         );
-        $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+        $url = 'http://61.143.63.169:8080/Services.asmx/DirectSend';
         $result=$this->http_request($url, http_build_query($post_data));
         return $result;
     }

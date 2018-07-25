@@ -87,7 +87,7 @@ class EquTypeController extends Controller
     {
         return Admin::form(EquType::class, function (Form $form) {
             $form->display('ID', 'ID');
-            $form->text('Name', '设备型号');
+            $form->text('Name', '设备型号')->rules("required|unique:EquType,Name",['required'=>'请输入光源类型']);;
             $form->number('Price', '单价');
             $form->number('GiftTime', '赠送时长');
         });

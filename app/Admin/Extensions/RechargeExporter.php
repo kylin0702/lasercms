@@ -19,11 +19,11 @@ class RechargeExporter extends AbstractExporter
                     $data_sort['NumBer']=$item['has_one_equ']['NumBer'];
                     $data_sort['EquNum']=$item['has_one_equ']['EquNum'];
                     $data_sort['Method']=$item['Method']==0?"网上充值":"系统赠送";
-                    $data_sort['Amount']=$item['Amount'];
+                    $data_sort['RechTime']=$item['RechTime'];
                     $data_sort['IP']=$item['IP'];
                     $data_sort['UpdateTime']=$item['UpdateTime'];
                     $data_sort['Results']=$item['Results']==1?"充值成功":"充值失败";
-                    $data_only=array_only($data_sort,['SerialNumber','ClientNum','ClientName','NumBer','EquNum','Method','Amount',"IP","UpdateTime","Results"]);
+                    $data_only=array_only($data_sort,['SerialNumber','ClientNum','ClientName','NumBer','EquNum','Method','RechTime',"IP","UpdateTime","Results"]);
                     return $data_only;
                 });
                 $sheet->row(1, array(

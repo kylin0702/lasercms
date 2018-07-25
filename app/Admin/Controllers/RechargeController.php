@@ -212,7 +212,7 @@ class RechargeController extends Controller
                         'SendTime' => '',
                         'PostFixNumber' => ''
                     );
-                    $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+                    $url = 'http://61.143.63.169:8080/Services.asmx/DirectSend';
                     $this->http_request($url, http_build_query($post_data));
             });
             Admin::script(
@@ -407,7 +407,7 @@ EOT
                 'SendTime' => '',
                 'PostFixNumber' => ''
             );
-            $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+            $url = 'http://61.143.63.169:8080/Services.asmx/DirectSend';
             $this->http_request($url, http_build_query($post_data));
         }
         return $codes;
@@ -493,7 +493,7 @@ EOT
             'SendTime' => '',
             'PostFixNumber' => ''
         );
-         $url = 'http://www.mxtong.net.cn/Services.asmx/DirectSend';
+         $url = 'http://61.143.63.169:8080/Services.asmx/DirectSend';
          $this->http_request($url, http_build_query($post_data));
          //返回充值列表页
          admin_toastr('充值成功！','success');

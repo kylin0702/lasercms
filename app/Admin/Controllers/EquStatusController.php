@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Widgets\Alert;
 use Encore\Admin\Widgets\Table;
-use function foo\func;
+use Illuminate\Http\Request;
 
 class EquStatusController extends Controller
 {
@@ -121,5 +121,10 @@ class EquStatusController extends Controller
 
             });
         });
+    }
+    //通过客户ID返回光源
+    public function getStatus(Request $request){
+        $snu = $request->get('s');
+        return EquStatus::where('sNU',"=", $snu)->orderby('ID','desc')->first();
     }
 }
