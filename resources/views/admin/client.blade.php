@@ -130,73 +130,14 @@
     </div><!-- /.box -->
 @endforeach
 {!!$clients->links()!!}
-<!-- 状态Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document" style="width: 1400px;">
         <div class="modal-content" id="app">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">[[st.sNU]]</h4>
+                <h4 class="modal-title" id="myModalLabel"></h4>
             </div>
             <div class="modal-body" id="status-table">
-                <table class="table table-bordered table-condensed table-responsive">
-                    <tbody>
-                    <tr>
-                        <td>上红光模组功率</td> <td>[[st.sURL]]</td><td>下红光模组功率</td><td>[[st.sDRL]]</td><td>上绿光模组功率</td><td>[[st.sURL]]</td><td>下绿光模组功率</td><td>[[st.sDGL]]</td><td>上蓝光模组功率</td><td>[[st.sUBL]]</td><td>下蓝光模组功率</td><td>[[st.sDBL]]</td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组温度</td> <td>[[st.sURT1]]</td><td>下红光模组温度</td><td>[[st.sDRT1]]</td><td>上绿光模组温度</td><td>[[st.sUGT1]]</td><td>下绿光模组温度</td><td>[[st.sDGT1]]</td><td>上蓝光模组温度</td><td>[[st.sUBT]]</td><td>下蓝光模组温度</td><td>[[st.sDBT]]</td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流1</td> <td>[[st.sURC1]]</td><td>下红光模组电流1</td><td>[[st.sDRC1]]</td><td>上绿光模组电流1</td><td>[[st.sUGC1]]</td><td>下绿光模组电流1</td><td>[[st.sDGC1]]</td><td>上蓝光模组电流1</td><td>[[st.sUBC1]]</td><td>下蓝光模组电流1</td><td>[[st.sDBC1]]</td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流2</td> <td>[[st.sURC2]]</td><td>下红光模组电流2</td><td>[[st.sDRC2]]</td><td>上绿光模组电流2</td><td>[[st.sUGC2]]</td><td>下绿光模组电流2</td><td>[[st.sDGC2]]</td><td>上蓝光模组电流2</td><td>[[st.sUBC2]]</td><td>下蓝光模组电流2</td><td>[[st.sDBC2]]</td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流3</td> <td>[[st.sURC3]]</td><td>下红光模组电流3</td><td>[[st.sDRC3]]</td><td>上绿光模组电流3</td><td>[[st.sUGC3]]</td><td>下绿光模组电流3</td><td>[[st.sDGC3]]</td><td>上蓝光模组电流3</td><td>[[st.sUBC3]]</td><td>下蓝光模组电流3</td><td>[[st.sDBC3]]</td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流4</td> <td>[[st.sURC4]]</td><td>下红光模组电流4</td><td>[[st.sDRC4]]</td><td>上绿光模组电流4</td><td>[[st.sUGC4]]</td><td>下绿光模组电流4</td><td>[[st.sDGC4]]</td><td>上蓝光模组电流4</td><td>[[st.sUBC4]]</td><td>下蓝光模组电流4</td><td>[[st.sDBC4]]</td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流5</td> <td>[[st.sURC5]]</td><td>下红光模组电流5</td><td>[[st.sDRC5]]</td><td>上绿光模组电流5</td><td>[[st.sUGC5]]</td><td>下绿光模组电流5</td><td>[[st.sDGC5]]</td><td>上蓝光模组电流5</td><td></td><td>下蓝光模组电流5</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流6</td> <td>[[st.sURC6]]</td><td>下红光模组电流6</td><td>[[st.sDRC6]]</td><td>上绿光模组电流6</td><td>[[st.sUGC6]]</td><td>下绿光模组电流6</td><td>[[st.sDGC6]]</td><td>上蓝光模组电流6</td><td></td><td>下蓝光模组电流6</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流7</td> <td>[[st.sURC7]]</td><td>下红光模组电流7</td><td>[[st.sDRC7]]</td><td>上绿光模组电流7</td><td>[[st.sUGC7]]</td><td>下绿光模组电流7</td><td>[[st.sDGC7]]</td><td>上蓝光模组电流7</td><td></td><td>下蓝光模组电流7</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流8</td> <td>[[st.sURC8]]</td><td>下红光模组电流8</td><td>[[st.sDRC8]]</td><td>上绿光模组电流8</td><td>[[st.sUGC8]]</td><td>下绿光模组电流8</td><td>[[st.sDGC8]]</td><td>上蓝光模组电流8</td><td></td><td>下蓝光模组电流8</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流9</td> <td>[[st.sURC9]]</td><td>下红光模组电流9</td><td>[[st.sDRC9]]</td><td>上绿光模组电流9</td><td>[[st.sUGC9]]</td><td>下绿光模组电流9</td><td>[[st.sDGC9]]</td><td>上蓝光模组电流9</td><td></td><td>下蓝光模组电流9</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流10</td> <td>[[st.sURC10]]</td><td>下红光模组电流10</td><td>[[st.sDRC10]]</td><td>上绿光模组电流10</td><td>[[st.sUGC10]]</td><td>下绿光模组电流10</td><td>[[st.sDGC10]]</td><td>上蓝光模组电流10</td><td></td><td>下蓝光模组电流10</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流11</td> <td>[[st.sURC11]]</td><td>下红光模组电流11</td><td>[[st.sDRC11]]</td><td>上绿光模组电流11</td><td>[[st.sUGC11]]</td><td>下绿光模组电流11</td><td>[[st.sDGC11]]</td><td>上蓝光模组电流11</td><td></td><td>下蓝光模组电流11</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流12</td> <td>[[st.sURC12]]</td><td>下红光模组电流12</td><td>[[st.sDRC12]]</td><td>上绿光模组电流12</td><td>[[st.sUGC12]]</td><td>下绿光模组电流12</td><td>[[st.sDGC12]]</td><td>上蓝光模组电流12</td><td></td><td>下蓝光模组电流12</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流13</td> <td>[[st.sURC13]]</td><td>下红光模组电流13</td><td>[[st.sDRC13]]</td><td>上绿光模组电流13</td><td>[[st.sUGC13]]</td><td>下绿光模组电流13</td><td>[[st.sDGC13]]</td><td>上蓝光模组电流13</td><td></td><td>下蓝光模组电流13</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流14</td> <td>[[st.sURC14]]</td><td>下红光模组电流14</td><td>[[st.sDRC14]]</td><td>上绿光模组电流14</td><td>[[st.sUGC14]]</td><td>下绿光模组电流14</td><td>[[st.sDGC14]]</td><td>上蓝光模组电流14</td><td></td><td>下蓝光模组电流14</td><td></td>
-                    </tr>
-                    <tr>
-                        <td>上红光模组电流15</td> <td>[[st.sURC15]]</td><td>下红光模组电流15</td><td>[[st.sDRC15]]</td><td>上绿光模组电流15</td><td>[[st.sUGC15]]</td><td>下绿光模组电流15</td><td>[[st.sDGC15]]</td><td>上蓝光模组电流15</td><td></td><td>下蓝光模组电流15</td><td></td>
-                    </tr>
-                    </tbody>
-                    <tfoot>
-                    <tr><th>总功率</th><th colspan="5">[[st.sLI]]</th></tr>
-                    </tfoot>
-                </table>
 
             </div>
             <div class="modal-footer">
@@ -205,6 +146,8 @@
         </div>
     </div>
 </div>
+<!-- 状态Modal -->
+
 <script>
 $("[data-widget='collapse']").on('click',function(){
     var collapse=$(this);
@@ -256,7 +199,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a>&nbsp;&nbsp;" +
                                 "<a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
-                                "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>状态</a>@endif</td>";
+                                "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>详细状态</a>@endif</td>";
                 equipment += "</tr>";
 
             });
@@ -345,28 +288,6 @@ $(".btn-bindAgent").on('click',function () {
         }
     }, "json");
 });
-
-//显示详细状态
-/*function getStatus(a) {
-    var snu=$(a).attr("data-snu");
-    var sample={"ID":6221217,"sNU":"I00001170726","sMT":"CB10L-10","sMS":"LampOn","sTM":"1595","sLI":"900","sURT1":"1900","sURL":"255","sURC1":"755","sURC2":"900","sURC3":"900","sURC4":"900","sURC5":"900","sURC6":"900","sURC7":"900","sURC8":"900","sURC9":"900","sURC10":"900","sURC11":"900","sURC12":"900","sURC13":"900","sURC14":"900","sURC15":"900","sUGT1":"900","sUGL":"255","sUGC1":"555","sUGC2":"1900","sUGC3":"1900","sUGC4":"1900","sUGC5":"1900","sUGC6":"1900","sUGC7":"1900","sUGC8":"1900","sUGC9":"1900","sUGC10":"1900","sUGC11":"1900","sUGC12":"1900","sUGC13":"1900","sUGC14":"1900","sUGC15":"1900","sUBT":"1900","sUBL":"255","sUBC1":"355","sUBC2":"2500","sUBC3":"2500","sUBC4":"2500","sDRT1":"2500","sDRL":"12361","sDRC1":"00","sDRC2":"00","sDRC3":"00","sDRC4":"00","sDRC5":"00","sDRC6":"14592","sDRC7":"00","sDRC8":"1943","sDRC9":"13875","sDRC10":"00","sDRC11":"1024","sDRC12":"13362","sDRC13":"4","sDRC14":"16384","sDRC15":"256","sDGT1":"00","sDGL":"00","sDGC1":"00","sDGC2":"1","sDGC3":"1","sDGC4":"14080","sDGC5":"1","sDGC6":"14080","sDGC7":"4179","sDGC8":"41","sDGC9":"00","sDGC10":"00","sDGC11":"00","sDGC12":"00","sDGC13":"00","sDGC14":"57","sDGC15":"00","sDBT":"1943","sDBL":"580","sDBC1":"1","sDBC2":"00","sDBC3":"00","sDBC4":"4","UpDates":"2018-04-14 11:50:53.110"}
-    var d;
-    var vm=new Vue({
-        el: '#app',
-        data: {"st":sample},
-        delimiters: ['[[', ']]'],
-    });
-    $.get('/admin/equstatuss/getStatus?s=' + snu, function (data) {
-        Vue.set(vm,'st',data);
-    });
-    $('#status-table tr td:nth-child(1)').css('color','red');
-    $('#status-table tr td:nth-child(3)').css('color','red');
-    $('#status-table tr td:nth-child(5)').css('color','green');
-    $('#status-table tr td:nth-child(7)').css('color','green');
-    $('#status-table tr td:nth-child(9)').css('color','blue');
-    $('#status-table tr td:nth-child(11)').css('color','blue');
-}*/
-
 function formatMinutes(StatusMinute){
     var day=parseInt(StatusMinute/60/24);
     var hour=parseInt(StatusMinute/60%24);
@@ -388,18 +309,88 @@ function formatMinutes(StatusMinute){
 }
 
 </script>
-<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/template_js/0.7.1/template.min.js"></script>
 <script>
-    var sample={"ID":6221217,"sNU":"I00001170726","sMT":"CB10L-10","sMS":"LampOn","sTM":"1595","sLI":"900","sURT1":"1900","sURL":"255","sURC1":"755","sURC2":"900","sURC3":"900","sURC4":"900","sURC5":"900","sURC6":"900","sURC7":"900","sURC8":"900","sURC9":"900","sURC10":"900","sURC11":"900","sURC12":"900","sURC13":"900","sURC14":"900","sURC15":"900","sUGT1":"900","sUGL":"255","sUGC1":"555","sUGC2":"1900","sUGC3":"1900","sUGC4":"1900","sUGC5":"1900","sUGC6":"1900","sUGC7":"1900","sUGC8":"1900","sUGC9":"1900","sUGC10":"1900","sUGC11":"1900","sUGC12":"1900","sUGC13":"1900","sUGC14":"1900","sUGC15":"1900","sUBT":"1900","sUBL":"255","sUBC1":"355","sUBC2":"2500","sUBC3":"2500","sUBC4":"2500","sDRT1":"2500","sDRL":"12361","sDRC1":"00","sDRC2":"00","sDRC3":"00","sDRC4":"00","sDRC5":"00","sDRC6":"14592","sDRC7":"00","sDRC8":"1943","sDRC9":"13875","sDRC10":"00","sDRC11":"1024","sDRC12":"13362","sDRC13":"4","sDRC14":"16384","sDRC15":"256","sDGT1":"00","sDGL":"00","sDGC1":"00","sDGC2":"1","sDGC3":"1","sDGC4":"14080","sDGC5":"1","sDGC6":"14080","sDGC7":"4179","sDGC8":"41","sDGC9":"00","sDGC10":"00","sDGC11":"00","sDGC12":"00","sDGC13":"00","sDGC14":"57","sDGC15":"00","sDBT":"1943","sDBL":"580","sDBC1":"1","sDBC2":"00","sDBC3":"00","sDBC4":"4","UpDates":"2018-04-14 11:50:53.110"}
-    var d;
-    new Vue({
-        el: '#app',
-        data: {"st":sample},
-        delimiters: ['[[', ']]'],
-        method:{
-            getData:function(){
+    function getStatus(a) {
+        var snu=$(a).attr("data-snu");
+        var sample={"ID":6221217,"sNU":"I00001170726","sMT":"CB10L-10","sMS":"LampOn","sTM":"1595","sLI":"900","sURT1":"1900","sURL":"255","sURC1":"755","sURC2":"900","sURC3":"900","sURC4":"900","sURC5":"900","sURC6":"900","sURC7":"900","sURC8":"900","sURC9":"900","sURC10":"900","sURC11":"900","sURC12":"900","sURC13":"900","sURC14":"900","sURC15":"900","sUGT1":"900","sUGL":"255","sUGC1":"555","sUGC2":"1900","sUGC3":"1900","sUGC4":"1900","sUGC5":"1900","sUGC6":"1900","sUGC7":"1900","sUGC8":"1900","sUGC9":"1900","sUGC10":"1900","sUGC11":"1900","sUGC12":"1900","sUGC13":"1900","sUGC14":"1900","sUGC15":"1900","sUBT":"1900","sUBL":"255","sUBC1":"355","sUBC2":"2500","sUBC3":"2500","sUBC4":"2500","sDRT1":"2500","sDRL":"12361","sDRC1":"00","sDRC2":"00","sDRC3":"00","sDRC4":"00","sDRC5":"00","sDRC6":"14592","sDRC7":"00","sDRC8":"1943","sDRC9":"13875","sDRC10":"00","sDRC11":"1024","sDRC12":"13362","sDRC13":"4","sDRC14":"16384","sDRC15":"256","sDGT1":"00","sDGL":"00","sDGC1":"00","sDGC2":"1","sDGC3":"1","sDGC4":"14080","sDGC5":"1","sDGC6":"14080","sDGC7":"4179","sDGC8":"41","sDGC9":"00","sDGC10":"00","sDGC11":"00","sDGC12":"00","sDGC13":"00","sDGC14":"57","sDGC15":"00","sDBT":"1943","sDBL":"580","sDBC1":"1","sDBC2":"00","sDBC3":"00","sDBC4":"4","UpDates":"2018-04-14 11:50:53.110"}
+        var d;
+        $.get('/admin/equstatuss/getStatus?s=' + snu, function (data) {
+            var tpl = document.getElementById('test').innerHTML;
+            var html = template(tpl, data);
+            document.getElementById('status-table').innerHTML = html;
+            $('#status-table tr td:nth-child(1)').css('color','red');
+            $('#status-table tr td:nth-child(3)').css('color','red');
+            $('#status-table tr td:nth-child(5)').css('color','green');
+            $('#status-table tr td:nth-child(7)').css('color','green');
+            $('#status-table tr td:nth-child(9)').css('color','blue');
+            $('#status-table tr td:nth-child(11)').css('color','blue');
+        });
 
-            }
-        }
-    });
+    }
+
+</script>
+<script id="test" type="text/html">
+                <table class="table table-bordered table-condensed table-responsive">
+                    <tbody>
+                    <thead>
+                    <tr><th>光源编号</th><th colspan="5"><%=sNU%></th></tr>
+                    </thead>
+                    <tr>
+                        <td>上红光模组功率</td> <td><%=sURL%></td><td>下红光模组功率</td><td><%=sDRL%></td><td>上绿光模组功率</td><td><%=sURL%></td><td>下绿光模组功率</td><td><%=sDGL%></td><td>上蓝光模组功率</td><td><%=sUBL%></td><td>下蓝光模组功率</td><td><%=sDBL%></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组温度</td> <td><%=sURT1%></td><td>下红光模组温度</td><td><%=sDRT1%></td><td>上绿光模组温度</td><td><%=sUGT1%></td><td>下绿光模组温度</td><td><%=sDGT1%></td><td>上蓝光模组温度</td><td><%=sUBT%></td><td>下蓝光模组温度</td><td><%=sDBT%></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流1</td> <td><%=sURC1%></td><td>下红光模组电流1</td><td><%=sDRC1%></td><td>上绿光模组电流1</td><td><%=sUGC1%></td><td>下绿光模组电流1</td><td><%=sDGC1%></td><td>上蓝光模组电流1</td><td><%=sUBC1%></td><td>下蓝光模组电流1</td><td><%=sDBC1%></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流2</td> <td><%=sURC2%></td><td>下红光模组电流2</td><td><%=sDRC2%></td><td>上绿光模组电流2</td><td><%=sUGC2%></td><td>下绿光模组电流2</td><td><%=sDGC2%></td><td>上蓝光模组电流2</td><td><%=sUBC2%></td><td>下蓝光模组电流2</td><td><%=sDBC2%></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流3</td> <td><%=sURC3%></td><td>下红光模组电流3</td><td><%=sDRC3%></td><td>上绿光模组电流3</td><td><%=sUGC3%></td><td>下绿光模组电流3</td><td><%=sDGC3%></td><td>上蓝光模组电流3</td><td><%=sUBC3%></td><td>下蓝光模组电流3</td><td><%=sDBC3%></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流4</td> <td><%=sURC4%></td><td>下红光模组电流4</td><td><%=sDRC4%></td><td>上绿光模组电流4</td><td><%=sUGC4%></td><td>下绿光模组电流4</td><td><%=sDGC4%></td><td>上蓝光模组电流4</td><td><%=sUBC4%></td><td>下蓝光模组电流4</td><td><%=sDBC4%></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流5</td> <td><%=sURC5%></td><td>下红光模组电流5</td><td><%=sDRC5%></td><td>上绿光模组电流5</td><td><%=sUGC5%></td><td>下绿光模组电流5</td><td><%=sDGC5%></td><td>上蓝光模组电流5</td><td></td><td>下蓝光模组电流5</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流6</td> <td><%=sURC6%></td><td>下红光模组电流6</td><td><%=sDRC6%></td><td>上绿光模组电流6</td><td><%=sUGC6%></td><td>下绿光模组电流6</td><td><%=sDGC6%></td><td>上蓝光模组电流6</td><td></td><td>下蓝光模组电流6</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流7</td> <td><%=sURC7%></td><td>下红光模组电流7</td><td><%=sDRC7%></td><td>上绿光模组电流7</td><td><%=sUGC7%></td><td>下绿光模组电流7</td><td><%=sDGC7%></td><td>上蓝光模组电流7</td><td></td><td>下蓝光模组电流7</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流8</td> <td><%=sURC8%></td><td>下红光模组电流8</td><td><%=sDRC8%></td><td>上绿光模组电流8</td><td><%=sUGC8%></td><td>下绿光模组电流8</td><td><%=sDGC8%></td><td>上蓝光模组电流8</td><td></td><td>下蓝光模组电流8</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流9</td> <td><%=sURC9%></td><td>下红光模组电流9</td><td><%=sDRC9%></td><td>上绿光模组电流9</td><td><%=sUGC9%></td><td>下绿光模组电流9</td><td><%=sDGC9%></td><td>上蓝光模组电流9</td><td></td><td>下蓝光模组电流9</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流10</td> <td><%=sURC10%></td><td>下红光模组电流10</td><td><%=sDRC10%></td><td>上绿光模组电流10</td><td><%=sUGC10%></td><td>下绿光模组电流10</td><td><%=sDGC10%></td><td>上蓝光模组电流10</td><td></td><td>下蓝光模组电流10</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流11</td> <td><%=sURC11%></td><td>下红光模组电流11</td><td><%=sDRC11%></td><td>上绿光模组电流11</td><td><%=sUGC11%></td><td>下绿光模组电流11</td><td><%=sDGC11%></td><td>上蓝光模组电流11</td><td></td><td>下蓝光模组电流11</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流12</td> <td><%=sURC12%></td><td>下红光模组电流12</td><td><%=sDRC12%></td><td>上绿光模组电流12</td><td><%=sUGC12%></td><td>下绿光模组电流12</td><td><%=sDGC12%></td><td>上蓝光模组电流12</td><td></td><td>下蓝光模组电流12</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流13</td> <td><%=sURC13%></td><td>下红光模组电流13</td><td><%=sDRC13%></td><td>上绿光模组电流13</td><td><%=sUGC13%></td><td>下绿光模组电流13</td><td><%=sDGC13%></td><td>上蓝光模组电流13</td><td></td><td>下蓝光模组电流13</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流14</td> <td><%=sURC14%></td><td>下红光模组电流14</td><td><%=sDRC14%></td><td>上绿光模组电流14</td><td><%=sUGC14%></td><td>下绿光模组电流14</td><td><%=sDGC14%></td><td>上蓝光模组电流14</td><td></td><td>下蓝光模组电流14</td><td></td>
+                    </tr>
+                    <tr>
+                        <td>上红光模组电流15</td> <td><%=sURC15%></td><td>下红光模组电流15</td><td><%=sDRC15%></td><td>上绿光模组电流15</td><td><%=sUGC15%></td><td>下绿光模组电流15</td><td><%=sDGC15%></td><td>上蓝光模组电流15</td><td></td><td>下蓝光模组电流15</td><td></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr><th>总功率</th><th colspan="5"><%=sLI%></th></tr>
+                    </tfoot>
+                </table>
+
 </script>
