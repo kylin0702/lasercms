@@ -146,7 +146,7 @@ class HomeController extends Controller
 
     protected function equGridForClient()
     {
-        return Admin::grid(Equipment::class, function (Grid $grid) {
+        /*return Admin::grid(Equipment::class, function (Grid $grid) {
             $phone=Admin::user()->username;//用户登陆帐号为手机号码
             $client=Client::where("Phone","=",$phone)->get();
             $ids=[];
@@ -179,7 +179,12 @@ class HomeController extends Controller
                     $v=$this->RemainTime+$this->GiftTime;
                 return "<i class='fa fa-clock-o'></i> ".$v."小时";
             });
-        });
+        });*/
+        $username=Admin::user()->username;
+        $clients=Client::with(['hasOneArea','hasOneEngineer'])
+            ->where("Phone","=",$username)
+            ->paginate(10);
+        return view("client.index",["clients"=>$clients]);
     }
     protected function equGridForEngineer()
     {
@@ -189,7 +194,7 @@ class HomeController extends Controller
                 ->where("ClientName","like",'%'.request("name").'%')
                 ->where("Phone","like",'%'.request("phone").'%')
                 ->paginate(10);
-            return view("admin.engineer",["clients"=>$clients]);
+            return view("engineer.index",["clients"=>$clients]);
     }
     protected function equGridForAgent()
     {
@@ -199,7 +204,7 @@ class HomeController extends Controller
             ->where("ClientName","like",'%'.request("name").'%')
             ->where("Phone","like",'%'.request("phone").'%')
             ->paginate(10);
-        return view("admin.agent",["clients"=>$clients]);
+        return view("agent.index",["clients"=>$clients]);
     }
 
 
