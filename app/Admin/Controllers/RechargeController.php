@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\MessageBag;
+use PHPUnit\Util\Json;
 use Symfony\Component\Debug\Debug;
 use Encore\Admin\Widgets\Table;
 use App\Admin\Extensions\RechargeExporter;
@@ -499,4 +500,13 @@ EOT
          admin_toastr('充值成功！','success');
         return redirect("/admin/recharges");
     }
+    //
+    function getRecharge(Request $request){
+        $eid=$request->get("eid");
+        $result = Recharge::where(function($query) use($eid) {
+            $query->where('EquID', '=', $eid)->where("Results","=","1");
+        })->get();
+        return  $result;
+    }
+
 }

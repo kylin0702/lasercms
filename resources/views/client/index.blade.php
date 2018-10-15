@@ -57,6 +57,7 @@
                         <th>光源序列</th>
                         <th>光源型号</th>
                         <th>剩余时长</th>
+                        <th>累计充值</th>
                         <th>光源状态</th>
                         <th>最后通讯时间</th>
                         <th>操作</th>
@@ -69,7 +70,22 @@
     </div><!-- /.box -->
 @endforeach
 {!!$clients->links()!!}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width: 1400px;">
+        <div class="modal-content" id="app">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+            </div>
+            <div class="modal-body" id="status-table">
 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $("[data-widget='collapse']").on('click',function(){
         var collapse=$(this);
@@ -80,7 +96,6 @@
             var equipment = "";
             $(data).each(function (i, e) {
                 var status="";
-
                 var remainTime=parseInt(e.RemainTime)+parseInt(e.GiftTime);//剩余时间等购买时间与赠送时间
                 var reviewtime=new Date(e.ReviewTime);//最后通讯时间
                 var now=new Date();
@@ -109,11 +124,12 @@
                 equipment += "<tr>";
                 equipment += "<td>" + e.NumBer + "</td>";
                 equipment += "<td>" + e.EquNum + "</td>";
-                equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
-                equipment += "<td>" + remainTime + "</td>"
+                equipment += "<td>" + e.has_one_equ_type.Name + "</td>";
+                equipment += "<td>" + remainTime + "</td>";
+                equipment += "<td>" + e.TotalTime+ "</td>";
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
-                equipment += "<td><a href='javascript:void(0);' class='btn btn-sm btn-info btn-recharge'>查看充值记录</a>  ";
+                equipment += "<td><a href='javascript:void(0);' class='btn btn-sm btn-info btn-recharge' data-toggle='modal' data-target='#myModal'>查看充值记录</a>  ";
                 equipment += "<a href='javascript:void(0);' class='btn btn-sm btn-success btn-report'>导出时长报表</a></td>";
                 equipment += "</tr>";
             });

@@ -7,6 +7,7 @@ use App\Admin\Models\Client;
 use App\Admin\Models\Equipment;
 use App\admin\Models\EquStatus;
 use App\Admin\Models\EquType;
+use App\admin\Models\Recharge;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -396,7 +397,13 @@ EOT
     //通过客户ID返回光源
     public function getEquipment(Request $request){
         $clientid = $request->get('ClientID');
-        return Equipment::with("hasOneEquType")->where('ClientID',"=", $clientid)->get();
+        $equipment1=Equipment::with("hasOneEquType")->where('ClientID',"=", $clientid)->get()->toArray();
+        $equipment2=[];
+        foreach ($equipment1 as $v){
+            $v["TotalTime"]=Recharge::all(["EquID","RechTime"])->where("EquID","=",$v['ID'])->sum('RechTime');
+           array_push($equipment2,$v);
+        }
+       return $equipment2;
     }
 
 }

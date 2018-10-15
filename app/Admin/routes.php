@@ -36,6 +36,7 @@ Route::group([
     $router->get('recharges/batchCreate', "RechargeController@batchCreate");
     $router->get('recharges/sms', "RechargeController@sms");
     $router->post('recharges/batchRecharge', "RechargeController@batchRecharge");
+    $router->get('recharges/getRecharge', "RechargeController@getRecharge");
     $router->resource('recharges', RechargeController::class);
     #异常记录
     $router->resource('abnormas', AbnormaController::class);
