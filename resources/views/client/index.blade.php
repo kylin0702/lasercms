@@ -33,21 +33,10 @@
         <div class="box-body">
             <div class="row">
                 <div class="col-lg-2"><i class="fa fa-star"></i> 用户编号:{{$v->ClientNum}}</div>
-                <div class="col-lg-2"><i class="fa fa-user"></i> 法人名称:{{$v->Owner}}</div>
+                <div class="col-lg-2"><i class="fa fa-user"></i> 联系人:{{$v->Owner}}</div>
                 <div class="col-lg-2"><i class="fa fa-mobile"></i> 联系方式:{{$v->Phone}}</div>
                 <div class="col-lg-2"><i class="fa fa-sitemap"></i> 所属区域:{{$v->hasOneArea->AreaName}}</div>
-                <div class="col-lg-2"><i class="fa fa-calendar-check-o"></i>注册时间:{{date("Y-m-d",strtotime($v->UpdateTime))}}</div>
-                <div class="col-lg-2"><i class="fa fa-check"></i>审核状态:{{$v->Review}}</div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4"><i class="fa fa-map-marker"></i> 客户地址:{{$v->Adress}}</div>
-                <div class="col-lg-2"></div>
-                <div class="col-lg-2">
-                </div>
-                <div class="col-lg-2">
-                </div>
-                <div class="col-lg-2">
-                </div>
+                <div class="col-lg-4"><i class="fa fa-calendar-check-o"></i>注册时间:{{date("Y-m-d",strtotime($v->UpdateTime))}}</div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
@@ -71,14 +60,24 @@
 @endforeach
 {!!$clients->links()!!}
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document" style="width: 1400px;">
+    <div class="modal-dialog" role="document" >
         <div class="modal-content" id="app">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel"></h4>
             </div>
-            <div class="modal-body" id="status-table">
-
+            <div class="modal-body" >
+                <table id="recharge-table" class="table table-bordered table-responsive">
+                    <thead>
+                        <tr>
+                            <th><i class="fa fa-clock-o"></i> 充值时间</th>
+                            <th><i class="fa fa-camera-retro"></i> 充值时长</th>
+                            <th><i class="fa fa-list"></i> 充值类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -125,34 +124,61 @@
                 equipment += "<td>" + e.NumBer + "</td>";
                 equipment += "<td>" + e.EquNum + "</td>";
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>";
-                equipment += "<td>" + remainTime + "</td>";
-                equipment += "<td>" + e.TotalTime+ "</td>";
+                equipment += "<td>" + remainTime + "小时</td>";
+                equipment += "<td>" + e.TotalTime+ "小时</td>";
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
-                equipment += "<td><a href='javascript:void(0);' class='btn btn-sm btn-info btn-recharge' data-toggle='modal' data-target='#myModal'>查看充值记录</a>  ";
-                equipment += "<a href='javascript:void(0);' class='btn btn-sm btn-success btn-report'>导出时长报表</a></td>";
+                equipment += "<td><a href='javascript:void(0);' class='btn btn-sm btn-info btn-recharge' data-number='"+e.NumBer+"' data-eid='"+e.ID+"'>查看充值记录</a>  ";
                 equipment += "</tr>";
             });
             content.html(equipment);
             //删除光源
-            $('.btn-del').on('click',function(){
+            $('.btn-recharge').on('click',function(){
                 var eid=$(this).attr("data-eid");
-                if(confirm("是否确定删除本台光源")){
-                    $.ajax({
-                        url:"/admin/equipments/"+eid,
-                        method:"delete",
-                        success:function (data) {
-                            if(data.status){
-                                alert(data.message);
-                                collapse.trigger('click');
-                                window.setTimeout(function () {
-                                    collapse.trigger('click');
-                                },1000);
+                $('#myModalLabel').html($(collapse).html()+'-'+$(this).attr("data-number"))
+                $.get('/admin/recharges/getRecharge',{eid:eid},function(result){
+                    $("#recharge-table").find("tbody").html('');//清空表格内容
+                    if(result.length>0){
+                        $(result).each(function (i,e) {
+                            var updatetime=new Date(e.UpdateTime.date);
+                            updatetime=dateFtt("yyyy-MM-dd hh:mm:ss",updatetime);
+                            var method="";
+                            if(e.RechTime<0){
+                                method="保底扣费";
                             }
-                        }
-                    });
-                }
+                            else{
+                                method=e.Method==0?"用户充值":"优惠赠送";
+                            }
+                            var content="<tr><td>"+updatetime+"</td>";
+                                content+="<td>"+e.RechTime+"小时</td>";
+                                content+="<td>"+method+"</td></tr>";
+                            $("#recharge-table").find("tbody").append(content);
+                        });
+                    }
+                });
+                $('#myModal').modal();
             });
         }, "json");
     });
+</script>
+<script>
+    /**************************************时间格式化处理************************************/
+    function dateFtt(fmt,date)
+    { //author: meizz
+        var o = {
+            "M+" : date.getMonth()+1,                 //月份
+            "d+" : date.getDate(),                    //日
+            "h+" : date.getHours(),                   //小时
+            "m+" : date.getMinutes(),                 //分
+            "s+" : date.getSeconds(),                 //秒
+            "q+" : Math.floor((date.getMonth()+3)/3), //季度
+            "S"  : date.getMilliseconds()             //毫秒
+        };
+        if(/(y+)/.test(fmt))
+            fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+        for(var k in o)
+            if(new RegExp("("+ k +")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        return fmt;
+    }
 </script>

@@ -203,7 +203,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "</tr>";
 
             });
-            equipment+="<tr><td colspan='10'> <a href='javascript:void(0)' class='btn btn-sm btn-danger btn-batchCharge' data-cid="+ClientID+" >批量充值</a></td></tr>";
+            equipment+="@if(Admin::user()->inRoles(['administrator']))<tr><td colspan='10'> <a href='javascript:void(0)' class='btn btn-sm btn-danger btn-batchCharge' data-cid="+ClientID+" >批量充值</a></td></tr>@endif";
             content.html(equipment);
             //删除光源
             $('.btn-del').on('click',function(){
@@ -309,7 +309,7 @@ function formatMinutes(StatusMinute){
 }
 
 </script>
-<script src="https://cdn.bootcss.com/template_js/0.7.1/template.min.js"></script>
+<<script src="/vendor/templatejs/template.min.js"></script>
 <script>
     function getStatus(a) {
         var snu=$(a).attr("data-snu");

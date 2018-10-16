@@ -504,7 +504,7 @@ EOT
     function getRecharge(Request $request){
         $eid=$request->get("eid");
         $result = Recharge::where(function($query) use($eid) {
-            $query->where('EquID', '=', $eid)->where("Results","=","1");
+            $query->where('EquID', '=', $eid);
         })->get();
         return  $result;
     }
