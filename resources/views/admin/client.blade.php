@@ -309,7 +309,7 @@ function formatMinutes(StatusMinute){
 }
 
 </script>
-<<script src="/vendor/templatejs/template.min.js"></script>
+<script src="/vendor/templatejs/template.min.js"></script>
 <script>
     function getStatus(a) {
         var snu=$(a).attr("data-snu");

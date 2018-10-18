@@ -3,8 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Models\Area;
-use App\admin\Models\Client;
-use App\admin\Models\Equipment;
+use App\Admin\Models\Client;
+use App\Admin\Models\Equipment;
 use App\User;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Auth\Database\Permission;

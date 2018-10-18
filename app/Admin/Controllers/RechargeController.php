@@ -247,8 +247,8 @@ class RechargeController extends Controller
                         else{
                             alert("发送失败!");
                         }
-                        
                     });
+                    $(this).attr('disabled','disabled');
                 });
                  $('#phone1').on('input propertychange',function(){
                        if(!codes.length==0){
@@ -340,7 +340,7 @@ EOT
                 });
                 $('.sms').on('click',function(){
                     var rechtime=parseFloat($('#time').val());  
-                    $.get('/admin/recharges/sms',{clientname:clientname,rechtime:rechtime,room:room},function(data){
+                   $.get('/admin/recharges/sms',{clientname:clientname,rechtime:rechtime,room:room},function(data){
                         if(data){
                             for(var key in data){
                                 codes.push(data[key]);
@@ -351,8 +351,8 @@ EOT
                         else{
                             alert("发送失败!");
                         }
-                        
                     });
+                    $(this).attr('disabled','disabled');
                 });
                  $('#phone1').on('input propertychange',function(){
                        if(!codes.length==0){
