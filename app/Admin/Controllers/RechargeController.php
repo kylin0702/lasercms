@@ -7,6 +7,7 @@ use App\Admin\Models\Equipment;
 use App\Admin\Models\EquType;
 use App\admin\Models\Recharge;
 
+use App\Admin\Models\UpAndDown;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -17,6 +18,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\MessageBag;
+use Maatwebsite\Excel\Classes\PHPExcel;
+use Maatwebsite\Excel\Facades\Excel;
 use PHPUnit\Util\Json;
 use Symfony\Component\Debug\Debug;
 use Encore\Admin\Widgets\Table;
@@ -247,8 +250,8 @@ class RechargeController extends Controller
                         else{
                             alert("发送失败!");
                         }
-                        
                     });
+                    $(this).attr('disabled','disabled');
                 });
                  $('#phone1').on('input propertychange',function(){
                        if(!codes.length==0){
@@ -340,7 +343,7 @@ EOT
                 });
                 $('.sms').on('click',function(){
                     var rechtime=parseFloat($('#time').val());  
-                    $.get('/admin/recharges/sms',{clientname:clientname,rechtime:rechtime,room:room},function(data){
+                   $.get('/admin/recharges/sms',{clientname:clientname,rechtime:rechtime,room:room},function(data){
                         if(data){
                             for(var key in data){
                                 codes.push(data[key]);
@@ -351,8 +354,8 @@ EOT
                         else{
                             alert("发送失败!");
                         }
-                        
                     });
+                    $(this).attr('disabled','disabled');
                 });
                  $('#phone1').on('input propertychange',function(){
                        if(!codes.length==0){
@@ -500,13 +503,37 @@ EOT
          admin_toastr('充值成功！','success');
         return redirect("/admin/recharges");
     }
-    //
+    //根据光源ID取得充值记录
     function getRecharge(Request $request){
         $eid=$request->get("eid");
         $result = Recharge::where(function($query) use($eid) {
             $query->where('EquID', '=', $eid);
         })->get();
         return  $result;
+    }
+    //根据客户ID、开始时间和结束时间导出各厅使用时长
+    function  exportExcel(){
+        $filename="时长使用报表".date("Ymd").rand(100,999);
+        return Excel::create($filename, function($excel) {
+            $excel->sheet('Sheetname', function($sheet) {
+                $data=Equipment::where('EquNum','=','I00001180613')->with(['upanddown'=>function($query){
+                    $query->where('TheTime','>',0);
+                }])->get()->toArray();
+                dd($data);
+                $sheet->row(1, array(
+                    '光源类型', '客户名称','客户编号','光源编号','剩余时间','厅号'
+                ));
+
+                $rows = collect($data->toArray())->map(function ($item) {
+                    $data=array_dot($item);
+
+                    $data_only=array_only($item,['ID','ClientNum']);
+
+                    return $data_only;
+                });
+                $sheet->rows($rows);
+            });
+        })->export('xls');
     }
 
 }

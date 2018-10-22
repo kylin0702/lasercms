@@ -14,7 +14,6 @@ class YearDurtExporter extends AbstractExporter
             $excel->sheet('Sheetname', function($sheet) {
                 $rows = collect($this->getData())->map(function ($item) {
                     $data=array_dot($item);
-                    dd($item);
                     $data_only=array_only($data,['has_one_client.ClientNum','has_one_client.ClientName','NumBer','has_one_equ_type.Name','EquNum','RemainTime']);
                     return array_reverse($data_only);
                 });

@@ -28,6 +28,11 @@ class Equipment extends Model
         return $this->hasOne(Client::class,'ID',"ClientID");
     }
 
+    #关联upanddown模型
+    public function upanddown()
+    {
+        return $this->hasMany(UpAndDown::class,'EquNum',"EquNum");
+    }
 
 
 }
