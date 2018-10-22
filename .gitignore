@@ -17,3 +17,4 @@ yarn-error.log
 !/vendor/encore/laravel-admin/src/Controllers/MenuController.php
 !/vendor/laravel-admin-ext/config/
 !/vendor/encore/laravel-admin/src/Grid/Exporters/CsvExporter.php
+!/config/database.php
