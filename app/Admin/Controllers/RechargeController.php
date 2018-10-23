@@ -515,19 +515,25 @@ EOT
     function  exportExcel(){
         $filename="时长使用报表".date("Ymd").rand(100,999);
         return Excel::create($filename, function($excel) {
-            $excel->sheet('Sheetname', function($sheet) {
-                $data=Equipment::where('EquNum','=','I00001180613')->with(['upanddown'=>function($query){
-                    $query->where('TheTime','>',0);
-                }])->get()->toArray();
-                dd($data);
+            $clientid= \request("clientid");
+            $excel->sheet(Client::find($clientid)->ClientName, function($sheet) use($clientid){
+                $sheet->setAutoSize(true);
+                $equipiments_array=[];//定义空数组存放光源信息
+                $equipiments=Equipment::where('ClientID','=',$clientid)->get();
+                foreach ($equipiments as $e){
+                    $total=$e->upanddown()->where('TheTime','>',0)->sum('TheTime');
+                    $a=$e->toArray();
+                    $a['Total']=$total;
+                    array_push($equipiments_array,$a);//把统计的光源播放时长写入光源信息数组
+                }
+
                 $sheet->row(1, array(
-                    '光源类型', '客户名称','客户编号','光源编号','剩余时间','厅号'
+                    '厅号','光源编号','截止时间','使用时长(小时)'
                 ));
 
-                $rows = collect($data->toArray())->map(function ($item) {
-                    $data=array_dot($item);
+                $rows = collect($equipiments_array)->map(function ($item) {
 
-                    $data_only=array_only($item,['ID','ClientNum']);
+                    $data_only=array_only($item,['NumBer','EquNum','ReviewTime','Total']);
 
                     return $data_only;
                 });
@@ -535,5 +541,4 @@ EOT
             });
         })->export('xls');
     }
-
 }

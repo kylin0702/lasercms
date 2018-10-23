@@ -321,74 +321,7 @@ EOT
             );
         });
     }
-    /*public function getUnbindEqu($clientid){
-       $unbinder=Equipment::where('ClientID','=',0)->leftJoin('EquType','Equipment.EquTypeID','=','EquType.ID')->get(['Equipment.ID','EquNum','EquType.Name','EquType.Price'])->toArray();
-        $headers = ['ID','光源编号','光源类型','单价','绑定'];
-        $rows =[];
-        foreach ($unbinder as $row){
-            $equid=$row['ID'];
-            $row['Bind']="<button class='btn btn-success bind' data-clientid='$clientid' data-equid='$equid'>绑定 <i class='fa fa-spin fa-spinner hidden'></i></button>";
-            array_push($rows,$row);
-        }
-        $table = new Table($headers, $rows);
-        $table->class("table table-bordered table-responsive");
 
-        //绑定处理
-        Admin::script(
-            <<<EOT
-          $(".bind").on("click",function(){
-                   var equid=$(this).attr('data-equid');
-                   var clientid=$(this).attr('data-clientid');
-                   var room=$("[name='NumBer']").val();
-                    if($('input[name="NumBer"]').val()==""){
-                      alert('请输入厅号');
-                    }
-                    else{
-                      $(this).find("i").removeClass("hidden");
-                      $.ajax({
-                        url: '/admin/equipments/'+equid+'/bind',
-                        type: 'POST',
-                        data:{"ClientID":clientid,NumBer:room},
-                        success: function(data) {
-                               if(data.ClientID){
-                                alert("绑定成功！");
-                                window.location.reload();
-                               }
-                        },
-                      });
-                    }
-
-                });
-EOT
-        );
-        return $table->render();
-    }*/
-
-/*    //客户绑定光源操作
-    public function bind(Request $request,$ID)
-    {
-        $equipment=Equipment::find($ID);
-        $equipment->ClientID=$request->input("ClientID");
-        $equipment->NumBer=$request->input("NumBer");
-        $equipment->save();
-
-        return response()->json($equipment, 200);
-    }
-    public function unbind($ID)
-    {
-        $equipment=Equipment::find($ID);
-        $equipment->ClientID=0;
-        $equipment->NumBer="";
-        $equipment->RemainTime=0;
-        $equipment->ReviewTime=0;
-        $equipment->Precharge=0;
-        $equipment->IsPre="N";
-        $equipment->IsSend="N";
-        $equipment->save();
-        return response()->json($equipment, 200);
-    }
-    //*/
-    //通过客户ID返回厅号
     public function getRoom(Request $request){
         $clientid = $request->get('q');
         return Equipment::where('ClientID',"=", $clientid)->get(["ID","NumBer"]);
