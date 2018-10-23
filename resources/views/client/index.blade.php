@@ -37,7 +37,7 @@
                 <div class="col-lg-2"><i class="fa fa-mobile"></i> 联系方式:{{$v->Phone}}</div>
                 <div class="col-lg-2"><i class="fa fa-sitemap"></i> 所属区域:{{$v->hasOneArea->AreaName}}</div>
                 <div class="col-lg-2"><i class="fa fa-calendar-check-o"></i>注册时间:{{date("Y-m-d",strtotime($v->UpdateTime))}}</div>
-                <div class="col-lg-2"><a class="btn btn-xs btn-adn " href="/admin/recharges/exportExcel?clientid={{$v->ID}}" target="_blank"><i class="fa fa-file-excel-o"></i> 导出使用时长报表</a></div>
+                <div class="col-lg-2"><a class="btn btn-xs btn-adn hidden " href="/admin/recharges/exportExcel?clientid={{$v->ID}}" target="_blank"><i class="fa fa-file-excel-o"></i> 导出使用时长报表</a></div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
