@@ -290,7 +290,7 @@ EOT
                 'on' => ['value' => '是', 'text' => '是', 'color' => 'success'],
                 'off' => ['value' => '否', 'text' => '否', 'color' => 'danger'],
             ];
-            $form->switch('IsBuy', '是否购买')->states($isbuy)->default("否");
+            $form->radio('IsBuy', '销售类型')->options(["否"=>"租赁","是"=>"销售","测试"=>"内部测试"])->default("否");
             $form->hidden("EntryPer")->default(function (){
                return Admin::user()->id;
             });
@@ -330,10 +330,17 @@ EOT
     //通过客户ID返回光源
     public function getEquipment(Request $request){
         $clientid = $request->get('ClientID');
-        $equipment1=Equipment::with("hasOneEquType")->where('ClientID',"=", $clientid)->get()->toArray();
+        $equipment1=Equipment::with("hasOneEquType")->where('ClientID',"=", $clientid)->get();
         $equipment2=[];
         foreach ($equipment1 as $v){
-            $v["TotalTime"]=Recharge::all(["EquID","RechTime"])->where("EquID","=",$v['ID'])->sum('RechTime');
+            //取得当年使用时间长
+            $year=date('Y');
+            $yeartotal=$v->upanddown()->whereRaw("TheTime>0 and Year(Date)=$year")->sum('TheTime');
+            //充值总时长
+            $totaltime=Recharge::all(["EquID","RechTime"])->where("EquID","=",$v['ID'])->sum('RechTime');
+            $v->toArray();
+            $v["YearTotal"]=$yeartotal;
+            $v["TotalTime"]=$totaltime;
            array_push($equipment2,$v);
         }
        return $equipment2;

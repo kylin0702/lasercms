@@ -513,16 +513,23 @@ EOT
     }
     //根据客户ID、开始时间和结束时间导出各厅使用时长
     function  exportExcel(){
-        $filename="时长使用报表".date("Ymd").rand(100,999);
+        $filename=\request("month")."月时长使用报表".date("Ymd").rand(100,999);//文件名:月份+月时长使用报表+当前日期+3位随机数
         return Excel::create($filename, function($excel) {
             $clientid= \request("clientid");
-            $excel->sheet(Client::find($clientid)->ClientName, function($sheet) use($clientid){
-                $sheet->setAutoSize(true);
+            $month= \request("month");
+            $year=date('Y');
+            $excel->sheet(Client::find($clientid)->ClientName, function($sheet) use($clientid,$year,$month){
+                $sheet->setWidth(['A'=>10,'B'=>40,'C'=>40,'D'=>20]);
                 $equipiments_array=[];//定义空数组存放光源信息
                 $equipiments=Equipment::where('ClientID','=',$clientid)->get();
                 foreach ($equipiments as $e){
-                    $total=$e->upanddown()->where('TheTime','>',0)->sum('TheTime');
+                    //取得当前月份大于零的扣费时长相加,统计范围：上月26号-本月25号
+                    $lastmonth=$month-1;
+                    $rang1=$year."-".$lastmonth."-26";
+                    $rang2=$year."-".$month."-25";
+                    $total=$e->upanddown()->whereRaw("TheTime>0 And Date Between '$rang1' And '$rang2'")->sum('TheTime');
                     $a=$e->toArray();
+                    $a["CloseTime"]=date("Y-m-d h:i:s");//截止到当前时间
                     $a['Total']=$total;
                     array_push($equipiments_array,$a);//把统计的光源播放时长写入光源信息数组
                 }
@@ -533,7 +540,7 @@ EOT
 
                 $rows = collect($equipiments_array)->map(function ($item) {
 
-                    $data_only=array_only($item,['NumBer','EquNum','ReviewTime','Total']);
+                    $data_only=array_only($item,['NumBer','EquNum','CloseTime','Total']);
 
                     return $data_only;
                 });

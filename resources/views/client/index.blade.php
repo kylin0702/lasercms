@@ -36,8 +36,14 @@
                 <div class="col-lg-2"><i class="fa fa-user"></i> 联系人:{{$v->Owner}}</div>
                 <div class="col-lg-2"><i class="fa fa-mobile"></i> 联系方式:{{$v->Phone}}</div>
                 <div class="col-lg-2"><i class="fa fa-sitemap"></i> 所属区域:{{$v->hasOneArea->AreaName}}</div>
-                <div class="col-lg-2"><i class="fa fa-calendar-check-o"></i>注册时间:{{date("Y-m-d",strtotime($v->UpdateTime))}}</div>
-                <div class="col-lg-2"><a class="btn btn-xs btn-adn hidden " href="/admin/recharges/exportExcel?clientid={{$v->ID}}" target="_blank"><i class="fa fa-file-excel-o"></i> 导出使用时长报表</a></div>
+                <div class="col-lg-4 hidden">
+                    <select class="custom-select month-select">
+                        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
+                        <option value="5">5月</option><option value="6" selected>6月</option><option value="7">7月</option> <option value="8">8月</option>
+                        <option value="9">9月</option><option value="10">10月</option> <option value="11">11月</option><option value="12">12月</option>
+                    </select>
+                    <a class="btn btn-xs btn-adn btn-export" href="javascript:void(0)" target="_blank" data-clientid="{{$v->ID}}"><i class="fa fa-file-excel-o"></i>导出各厅月使用时长报表</a> (统计时间段：上月26日-本月25日)
+                </div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
@@ -47,6 +53,7 @@
                         <th>光源序列</th>
                         <th>光源型号</th>
                         <th>剩余时长</th>
+                        <th>今年使用时长</th>
                         <th>累计充值</th>
                         <th>光源状态</th>
                         <th>最后通讯时间</th>
@@ -126,6 +133,7 @@
                 equipment += "<td>" + e.EquNum + "</td>";
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>";
                 equipment += "<td>" + remainTime + "小时</td>";
+                equipment += "<td>" + e.YearTotal + "</td>";
                 equipment += "<td>" + e.TotalTime+ "小时</td>";
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
@@ -133,7 +141,7 @@
                 equipment += "</tr>";
             });
             content.html(equipment);
-            //删除光源
+            //查看充值记录
             $('.btn-recharge').on('click',function(){
                 var eid=$(this).attr("data-eid");
                 $('#myModalLabel').html($(collapse).html()+'-'+$(this).attr("data-number"))
@@ -160,6 +168,12 @@
                 $('#myModal').modal();
             });
         }, "json");
+    });
+    //导出选择月份的使用时长报表
+    $('.btn-export').on('click',function(){
+        var clientid=$(this).attr("data-clientid");
+        var month=$(this).prev(".month-select").val();
+        window.open("/admin/recharges/exportExcel?clientid="+clientid+"&month="+month);
     });
 </script>
 <script>

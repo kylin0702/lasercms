@@ -70,10 +70,15 @@
                 <div class="col-lg-2">
                     <i class="fa fa-sitemap"></i>  代理商:{{empty($v->hasOneAgent)?"未绑定":$v->hasOneAgent->name}}
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-4">
+                    <select class="custom-select month-select">
+                        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
+                        <option value="5">5月</option><option value="6" selected>6月</option><option value="7">7月</option> <option value="8">8月</option>
+                        <option value="9">9月</option><option value="10">10月</option> <option value="11">11月</option><option value="12">12月</option>
+                    </select>
+                    <a class="btn btn-xs btn-adn btn-export" href="javascript:void(0)" target="_blank" data-clientid="{{$v->ID}}"><i class="fa fa-file-excel-o"></i>导出各厅月使用时长报表</a> (统计时间段：上月26日-本月25日)
                 </div>
-                <div class="col-lg-2">
-                </div>
+
             </div>
             <div class="row">
                 <div class="col-lg-4">
@@ -115,8 +120,9 @@
                         <th>厅号</th>
                         <th>光源序列</th>
                         <th>光源型号</th>
-                        <th>是否购买</th>
+                        <th>销售类型</th>
                         <th>剩余时长</th>
+                        <th>今年使用时长</th>
                         <th>光源状态</th>
                         <th>最后通讯时间</th>
                         <th>距离当前时长</th>
@@ -158,6 +164,10 @@ $("[data-widget='collapse']").on('click',function(){
             var equipment = "";
             $(data).each(function (i, e) {
                 var status="";
+                var isbuy="租赁";
+                if(e.ISBuy!="否"){
+                    if(e.ISBuy=="是"){isbuy="销售";}else{isbuy="测试"}
+                }
                 var href1="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=0";
                 var href2="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=1";
                 var remainTime=parseInt(e.RemainTime)+parseInt(e.GiftTime);//剩余时间等购买时间与赠送时间
@@ -191,8 +201,9 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + e.NumBer + "</td>";
                 equipment += "<td>" + e.EquNum + "</td>";
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
-                equipment += "<td>" + e.ISBuy + "</td>"
+                equipment += "<td>" +isbuy + "</td>"
                 equipment += "<td>" + remainTime + "</td>"
+                equipment += "<td>" + e.YearTotal + "</td>"
                 equipment += "<td>" + status + "</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
                 equipment += "<td>" +formatMinutes(overtime) + "</td>";
@@ -203,7 +214,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "</tr>";
 
             });
-            equipment+="@if(Admin::user()->inRoles(['administrator']))<tr><td colspan='10'> <a href='javascript:void(0)' class='btn btn-sm btn-danger btn-batchCharge' data-cid="+ClientID+" >批量充值</a></td></tr>@endif";
+            equipment+="@if(Admin::user()->inRoles(['administrator']))<tr><td colspan='12'> <a href='javascript:void(0)' class='btn btn-sm btn-danger btn-batchCharge' data-cid="+ClientID+" >批量充值</a></td></tr>@endif";
             content.html(equipment);
             //删除光源
             $('.btn-del').on('click',function(){
@@ -288,6 +299,13 @@ $(".btn-bindAgent").on('click',function () {
         }
     }, "json");
 });
+//导出选择月份的使用时长报表
+$('.btn-export').on('click',function(){
+    var clientid=$(this).attr("data-clientid");
+    var month=$(this).prev(".month-select").val();
+    window.open("/admin/recharges/exportExcel?clientid="+clientid+"&month="+month);
+});
+//时间格式化
 function formatMinutes(StatusMinute){
     var day=parseInt(StatusMinute/60/24);
     var hour=parseInt(StatusMinute/60%24);
