@@ -64,8 +64,8 @@ class EquipmentController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('修改光源信息');
+            $content->description('');
 
             $content->body($this->form()->edit($id));
         });
@@ -261,8 +261,19 @@ EOT
     protected function form()
     {
         return Admin::form(Equipment::class, function (Form $form) {
+            $method=request()->route()->getActionMethod();//获取路由方法,判断是增加还是修改
+            if($method=="create") {
+                $form->text("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum",['required'=>'请输入光源编号']);
+            }
+            else{
+                //$form->display("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum",['required'=>'请输入光源编号']);
+                $form->html(function (){
+                    $html=" <p class='no-border form-control'> $this->EquNum</p>";
+                    return $html;
+                    },"光源编号")->setWidth(2);
+            }
 
-            $form->text("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum",['required'=>'请输入光源编号']);
+            $form->text("AssetNo","资产编号")->setWidth(2);
             $clientid=request("cid");
             $form->select("ClientID","客户名称")->options(Client::all()->pluck("ClientName","ID"))->default($clientid)->setWidth(2);
             $form->text("NumBer","厅号")->setWidth(2);

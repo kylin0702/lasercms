@@ -87,8 +87,17 @@ class HomeController extends Controller
                     });
                 });
             }
+            //销售人员显示内容
+            elseif (Admin::user()->inRoles(['seller'])){
+                $content->row(function (Row $row) {
+                    $row->column(12, function (Column $column) {
+                        $column->append($this->equGridForSeller());
+                    });
+                });
+            }
         });
     }
+    //异常数据
     protected function abnormaGrid()
     {
         return Admin::grid(Abnorma::class, function (Grid $grid) {
@@ -106,7 +115,7 @@ class HomeController extends Controller
             $grid->UpdateTime("登记时间");
         });
     }
-
+    //剩余时间小于500小时数据
     protected function equGrid()
     {
         return Admin::grid(Equipment::class, function (Grid $grid) {
@@ -123,7 +132,7 @@ class HomeController extends Controller
             $grid->RemainTime('剩余时长')->display(function ($v){return "<i class='fa fa-clock-o'></i> ".$v."小时";});
         });
     }
-
+    //最新客户数据
     protected function clientGrid()
     {
         return Admin::grid(Client::class, function (Grid $grid) {
@@ -143,49 +152,16 @@ class HomeController extends Controller
 
         });
     }
-
+    //客户登陆显示页面
     protected function equGridForClient()
     {
-        /*return Admin::grid(Equipment::class, function (Grid $grid) {
-            $phone=Admin::user()->username;//用户登陆帐号为手机号码
-            $client=Client::where("Phone","=",$phone)->get();
-            $ids=[];
-            foreach ($client as $v){
-                array_push($ids,$v->ID);
-            }
-            $grid->model()->whereIn("ClientID",$ids);
-            $grid->disablePagination()->disableCreateButton()->disableExport()->disableRowSelector()->disableActions()->disableFilter();
-            $grid->tools->disableBatchActions();
-            $grid->tools->disableRefreshButton();
-            $grid->tools->append(" <i class='fa fa-camera'></i> 光源信息");
-            $grid->disableRowSelector();
-            $grid->hasOneClient()->ClientName("影城名称");
-            $grid->NumBer('影厅号');
-            $grid->hasOneEquType()->Name('光源型号');
-            $grid->EquStatus("光源状态")->display(function($v){
-                $reviewtime=strtotime($this->ReviewTime);
-                $now=time();
-                //4分钟未通讯显示离线
-               if(($reviewtime+240)<$now){
-                   return "<label class='label label-default'>离线</label>";
-               }
-               else{
-                    $styles=["Standby"=>"label-info","LampOn"=>"label-success","UnActive"=>"label-warning"];
-                    $names=["Standby"=>"待机中","LampOn"=>"放映中","UnActive"=>"未激活"];
-                    return "<label class='label $styles[$v]'>$names[$v]</label>";
-                }
-            });
-            $grid->RemainTime('剩余时长')->display(function (){
-                    $v=$this->RemainTime+$this->GiftTime;
-                return "<i class='fa fa-clock-o'></i> ".$v."小时";
-            });
-        });*/
         $username=Admin::user()->username;
         $clients=Client::with(['hasOneArea','hasOneEngineer'])
             ->where("Phone","=",$username)
             ->paginate(10);
         return view("client.index",["clients"=>$clients]);
     }
+    //工程师登陆显示页面
     protected function equGridForEngineer()
     {
             $username=Admin::user()->username;
@@ -196,6 +172,7 @@ class HomeController extends Controller
                 ->paginate(10);
             return view("engineer.index",["clients"=>$clients]);
     }
+    //代理商登陆显示页面
     protected function equGridForAgent()
     {
         $username=Admin::user()->username;
@@ -205,6 +182,17 @@ class HomeController extends Controller
             ->where("Phone","like",'%'.request("phone").'%')
             ->paginate(10);
         return view("agent.index",["clients"=>$clients]);
+    }
+   //销售人员登陆显示页面
+    protected function equGridForSeller()
+    {
+        $username=Admin::user()->username;
+        $clients=Client::with(['hasOneArea','hasOneEngineer'])
+            ->where("seller","=",$username)
+            ->where("ClientName","like",'%'.request("name").'%')
+            ->where("Phone","like",'%'.request("phone").'%')
+            ->paginate(10);
+        return view("seller.index",["clients"=>$clients]);
     }
 
 

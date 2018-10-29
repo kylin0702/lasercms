@@ -42,9 +42,10 @@ class ClientController extends Controller
                     ->paginate(10);
             $engineer=Role::with("administrators")->where("slug","=","engineer")->first()->administrators;
             $user=Role::with("administrators")->where("slug","=","agent")->first()->administrators;
+            $seller=Role::with("administrators")->where("slug","=","seller")->first()->administrators;
             $content->header('客户管理');
             $content->description('客户信息列表');
-            $content->body(view("admin.client",["clients"=>$clients,"agent"=>$user,"engineer"=>$engineer]));
+            $content->body(view("admin.client",["clients"=>$clients,"agent"=>$user,"engineer"=>$engineer,"seller"=>$seller]));
             /*Admin::script(
                 <<<EOT
             $(".panel").removeClass('box-primary').css("margin-bottom","10px");
@@ -413,6 +414,15 @@ EOT
         $client->agent=$request->input("username");
         $client->save();
          return  response()->json($client->agent);
+    }
+    //客户绑定销售人员操作
+    public function bindSeller(\Illuminate\Http\Request $request,$ID)
+    {
+
+        $client=Client::findorfail($ID);
+        $client->seller=$request->input("username");
+        $client->save();
+        return  response()->json($client->seller);
     }
     //发送短信
     public function sms($clientname,$username){

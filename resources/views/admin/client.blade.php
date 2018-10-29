@@ -71,20 +71,10 @@
                     <i class="fa fa-sitemap"></i>  代理商:{{empty($v->hasOneAgent)?"未绑定":$v->hasOneAgent->name}}
                 </div>
                 <div class="col-lg-4">
-                    <select class="custom-select month-select">
-                        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
-                        <option value="5">5月</option><option value="6" selected>6月</option><option value="7">7月</option> <option value="8">8月</option>
-                        <option value="9">9月</option><option value="10">10月</option> <option value="11">11月</option><option value="12">12月</option>
-                    </select>
-                    <a class="btn btn-xs btn-adn btn-export" href="javascript:void(0)" target="_blank" data-clientid="{{$v->ID}}"><i class="fa fa-file-excel-o"></i>导出各厅月使用时长报表</a> (统计时间段：上月26日-本月25日)
+                    <i class="fa fa-user-secret"></i>  销售人员:{{empty($v->hasOneSeller)?"未绑定":$v->hasOneSeller->name}}
                 </div>
-
             </div>
             <div class="row">
-                <div class="col-lg-4">
-                    <a href="/admin/clients/{{$v->ID}}/edit" class="btn btn-sm btn-info">修改信息</a>
-                    <a href="/admin/equipments/create?cid={{$v->ID}}" class="btn btn-sm btn-success">添加光源</a>
-                </div>
                 <div class="col-lg-4">
                     <a  class="btn btn-sm btn-outline-success btn-engineer">绑定工程师</a>
                     <span class="span-engineer hidden">
@@ -111,12 +101,42 @@
                         <button type="button" class="btn btn-sm btn-danger btn-bindAgentCancel">取消</button>
                     </span>
                 </div>
+                <div class="col-lg-4">
+                    <a  class="btn btn-sm btn-outline-success btn-seller">绑定销售人员</a>
+                    <span class="span-seller hidden">
+                        <label>选择销售人员:</label>
+                    <select class="select-seller">
+                        @foreach ($seller as $s)
+                            <option value={{$s->username}}>{{$s->name}}</option>
+                        @endforeach
+                    </select>
+                     <button type="button" class="btn btn-sm btn-warning btn-bindSeller" data-clientid="{{$v->ID}}">绑定 <i class="fa fa-spin fa-spinner hidden"></i></button>
+                        <button type="button" class="btn btn-sm btn-danger btn-bindSellerCancel">取消</button>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <a href="/admin/clients/{{$v->ID}}/edit" class="btn btn-sm btn-info">修改信息</a>
+                    <a href="/admin/equipments/create?cid={{$v->ID}}" class="btn btn-sm btn-success">添加光源</a>
+                </div>
+                <div class="col-lg-4">
+                    <select class="custom-select month-select">
+                        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
+                        <option value="5">5月</option><option value="6" selected>6月</option><option value="7">7月</option> <option value="8">8月</option>
+                        <option value="9">9月</option><option value="10">10月</option> <option value="11">11月</option><option value="12">12月</option>
+                    </select>
+                    <a class="btn btn-xs btn-adn btn-export" href="javascript:void(0)" target="_blank" data-clientid="{{$v->ID}}"><i class="fa fa-file-excel-o"></i>导出各厅月使用时长报表</a> (统计时间段：上月26日-本月25日)
+                </div>
+                <div class="col-lg-4">
+                </div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
                     <table class="table table-responsive table-bordered table-condensed">
                         <thead>
                         <th><input type="checkbox" class="allcheck"/></th>
+                        <th>资产编号</th>
                         <th>厅号</th>
                         <th>光源序列</th>
                         <th>光源型号</th>
@@ -173,6 +193,8 @@ $("[data-widget='collapse']").on('click',function(){
                 var remainTime=parseInt(e.RemainTime)+parseInt(e.GiftTime);//剩余时间等购买时间与赠送时间
                 var reviewtime=new Date(e.ReviewTime);//最后通讯时间
                 var now=new Date();
+                var assetno=" ";
+                if(e.AssetNo!=null){assetno=e.AssetNo;}
                 reviewtime=reviewtime.getTime();//转时间戳
                 now=now.getTime();
                 isOvertime=(reviewtime+240000)<now;//4分钟不通讯显示超时
@@ -198,6 +220,7 @@ $("[data-widget='collapse']").on('click',function(){
                 }
                 equipment += "<tr>";
                 equipment+="<td><input type='checkbox' name='eid' value='"+e.ID+"'/></td>";
+                equipment += "<td>" + assetno + "</td>";
                 equipment += "<td>" + e.NumBer + "</td>";
                 equipment += "<td>" + e.EquNum + "</td>";
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
@@ -210,6 +233,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a>&nbsp;&nbsp;" +
                                 "<a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
+                                "<a href='/admin/equipments/"+e.ID+"/edit' class='btn btn-sm btn-microsoft' >修改</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>详细状态</a>@endif</td>";
                 equipment += "</tr>";
 
@@ -275,6 +299,17 @@ $(".btn-bindAgentCancel").on('click',function () {
     $('.span-agent').addClass("hidden");
 });
 
+//显示绑定销售人员选择框
+$(".btn-seller").on('click',function () {
+    $('.span-seller').removeClass("hidden");
+});
+//隐藏绑定销售人员选择框
+$(".btn-bindSellerCancel").on('click',function () {
+    $('.span-seller').addClass("hidden");
+});
+
+
+
 //绑定工程师操作
 $(".btn-bindEngineer").on('click',function () {
     var clientid=$(this).attr("data-clientid");
@@ -294,6 +329,18 @@ $(".btn-bindAgent").on('click',function () {
     $(this).find("i").removeClass("hidden");
     $.post("/admin/clients/" + clientid + "/bindAgent", {username: agent}, function (data) {
         if (data== agent) {
+            alert("绑定成功!");
+            window.location.reload();
+        }
+    }, "json");
+});
+//绑定销售人员操作
+$(".btn-bindSeller").on('click',function () {
+    var clientid = $(this).attr("data-clientid");
+    var seller =$(this).parent().find(".select-seller").val();
+    $(this).find("i").removeClass("hidden");
+    $.post("/admin/clients/" + clientid + "/bindSeller", {username: seller}, function (data) {
+        if (data== seller) {
             alert("绑定成功!");
             window.location.reload();
         }
