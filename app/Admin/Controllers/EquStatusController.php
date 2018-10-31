@@ -127,4 +127,25 @@ class EquStatusController extends Controller
         $snu = $request->get('s');
         return EquStatus::where('sNU',"=", $snu)->orderby('ID','desc')->first();
     }
+    //通过客户ID返回光源
+    public function exportExcel(Request $request){
+        $filename="光源状态记录(".$request->get('s').")".rand(100,999);//文件名:月份+月时长使用报表+当前日期+3位随机数
+        return Excel::create($filename, function($excel) use ($request) {
+            $snu = $request->get('s');
+            $date1=$request->get('date1');
+            $date2=$request->get('date2');
+            $excel->sheet($snu, function($sheet) use($snu,$date1,$date2){
+                $sheet->setWidth(['A'=>10,'B'=>40,'C'=>40,'D'=>20]);
+                $status=EquStatus::whereRaw("EquNum='$snu' and UpDates Between '$date1' and '$date2'")->get()->toArray();
+                $sheet->row(1, array(
+                    '光源编号','总功率','上红光模组功率','下红光模组功率'
+                ));
+                $rows = collect($status)->map(function ($item) {
+                    $data_only=array_only($item,['sNu','sLI','sURL','sDRL']);
+                    return $data_only;
+                });
+                $sheet->rows($rows);
+            });
+        })->export('xls');
+    }
 }

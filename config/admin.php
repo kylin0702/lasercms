@@ -10,7 +10,7 @@ return [
     /*
      * Logo in admin panel header.
      */
-    'logo' => ' <i class="fa fa-file-movie-o"></i> <b>中科创激光</b>',
+    'logo' => '<img src="logo.png" width="150px"></img>',
 
     /*
      * Mini-logo in admin panel header.

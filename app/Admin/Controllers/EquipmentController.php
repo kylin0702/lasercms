@@ -262,16 +262,7 @@ EOT
     {
         return Admin::form(Equipment::class, function (Form $form) {
             $method=request()->route()->getActionMethod();//获取路由方法,判断是增加还是修改
-            if($method=="create") {
-                $form->text("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum",['required'=>'请输入光源编号']);
-            }
-            else{
-                //$form->display("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum",['required'=>'请输入光源编号']);
-                $form->html(function (){
-                    $html=" <p class='no-border form-control'> $this->EquNum</p>";
-                    return $html;
-                    },"光源编号")->setWidth(2);
-            }
+            $form->text("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum",['required'=>'请输入光源编号']);
 
             $form->text("AssetNo","资产编号")->setWidth(2);
             $clientid=request("cid");
@@ -309,12 +300,13 @@ EOT
                 return Admin::user()->id;
             });
             //保存后回调
-            $form->saved(function (Form $form) {
+            $form->saved(function (Form $form) use($method) {
                 $success = new MessageBag([
-                    'title'   => '添加光源成功',
-                    'message' => '你可以继续添加光源或返回客户列表',
+                    'title'   => '添加/修改光源成功',
+                    'message' => '添加/修改光源成功',
                 ]);
                 return back()->with(compact('success'));
+
             });
             //根据所选光源类型取得赠送时长
             Admin::script(

@@ -28,6 +28,7 @@ Route::group([
     $router->post('equipments/{ID}/unbind', "EquipmentController@unbind");//解绑光源
     #光源状态路由
     $router->get('equstatuss/getStatus', "EquStatusController@getStatus");
+    $router->post('equstatuss/exportExcel', "EquStatusController@exportExcel");
     $router->resource('equstatuss', EquStatusController::class);
     $router->get('equstatuss/{sn}/show', "EquStatusController@show");
     #区域设置路由

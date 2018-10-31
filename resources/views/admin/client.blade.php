@@ -390,6 +390,8 @@ function formatMinutes(StatusMinute){
             $('#status-table tr td:nth-child(7)').css('color','green');
             $('#status-table tr td:nth-child(9)').css('color','blue');
             $('#status-table tr td:nth-child(11)').css('color','blue');
+            $('.date1').datepicker({locale:"zh-CN",format: 'yyyy-mm-dd' });
+            $('.date2').datepicker({locale:"zh-CN",format: 'yyyy-mm-dd',});
         });
 
     }
@@ -399,7 +401,7 @@ function formatMinutes(StatusMinute){
                 <table class="table table-bordered table-condensed table-responsive">
                     <tbody>
                     <thead>
-                    <tr><th>光源编号</th><th colspan="5"><%=sNU%></th></tr>
+                    <tr><th>光源编号</th><th colspan="12"><%=sNU%></th></tr>
                     </thead>
                     <tr>
                         <td>上红光模组功率</td> <td><%=sURL%></td><td>下红光模组功率</td><td><%=sDRL%></td><td>上绿光模组功率</td><td><%=sURL%></td><td>下绿光模组功率</td><td><%=sDGL%></td><td>上蓝光模组功率</td><td><%=sUBL%></td><td>下蓝光模组功率</td><td><%=sDBL%></td>
@@ -454,8 +456,10 @@ function formatMinutes(StatusMinute){
                     </tr>
                     </tbody>
                     <tfoot>
-                    <tr><th>总功率</th><th colspan="5"><%=sLI%></th></tr>
+                    <tr><th>总功率</th><th colspan="12"><%=sLI%></th></tr>
+                    <tr><th>导出数据</th><th  colspan="2">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="2">结束日期：</th><th  colspan="2"><input type="text" class="form-control date1"></th><th colspan="3"><a  class="btn btn-sm btn-success">导出</a></th></tr>
                     </tfoot>
+
                 </table>
 
 </script>
