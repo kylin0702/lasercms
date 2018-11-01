@@ -175,6 +175,7 @@
 <!-- 状态Modal -->
 
 <script>
+
 $("[data-widget='collapse']").on('click',function(){
     var collapse=$(this);
     var ClientID=$(this).attr("data-clientid");
@@ -390,8 +391,8 @@ function formatMinutes(StatusMinute){
             $('#status-table tr td:nth-child(7)').css('color','green');
             $('#status-table tr td:nth-child(9)').css('color','blue');
             $('#status-table tr td:nth-child(11)').css('color','blue');
-            $('.date1').datepicker({locale:"zh-CN",format: 'yyyy-mm-dd' });
-            $('.date2').datepicker({locale:"zh-CN",format: 'yyyy-mm-dd',});
+            $('.date1').datepicker({format: 'yyyy-mm-dd'});
+            $('.date2').datepicker({format: 'yyyy-mm-dd'});
         });
 
     }
