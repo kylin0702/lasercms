@@ -262,7 +262,10 @@ EOT
     {
         return Admin::form(Equipment::class, function (Form $form) {
             $method=request()->route()->getActionMethod();//获取路由方法,判断是增加还是修改
-            $form->text("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum",['required'=>'请输入光源编号']);
+            $id=0;
+            $params=\request()->route()->parameters();
+            if($params){$id=$params['equipment'];};
+            $form->text("EquNum","光源编号")->setWidth(2)->rules("required|unique:Equipment,EquNum,".$id,['required'=>'请输入光源编号']);
 
             $form->text("AssetNo","资产编号")->setWidth(2);
             $clientid=request("cid");
