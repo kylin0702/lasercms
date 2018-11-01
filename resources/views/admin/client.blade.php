@@ -391,8 +391,15 @@ function formatMinutes(StatusMinute){
             $('#status-table tr td:nth-child(7)').css('color','green');
             $('#status-table tr td:nth-child(9)').css('color','blue');
             $('#status-table tr td:nth-child(11)').css('color','blue');
-            $('.date1').datepicker({format: 'yyyy-mm-dd'});
+            $('.date1').datepicker({clearBtn:true,format: 'yyyy-mm-dd'});
             $('.date2').datepicker({format: 'yyyy-mm-dd'});
+            $('.btn-exportStatus').on('click',function(){
+                var date1=$(this).parents('table').find('.date1').val();
+                var date2=$(this).parents('table').find('.date2').val();
+                if(date1==""){alert('请输入开始日期');return false;}
+                if(date2==""){alert('请输入结束日期');return false;}
+                window.open("/admin/equstatuss/exportExcel?snu="+snu+"&date1="+date1+"&date2="+date2);
+            });
         });
 
     }
@@ -458,7 +465,7 @@ function formatMinutes(StatusMinute){
                     </tbody>
                     <tfoot>
                     <tr><th>总功率</th><th colspan="12"><%=sLI%></th></tr>
-                    <tr><th>导出数据</th><th  colspan="2">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="2">结束日期：</th><th  colspan="2"><input type="text" class="form-control date1"></th><th colspan="3"><a  class="btn btn-sm btn-success">导出</a></th></tr>
+                    <tr><th>导出数据</th><th  colspan="2">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="2">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="3"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出</a></th></tr>
                     </tfoot>
 
                 </table>
