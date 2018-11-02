@@ -391,8 +391,8 @@ function formatMinutes(StatusMinute){
             $('#status-table tr td:nth-child(7)').css('color','green');
             $('#status-table tr td:nth-child(9)').css('color','blue');
             $('#status-table tr td:nth-child(11)').css('color','blue');
-            $('.date1').datepicker({clearBtn:true,format: 'yyyy-mm-dd'});
-            $('.date2').datepicker({format: 'yyyy-mm-dd'});
+            $('.date1').datetimepicker({showClose:true,format:"YYYY-MM-DD",locale:"zh-CN",widgetParent:$('table'),widgetPositioning:{horizontal: 'right',vertical:'bottom',format:"YYYY-MM-DD HH:mm:ss",toolbarPlacement:'top'}});
+            $('.date2').datetimepicker({showClose:true,format:"YYYY-MM-DD",locale:"zh-CN",widgetParent:$('.modal-footer'),widgetPositioning:{horizontal: 'right',vertical:'bottom'}});
             $('.btn-exportStatus').on('click',function(){
                 var date1=$(this).parents('table').find('.date1').val();
                 var date2=$(this).parents('table').find('.date2').val();
@@ -409,7 +409,7 @@ function formatMinutes(StatusMinute){
                 <table class="table table-bordered table-condensed table-responsive">
                     <tbody>
                     <thead>
-                    <tr><th>光源编号</th><th colspan="12"><%=sNU%></th></tr>
+                    <tr><th>光源编号</th><th colspan="2"><%=sNU%></th><th  colspan="1">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="1">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="4"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出所选时间段数据</a></th></tr>
                     </thead>
                     <tr>
                         <td>上红光模组功率</td> <td><%=sURL%></td><td>下红光模组功率</td><td><%=sDRL%></td><td>上绿光模组功率</td><td><%=sURL%></td><td>下绿光模组功率</td><td><%=sDGL%></td><td>上蓝光模组功率</td><td><%=sUBL%></td><td>下蓝光模组功率</td><td><%=sDBL%></td>
@@ -465,7 +465,6 @@ function formatMinutes(StatusMinute){
                     </tbody>
                     <tfoot>
                     <tr><th>总功率</th><th colspan="12"><%=sLI%></th></tr>
-                    <tr><th>导出数据</th><th  colspan="2">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="2">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="3"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出</a></th></tr>
                     </tfoot>
 
                 </table>

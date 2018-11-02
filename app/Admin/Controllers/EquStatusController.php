@@ -139,10 +139,24 @@ class EquStatusController extends Controller
             $excel->sheet($snu, function($sheet) use($snu,$date1,$date2){
                 $status=EquStatus::whereRaw("sNu='$snu' and UpDates Between '$date1' and '$date2'")->get()->toArray();
                 $sheet->row(1, array(
-                    '光源编号','总功率','上红光模组功率','下红光模组功率','上传时间'
+                    'UpDates','sMT','sMS','sTM','sLI','sURT1','sURL','sURC1','sURC2','sURC3','sURC4','sURC5','sURC6','sURC7',
+                    'sURC8','sURC9','sURC10','sURC11','sURC12','sURC13','sURC14','sURC15','sUGT1','sUGL','sUGC1','sUGC2','sUGC3',
+                    'sUGC4','sUGC5','sUGC6','sUGC7','sUGC8','sUGC9','sUGC10','sUGC11','sUGC12','sUGC13','sUGC14','sUGC15','sUBT',
+                    'sUBL','sUBC1','sUBC2','sUBC3','sUBC4','sDRT1','sDRL','sDRC1','sDRC2','sDRC3','sDRC4','sDRC5','sDRC6','sDRC7',
+                    'sDRC8','sDRC9','sDRC10','sDRC11','sDRC12','sDRC13','sDRC14','sDRC15','sDGT1','sDGL','sDGC1','sDGC2','sDGC3',
+                    'sDGC4','sDGC5','sDGC6','sDGC7','sDGC8','sDGC9','sDGC10','sDGC11','sDGC12','sDGC13','sDGC14','sDGC15','sDBT',
+                    'sDBL','sDBC1','sDBC2','sDBC3','sDBC4'
                 ));
                 $rows = collect($status)->map(function ($item) {
-                    $data_only=array_only($item,['sNU','sLI','sURL','sDRL','UpDates']);
+                    $data_only=array_only($item,[
+                        'UpDates','sMT','sMS','sTM','sLI','sURT1','sURL','sURC1','sURC2','sURC3','sURC4','sURC5','sURC6','sURC7',
+                        'sURC8','sURC9','sURC10','sURC11','sURC12','sURC13','sURC14','sURC15','sUGT1','sUGL','sUGC1','sUGC2','sUGC3',
+                        'sUGC4','sUGC5','sUGC6','sUGC7','sUGC8','sUGC9','sUGC10','sUGC11','sUGC12','sUGC13','sUGC14','sUGC15','sUBT',
+                        'sUBL','sUBC1','sUBC2','sUBC3','sUBC4','sDRT1','sDRL','sDRC1','sDRC2','sDRC3','sDRC4','sDRC5','sDRC6','sDRC7',
+                        'sDRC8','sDRC9','sDRC10','sDRC11','sDRC12','sDRC13','sDRC14','sDRC15','sDGT1','sDGL','sDGC1','sDGC2','sDGC3',
+                        'sDGC4','sDGC5','sDGC6','sDGC7','sDGC8','sDGC9','sDGC10','sDGC11','sDGC12','sDGC13','sDGC14','sDGC15','sDBT',
+                        'sDBL','sDBC1','sDBC2','sDBC3','sDBC4'
+                    ]);
                     return $data_only;
                 });
                 $sheet->rows($rows);
