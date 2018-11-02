@@ -409,7 +409,7 @@ function formatMinutes(StatusMinute){
                 <table class="table table-bordered table-condensed table-responsive">
                     <tbody>
                     <thead>
-                    <tr><th>光源编号</th><th colspan="2"><%=sNU%></th><th  colspan="1">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="1">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="4"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出所选时间段数据</a></th></tr>
+                    <tr class="hidden"><th>光源编号</th><th colspan="2"><%=sNU%></th><th  colspan="1">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="1">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="4"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出所选时间段数据</a></th></tr>
                     </thead>
                     <tr>
                         <td>上红光模组功率</td> <td><%=sURL%></td><td>下红光模组功率</td><td><%=sDRL%></td><td>上绿光模组功率</td><td><%=sURL%></td><td>下绿光模组功率</td><td><%=sDGL%></td><td>上蓝光模组功率</td><td><%=sUBL%></td><td>下蓝光模组功率</td><td><%=sDBL%></td>
