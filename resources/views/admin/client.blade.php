@@ -173,7 +173,31 @@
     </div>
 </div>
 <!-- 状态Modal -->
-
+<div class="modal fade" id="myMiniModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" >
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">更换光源编号</h4>
+            </div>
+            <div class="modal-body" id="equnum-form">
+                <div class="form-group">
+                    <label class=" control-label col-sm-3 ">旧光源编号:</label>
+                    <div class="input-group col-sm-7"> <b id="oldnum"></b></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3">新光源编号:</label>
+                    <div class="input-group col-sm-7"> <input id="newnum" class="form-control" /></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-success" id="btn-changeEquipment"><b>更换</b> <i class="fa fa-spinner fa-spin hidden "></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 状态Modal -->
 <script>
 
 $("[data-widget='collapse']").on('click',function(){
@@ -235,7 +259,8 @@ $("[data-widget='collapse']").on('click',function(){
                                 "<a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
                                 "<a href='/admin/equipments/"+e.ID+"/edit' class='btn btn-sm btn-microsoft' >修改</a>&nbsp;&nbsp;"+
-                                "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>详细状态</a>@endif</td>";
+                                "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>详细状态</a>&nbsp;&nbsp;"+
+                                 "<a href='javascript:void(0);' class='btn btn-sm btn-github btn-changeEqu' data-target='#myMiniModal' data-toggle='modal' data-snu='"+e.EquNum+"' data-eid='"+e.ID+"' onclick='changeEquNum(this)'>更换光源</a>@endif</td>";
                 equipment += "</tr>";
 
             });
@@ -391,8 +416,8 @@ function formatMinutes(StatusMinute){
             $('#status-table tr td:nth-child(7)').css('color','green');
             $('#status-table tr td:nth-child(9)').css('color','blue');
             $('#status-table tr td:nth-child(11)').css('color','blue');
-            $('.date1').datetimepicker({showClose:true,format:"YYYY-MM-DD",locale:"zh-CN",widgetParent:$('table'),widgetPositioning:{horizontal: 'right',vertical:'bottom',format:"YYYY-MM-DD HH:mm:ss",toolbarPlacement:'top'}});
-            $('.date2').datetimepicker({showClose:true,format:"YYYY-MM-DD",locale:"zh-CN",widgetParent:$('.modal-footer'),widgetPositioning:{horizontal: 'right',vertical:'bottom'}});
+            $('.date1').datetimepicker({showClose:true,format:"YYYY-MM-DD",locale:"zh-CN",widgetPositioning:{horizontal: 'right',vertical:'bottom'}});
+            $('.date2').datetimepicker({showClose:true,format:"YYYY-MM-DD",locale:"zh-CN",widgetPositioning:{horizontal: 'right',vertical:'bottom'}});
             $('.btn-exportStatus').on('click',function(){
                 var date1=$(this).parents('table').find('.date1').val();
                 var date2=$(this).parents('table').find('.date2').val();
@@ -401,15 +426,44 @@ function formatMinutes(StatusMinute){
                 window.open("/admin/equstatuss/exportExcel?snu="+snu+"&date1="+date1+"&date2="+date2);
             });
         });
-
     }
-
+    function changeEquNum(a){
+        var eid=$(a).attr("data-eid");
+        var snu=$(a).attr("data-snu");
+        $("#oldnum").html(snu);
+        $("#btn-changeEquipment").on('click',function(){
+            var that=this;
+            var newnum=$("#newnum").val();
+            newnum=newnum.trim();
+            if(newnum.length==12){
+                $(that).find("b").html("处理中,请稍等...")
+                $(that).find(".fa-spin").removeClass("hidden");
+                $(that).attr("disabled","disabled");
+                $.get("/admin/equipments/changeEquipment",{eid:eid,old:snu,new:newnum},function (callback) {
+                    if(callback.result==false){
+                        $(that).find("b").html("更换")
+                        $(that).find(".fa-spin").addClass("hidden");
+                        $(that).removeAttr("disabled");
+                        sweetAlert(callback.message);
+                        return false;
+                    }
+                    else{
+                        $(that).attr("disabled","disabled");
+                        $(that).html("更换完成");
+                    }
+                },"json");
+            }
+            else {
+                sweetAlert("光源编号格式不对！")
+            }
+        });
+    }
 </script>
 <script id="test" type="text/html">
                 <table class="table table-bordered table-condensed table-responsive">
                     <tbody>
                     <thead>
-                    <tr class="hidden"><th>光源编号</th><th colspan="2"><%=sNU%></th><th  colspan="1">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="1">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="4"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出所选时间段数据</a></th></tr>
+                    <tr><th>光源编号</th><th colspan="2"><%=sNU%></th><th  colspan="1">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="1">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="4"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出所选时间段数据</a></th></tr>
                     </thead>
                     <tr>
                         <td>上红光模组功率</td> <td><%=sURL%></td><td>下红光模组功率</td><td><%=sDRL%></td><td>上绿光模组功率</td><td><%=sURL%></td><td>下绿光模组功率</td><td><%=sDGL%></td><td>上蓝光模组功率</td><td><%=sUBL%></td><td>下蓝光模组功率</td><td><%=sDBL%></td>

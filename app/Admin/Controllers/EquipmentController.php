@@ -8,6 +8,7 @@ use App\Admin\Models\Equipment;
 use App\admin\Models\EquStatus;
 use App\Admin\Models\EquType;
 use App\admin\Models\Recharge;
+use App\Admin\Models\UpAndDown;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -17,6 +18,7 @@ use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Widgets\Table;
 use function foo\func;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\MessageBag;
 use Symfony\Component\Console\Output\Output;
@@ -68,6 +70,12 @@ class EquipmentController extends Controller
             $content->description('');
 
             $content->body($this->form()->edit($id));
+            Admin::script(
+                <<<EOT
+$("#EquNum").parents('.form-group').addClass("hidden")
+EOT
+
+            );
         });
     }
 
@@ -291,10 +299,6 @@ EOT
                 'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
             ];
             $form->switch('Review', '审核状态')->states($states)->default("已审核");
-            $isbuy= [
-                'on' => ['value' => '是', 'text' => '是', 'color' => 'success'],
-                'off' => ['value' => '否', 'text' => '否', 'color' => 'danger'],
-            ];
             $form->radio('IsBuy', '销售类型')->options(["否"=>"租赁","是"=>"销售","测试"=>"内部测试"])->default("否");
             $form->hidden("EntryPer")->default(function (){
                return Admin::user()->id;
@@ -350,6 +354,33 @@ EOT
            array_push($equipment2,$v);
         }
        return $equipment2;
+    }
+    //更换光源
+    function changeEquipment(Request $request){
+        DB::beginTransaction();
+        $eid=$request->get('eid');
+        $old=$request->get('old');
+        $new=$request->get('new');
+        $exist=Equipment::where("EquNum","=","$new")->first();
+        if($exist){
+            return json_encode(["result"=>false,"message"=>"输入的光源已存在"]);
+        }
+        else{
+            $equipment = Equipment::find($eid);
+            $equipment->update(["EquNum"=>"$new","OldEquNum"=>"$old"]);
+            if(  $equipment->update(["EquNum"=>"$new","OldEquNum"=>"$old"])){
+                try{
+                    EquStatus::where("sNU","=","$old")->update(["sNU"=>"$new"]);
+                    UpAndDown::where("EquNum","=","$old")->update(["EquNum"=>"$new"]);
+                    DB::commit();
+                    return json_encode(["result"=>true,"message"=>"update success"]);
+                }
+                catch (\Exception $e){
+                    DB::rollBack();
+                    return json_encode(["result"=>false,"message"=>$e->getMessage()]);
+                }
+            }
+        }
     }
 
 }

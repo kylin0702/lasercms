@@ -9,7 +9,7 @@ class Equipment extends Model
     protected $table = 'Equipment';
     protected $primaryKey="ID";
     public $timestamps=false;
-
+    protected $fillable = ['EquNum',"OldEquNum"];
     protected $casts=[
         "RemainTime"=>"integer",
         "GiftTime"=>"integer"

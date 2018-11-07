@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class UpAndDown extends Model
 {
     protected $table = 'UpAndDown';
+    protected $fillable = ['EquNum'];
+    public $timestamps=false;
     protected $primaryKey='ID';
     #关联Equipemnt模型
     public function hasOneEqu()
