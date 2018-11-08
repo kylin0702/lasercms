@@ -33,7 +33,7 @@ class ClientController extends Controller
         return Admin::content(function (Content $content) {
             $clients=Client::with(['hasOneArea','hasOneEngineer'])
                     ->where("ClientName","like",'%'.request("name").'%')
-                    ->where("Phone","like",'%'.request("phone").'%')
+                    ->where("Adress","like",'%'.request("address").'%')
                     ->where(function($q){
                         if(!empty(request("review"))){
                             $q->where('Review','=',request("review"));

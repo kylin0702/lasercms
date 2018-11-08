@@ -29,11 +29,11 @@
     <div class="box-body">
         <form class="form-inline" action="/admin/clients" method="get">
             <div class="form-group">
-                <label for="name"><i class="fa fa-user"></i>客户名称</label>
+                <label for="name"><i class="fa fa-user"></i> 客户名称</label>
                 <input type="text" class="form-control" name="name" placeholder="请输入客户名称">&nbsp;&nbsp;
-                <label for="phone"><i class="fa fa-phone"></i>联系电话</label>
-                <input type="text" class="form-control" name="phone" placeholder="请输入联系电话">&nbsp;&nbsp;
-                <label for="review"><i class="fa fa-check"></i>审核状态</label>
+                <label for="phone"><i class="fa fa-map-marker"></i> 地址</label>
+                <input type="text" class="form-control"  name="address" placeholder="请输入地址">&nbsp;&nbsp;
+                <label for="review"><i class="fa fa-check"></i> 审核状态</label>
                 <select name="review">
                     <option value="">全部</option>
                     <option value="未审核">未审核</option>
