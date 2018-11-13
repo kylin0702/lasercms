@@ -48,7 +48,7 @@
 @foreach ($clients as $v)
     <div class="box box-default collapsed-box">
         <div class="box-header with-border">
-           <h4 class="box-title" ><a data-widget="collapse" data-clientid="{{$v->ID}}">{{$v->ClientName}}</a></h4>
+           <h4 class="box-title" ><a data-widget="collapse" data-clientid="{{$v->ID}}" id="h4a{{$v->ID}}">{{$v->ClientName}}</a></h4>
             @if ($v->Review!="已审核"&&Admin::user()->isRole('administrator'))
             <div class="box-tools pull-right">
                 <a href="/admin/clients/{{$v->ID}}/audit" class="btn btn-sm btn-success" type="button">审核</a>
@@ -198,6 +198,36 @@
     </div>
 </div>
 <!-- 状态Modal -->
+<!-- 删除光源的短信验证Modal -->
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" >
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">删除光源</h4>
+            </div>
+            <div class="modal-body" id="equnum-form">
+                <div class="form-group">
+                    <label class=" control-label col-sm-3 ">验证码1:</label>
+                    <div class="input-group col-sm-3"><input id="phone1" class="form-control" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3">验证码2:</label>
+                    <div class="input-group col-sm-3"> <input id="phone2"  class="form-control hidden" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3"></label>
+                    <div class="input-group col-sm-3"><button type='button'  class='btn btn-primary pull-left sms'>发送验证码</button></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-danger" disabled="disabled" id="btn-confirmDel"><b>删除光源</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 状态Modal -->
 <script>
 
 $("[data-widget='collapse']").on('click',function(){
@@ -257,7 +287,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" +formatMinutes(overtime) + "</td>";
                 equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a>&nbsp;&nbsp;" +
                                 "<a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>&nbsp;&nbsp;"+
-                                "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
+                                "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-toggle='modal' data-target='#delModal' data-room='"+e.NumBer+"' data-cid='"+e.ClientID+"'  data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
                                 "<a href='/admin/equipments/"+e.ID+"/edit' class='btn btn-sm btn-microsoft' >修改</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>详细状态</a>&nbsp;&nbsp;"+
                                  "<a href='javascript:void(0);' class='btn btn-sm btn-github btn-changeEqu' data-target='#myMiniModal' data-toggle='modal' data-snu='"+e.EquNum+"' data-eid='"+e.ID+"' onclick='changeEquNum(this)'>更换光源</a>@endif</td>";
@@ -268,14 +298,66 @@ $("[data-widget='collapse']").on('click',function(){
             content.html(equipment);
             //删除光源
             $('.btn-del').on('click',function(){
-                var eid=$(this).attr("data-eid");
-                if(confirm("是否确定删除本台光源")){
+                var that=this;
+                var codes=[];
+                var eid=$(that).attr("data-eid");
+                $('.sms').on('click',function(){
+                    var clientid=$(that).attr("data-cid");
+                    var clientname=$("#h4a"+clientid).html();
+                    var room=$(that).attr("data-room");
+                    $.get('/admin/equipments/sms',{clientname:clientname,room:room},function(data){
+                        if(data){
+                            for(var key in data){
+                                codes.push(data[key]);
+                            }
+                            //alert("验证码为"+codes[0]+","+codes[1]+","+codes[2]);
+                            alert("验证码已发送");
+                        }
+                        else{
+                            alert("发送失败!");
+                        }
+                    });
+                    $(this).attr('disabled','disabled');
+                });
+                $('#phone1').on('input propertychange',function(){
+                    if(!codes.length==0){
+                        codes=$.map(codes,function(n){
+                            if( $('#phone1').val()==n) {
+                                $('.check1').removeClass('hidden');
+                                $('#phone1').attr('disabled',"disabled");
+                                $('#phone2').removeClass('hidden');
+                                return null;
+                            }
+                            else{
+                                return n;
+                            }
+
+                        });
+                    };
+                });
+                $('#phone2').on('input propertychange',function(){
+                    if(!codes.length==0){
+                        codes=$.map(codes,function(n){
+                            if($('#phone2').val()==n) {
+                                $('#phone2').attr('disabled',"disabled");
+                                $("#btn-confirmDel").removeAttr("disabled");
+                                return null;
+                            }
+                            else{
+                                return n;
+                            }
+
+                        });
+                    }
+                });
+                $('#btn-confirmDel').on('click',function(){
                     $.ajax({
                         url:"/admin/equipments/"+eid,
                         method:"delete",
                         success:function (data) {
                             if(data.status){
                                 alert(data.message);
+                                $("#delModal").find(".close").trigger('click');
                                 collapse.trigger('click');
                                 window.setTimeout(function () {
                                     collapse.trigger('click');
@@ -283,7 +365,7 @@ $("[data-widget='collapse']").on('click',function(){
                             }
                         }
                     });
-                }
+                });
             });
             //获取设备ID,跳转至批量充值界面
            $('.btn-batchCharge').on('click',function () {

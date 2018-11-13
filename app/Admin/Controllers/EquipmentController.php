@@ -382,5 +382,63 @@ EOT
             }
         }
     }
+    //发送删除确认短信
+    public function sms(){
+        $clientname=request("clientname");
+        $room=request("room");
+        header('Content-Type:text/html;charset=utf-8');
+        $codes = [config("phone1")=>rand(1000,9999),config("phone2")=>rand(1000,9999),config("phone3")=>rand(1000,9999)];
+        foreach ($codes as $phone=>$code) {
+            $data = "删除".$clientname.$room."光源,验证码" . $code . "【中科创激光】";
+            $post_data = array(
+                'UserID' => "999595",
+                'Account' => 'admin',
+                'Password' => "FW9NQ9",
+                'Content' => urlencode($data),
+                'Phones' => $phone,
+                'SendType' => 1,  //true or false,
+                'SendTime' => '',
+                'PostFixNumber' => ''
+            );
+            $url = 'http://61.143.63.169:8080/Services.asmx/DirectSend';
+            $this->http_request($url, http_build_query($post_data));
+        }
+        return $codes;
+    }
+    public function http_request($url,$data = null){
+        if(function_exists('curl_init')){
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+
+            if (!empty($data)){
+                curl_setopt($curl, CURLOPT_POST, 1);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            }
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            $output = curl_exec($curl);
+            curl_close($curl);
+
+
+            $result=preg_split("/[,\r\n]/",$output);
+
+            if($result[1]==0){
+                return "success";
+            }else{
+                return "curl error".$result[1];
+            }
+        }elseif(function_exists('file_get_contents')){
+
+            $output=file_get_contents($url.$data);
+            $result=preg_split("/[,\r\n]/",$output);
+
+            if($result[1]==0){
+                return "success";
+            }else{
+                return "error".$result[1];
+            }
+        }else{
+            return false;
+        }
+    }
 
 }
