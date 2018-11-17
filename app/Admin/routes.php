@@ -48,4 +48,6 @@ Route::group([
     #统计报表
     $router->resource('durt', YearDurtReptController::class);
     $router->resource('cost', YearCostReptController::class);
+    #日结算
+    $router->get('balances/date', "DateBalanceController@autocreate");
 });
