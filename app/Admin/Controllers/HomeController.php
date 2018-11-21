@@ -26,7 +26,7 @@ class HomeController extends Controller
             $content->header('信息面板');
             $content->description('');
             //超级管理员显示内容
-            if(Admin::user()->inRoles(['administrator','manager'])) {
+            if(Admin::user()->inRoles(['administrator','manager','leader'])) {
                 $content->row(function (Row $row) {
                     $row->column(3, function (Column $column) {
                         $model = new Client();

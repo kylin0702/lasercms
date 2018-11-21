@@ -51,3 +51,11 @@ Route::group([
     #日结算
     $router->get('balances/date', "DateBalanceController@autocreate");
 });
+
+Route::group([
+    'prefix'        => config('admin.route.prefix'),
+    'namespace'     => config('admin.route.namespace'),
+], function (Router $router) {
+    $router->get('balances/date', "DateBalanceController@autocreate");
+    $router->get('balances/date_all', "DateBalanceController@autocreate_all");
+});

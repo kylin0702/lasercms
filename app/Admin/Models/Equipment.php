@@ -33,6 +33,11 @@ class Equipment extends Model
     {
         return $this->hasMany(UpAndDown::class,'EquNum',"EquNum");
     }
+    #关联date_balance模型
+    public function date_balance()
+    {
+        return $this->hasMany(DateBalance::class,'EquID',"ID");
+    }
 
 
 }

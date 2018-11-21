@@ -345,9 +345,11 @@ EOT
         foreach ($equipment1 as $v){
             //取得当年使用时间长
             $year=date('Y');
-            $yeartotal=$v->upanddown()->whereRaw("TheTime>0 and Year(Date)=$year")->sum('TheTime');
+            //$yeartotal=$v->upanddown()->whereRaw("TheTime>0 and Year(Date)=$year")->sum('TheTime');
+            $yeartotal=$v->date_balance()->whereRaw("Year(BalanceDate)=$year")->sum('CostTime');
             //充值总时长
-            $totaltime=Recharge::all(["EquID","RechTime"])->where("EquID","=",$v['ID'])->sum('RechTime');
+            //$totaltime=Recharge::all(["EquID","RechTime"])->where("EquID","=",$v['ID'])->sum('RechTime');
+            $totaltime=$v->date_balance()->whereRaw("1=1")->sum('RechargeTime');
             $v->toArray();
             $v["YearTotal"]=$yeartotal;
             $v["TotalTime"]=$totaltime;
