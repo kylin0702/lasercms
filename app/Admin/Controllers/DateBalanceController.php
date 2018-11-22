@@ -37,7 +37,7 @@ class DateBalanceController extends Controller
 
         });
     }
-
+     //天结算
     public  function  autocreate(){
         $balance_date=date("Y-m-d",strtotime("-1 day"));
         $balance_timespan="'$balance_date 00:00:00.000' and '$balance_date 23:59:59.000'";
@@ -57,7 +57,7 @@ class DateBalanceController extends Controller
                     $rechargetime = Recharge::whereRaw("EquID=$v->EquID and Results='1' and UpdateTime between $balance_timespan")->select(['RechTime'])->get('RechTime')->sum('RechTime');
                     $costtime = $firsttime+$rechargetime-$lasttime;//每天第一次上传时间+当天充值时间-最后一次剩余时间得出使用时间
                     //不正常数据设置0
-                    if($costtime<0||$costtime>24){
+                    if($costtime<0||$costtime>200){
                         $costtime=0;
                     }
                     $item = array("EquID" => $v->EquID, "FirstTime" => $firsttime, "LastTime" => $lasttime,"RechargeTime" => $rechargetime,"CostTime" => $costtime, "BalanceDate" => "$balance_date");
@@ -78,9 +78,10 @@ class DateBalanceController extends Controller
             return json_encode(["result"=>"fasle","message"=>"Date Balance Have Done,Not Thing To Do"]);
         }
     }
+    //时间段天结算
     public  function  autocreate_all(){
         $start=new \DateTime('2018-03-12');
-        $end=new \DateTime('2018-03-13');
+        $end=new \DateTime('2018-09-13');
         $dates=array();
         foreach(new \DatePeriod($start,new \DateInterval('P1D'),$end) as $d){
             array_push($dates,$d->format('Y-m-d'));
