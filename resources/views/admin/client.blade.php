@@ -542,7 +542,7 @@ function formatMinutes(StatusMinute){
     }
 </script>
 <script id="test" type="text/html">
-                <table class="table table-bordered table-condensed table-responsive">
+                <table class="table table-bordered table-responsive table-condensed">
                     <tbody>
                     <thead>
                     <tr><th>光源编号</th><th colspan="2"><%=sNU%></th><th  colspan="1">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="1">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="4"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出所选时间段数据</a></th></tr>
@@ -600,7 +600,8 @@ function formatMinutes(StatusMinute){
                     </tr>
                     </tbody>
                     <tfoot>
-                    <tr><th>总功率</th><th colspan="12"><%=sLI%></th></tr>
+                    <tr><th>温度1</th><th><%if(sTMP1){%><%=sTMP1%><%}%></th><th>温度2</th><th><%if(sTMP2){%><%=sTMP2%><%}%></th><th>温度3</th><th><%if(sTMP3){%><%=sTMP3%><%}%></th><th>温度4</th><th><%if(sTMP4){%><%=sTMP4%><%}%></th><th>温度5</th><th><%if(sTMP5){%><%=sTMP5%><%}%></th><th>温度6</th><th><%if(sTMP6){%><%=sTMP6%><%}%></th></tr>
+                    <tr><th>总功率</th><th colspan="11"><%sLI%></th></tr>
                     </tfoot>
 
                 </table>
