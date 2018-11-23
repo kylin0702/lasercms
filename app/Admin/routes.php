@@ -46,6 +46,7 @@ Route::group([
     #异常记录
     $router->resource('abnormas', AbnormaController::class);
     #统计报表
+    $router->get('durt/query/{ID}', "YearDurtReptController@query");
     $router->resource('durt', YearDurtReptController::class);
     $router->resource('cost', YearCostReptController::class);
     #日结算

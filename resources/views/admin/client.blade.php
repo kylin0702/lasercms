@@ -120,7 +120,7 @@
                     <a href="/admin/clients/{{$v->ID}}/edit" class="btn btn-sm btn-info">修改信息</a>
                     <a href="/admin/equipments/create?cid={{$v->ID}}" class="btn btn-sm btn-success">添加光源</a>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 hidden">
                     <select class="custom-select month-select">
                         <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option>
                         <option value="5">5月</option><option value="6" selected>6月</option><option value="7">7月</option> <option value="8">8月</option>
@@ -547,10 +547,10 @@ function formatMinutes(StatusMinute){
                     <thead>
                     <tr><th>光源编号</th><th colspan="2"><%=sNU%></th><th  colspan="1">开始日期：</th><th colspan="2"><input type="text" class="form-control date1"></th><th  colspan="1">结束日期：</th><th  colspan="2"><input type="text" class="form-control date2"></th><th colspan="4"><a  href='javascript:void(0)' class="btn btn-sm btn-success btn-exportStatus" >导出所选时间段数据</a></th></tr>
                     </thead>
-                    <tr>
+                    <tr class="hidden">
                         <td>上红光模组功率</td> <td><%=sURL%></td><td>下红光模组功率</td><td><%=sDRL%></td><td>上绿光模组功率</td><td><%=sURL%></td><td>下绿光模组功率</td><td><%=sDGL%></td><td>上蓝光模组功率</td><td><%=sUBL%></td><td>下蓝光模组功率</td><td><%=sDBL%></td>
                     </tr>
-                    <tr>
+                    <tr class="hidden">
                         <td>上红光模组温度</td> <td><%=sURT1%></td><td>下红光模组温度</td><td><%=sDRT1%></td><td>上绿光模组温度</td><td><%=sUGT1%></td><td>下绿光模组温度</td><td><%=sDGT1%></td><td>上蓝光模组温度</td><td><%=sUBT%></td><td>下蓝光模组温度</td><td><%=sDBT%></td>
                     </tr>
                     <tr>

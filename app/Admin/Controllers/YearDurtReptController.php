@@ -32,36 +32,13 @@ class YearDurtReptController extends Controller
         });
     }
 
-    /**
-     * Edit interface.
-     *
-     * @param $id
-     * @return Content
-     */
-    public function edit($id)
+    public function query($id)
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('header');
+            $content->header('任意时长查询');
             $content->description('description');
 
-            $content->body($this->form()->edit($id));
-        });
-    }
-
-    /**
-     * Create interface.
-     *
-     * @return Content
-     */
-    public function create()
-    {
-        return Admin::content(function (Content $content) {
-
-            $content->header('时长统计');
-            $content->description('光源放映时长统计');
-
-            $content->body($this->form());
         });
     }
 
@@ -74,7 +51,7 @@ class YearDurtReptController extends Controller
     {
         return Admin::grid(YearDurtRept::class, function (Grid $grid) {
 
-            $grid->disableCreateButton()->disableActions();
+            $grid->disableCreateButton();
             $grid->tools->disableBatchActions();
             $grid->model()->orderby('ClientName');
             $grid->ClientName('客户名称');
@@ -100,6 +77,12 @@ class YearDurtReptController extends Controller
                 $filter->equal('Years', '年份')->select(["2017"=>"2017","2018"=>"2018","2019"=>"2019","2020"=>"2020"]);
                 $filter->equal('EquNum', '光源编号');
                 $filter->equal('ClientName', '客户名称')->select(Client::all()->pluck('ClientName',"ClientName"));
+            });
+            $grid->actions(function($actions){
+                $actions->disableDelete();
+                $actions->disableEdit();
+                $id=$actions->row->EquID;
+                $actions->append("<a href='/admin/durt/query/$id' class='btn btn-microsoft btn-xs' >时间段统计</i></a>");
             });
             $grid->exporter(new YearDurtExporter());
         });
