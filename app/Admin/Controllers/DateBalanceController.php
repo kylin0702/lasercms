@@ -51,11 +51,20 @@ class DateBalanceController extends Controller
             foreach ($balance_data as $v){
                 $count_min=EquStatus::where("ID","=",$v->MinID)->count();
                 $count_max=EquStatus::where("ID","=",$v->MaxID)->count();
+
                 if($count_min>0&&$count_max>0){
                     $firsttime = EquStatus::find($v->MinID)->sTM;
                     $lasttime = EquStatus::find($v->MaxID)->sTM;
+                    $count_lastbalance=DateBalance::where("EquID","=",$v->EquID)->orderBy("BalanceDate","Desc")->count();
+                    if($count_lastbalance>0){
+                        $lasttime_lastbalance=DateBalance::where("EquID","=",$v->EquID)->orderBy("BalanceDate","Desc")->first()->LastTime;
+                    }
+                    else{
+                        $lasttime_lastbalance=$firsttime;
+                    }
+                    $lost=$lasttime_lastbalance-$firsttime;//用户没联网丢失的使用时长
                     $rechargetime = Recharge::whereRaw("EquID=$v->EquID and Results='1' and UpdateTime between $balance_timespan")->select(['RechTime'])->get('RechTime')->sum('RechTime');
-                    $costtime = $firsttime+$rechargetime-$lasttime;//每天第一次上传时间+当天充值时间-最后一次剩余时间得出使用时间
+                    $costtime = $firsttime+$rechargetime-$lasttime+$lost;//每天第一次上传时间+当天充值时间-最后一次剩余时间得出使用时间
                     //不正常数据设置0
                     if($costtime<0||$costtime>200){
                         $costtime=0;
@@ -80,8 +89,8 @@ class DateBalanceController extends Controller
     }
     //时间段天结算
     public  function  autocreate_all(){
-        $start=new \DateTime('2018-05-02');
-        $end=new \DateTime('2018-09-15');
+        $start=new \DateTime('2018-03-12');
+        $end=new \DateTime('2018-09-14');
         $dates=array();
         foreach(new \DatePeriod($start,new \DateInterval('P1D'),$end) as $d){
             array_push($dates,$d->format('Y-m-d'));
@@ -102,10 +111,19 @@ class DateBalanceController extends Controller
                     if($count_min>0&&$count_max>0){
                         $firsttime = EquStatusTemp::find($v->MinID)->sTM;
                         $lasttime = EquStatusTemp::find($v->MaxID)->sTM;
+                        $count_lastbalance=DateBalance::where("EquID","=",$v->EquID)->orderBy("BalanceDate","Desc")->count();
+                        if($count_lastbalance>0){
+                            $lasttime_lastbalance=DateBalance::where("EquID","=",$v->EquID)->orderBy("BalanceDate","Desc")->first()->LastTime;
+                        }
+                        else{
+                            $lasttime_lastbalance=$firsttime;
+                        }
+                        //最后一次结算的LastTime
+                        $lost=$lasttime_lastbalance-$firsttime;//用户没联网丢失的使用时长
                         $rechargetime = Recharge::whereRaw("EquID=$v->EquID and Results='1' and UpdateTime between $balance_timespan")->select(['RechTime'])->get('RechTime')->sum('RechTime');
-                        $costtime = $firsttime+$rechargetime- $lasttime;//每天第一次上传时间+当天充值时间-最后一次剩余时间得出使用时间
+                        $costtime = $firsttime+$rechargetime- $lasttime+$lost;//每天第一次上传时间+当天充值时间-最后一次剩余时间得出使用时间+用户没联网丢失时长
                         //不正常数据设置0
-                        if($costtime<0||$costtime>100){
+                        if($costtime<0||$costtime>200){
                             $costtime=0;
                         }
                         $item = array("EquID" => $v->EquID, "FirstTime" => $firsttime, "LastTime" => $lasttime,"RechargeTime" => $rechargetime,"CostTime" => $costtime, "BalanceDate" => "$balance_date");

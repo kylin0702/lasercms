@@ -76,24 +76,24 @@ class YearDurtReptController extends Controller
 
             $grid->disableCreateButton()->disableActions();
             $grid->tools->disableBatchActions();
-            $grid->model()->orderby('Years','desc');
+            $grid->model()->orderby('ClientName');
             $grid->ClientName('客户名称');
-            $grid->EquNum('光源序列');
+            $grid->NumBer('客户名称');
             $grid->Years('年份');
-            $grid->January('一月')->display(function($v){ return $v==0?0:$v;});
-            $grid->February('二月')->display(function($v){ return $v==0?0:$v;});
-            $grid->March('三月')->display(function($v){ return $v==0?0:$v;});
-            $grid->April('四月')->display(function($v){ return $v==0?0:$v;});
-            $grid->May('五月')->display(function($v){ return $v==0?0:$v;});
-            $grid->June('六月')->display(function($v){ return $v==0?0:$v;});
-            $grid->July('七月')->display(function($v){ return $v==0?0:$v;});
-            $grid->August('八月')->display(function($v){ return $v==0?0:$v;});
-            $grid->September('九月')->display(function($v){ return $v==0?0:$v;});
-            $grid->October('十月')->display(function($v){ return $v==0?0:$v;});
-            $grid->November('十一月')->display(function($v){ return $v==0?0:$v;});
-            $grid->December('十二月')->display(function($v){ return $v==0?0:$v;});
+            $grid->一月('一月')->display(function($v){ return $v==0?0:$v;});
+            $grid->二月('二月')->display(function($v){ return $v==0?0:$v;});
+            $grid->三月('三月')->display(function($v){ return $v==0?0:$v;});
+            $grid->四月('四月')->display(function($v){ return $v==0?0:$v;});
+            $grid->五月('五月')->display(function($v){ return $v==0?0:$v;});
+            $grid->六月('六月')->display(function($v){ return $v==0?0:$v;});
+            $grid->七月('七月')->display(function($v){ return $v==0?0:$v;});
+            $grid->八月('八月')->display(function($v){ return $v==0?0:$v;});
+            $grid->九月('九月')->display(function($v){ return $v==0?0:$v;});
+            $grid->十月('十月')->display(function($v){ return $v==0?0:$v;});
+            $grid->十一月('十一月')->display(function($v){ return $v==0?0:$v;});
+            $grid->十二月('十二月')->display(function($v){ return $v==0?0:$v;});
             $grid->Html('合计(小时)')->display(function(){
-                return  $this->January+ $this->February+$this->March+$this->April+$this->May+$this->June+$this->July+$this->August+$this->September+$this->October+$this->November+$this->December;
+                return  $this->一月+ $this->二月+$this->三月+$this->四月+$this->五月+$this->七月+$this->八月+$this->九月+$this->十月+$this->十一月+$this->十二月+$this->十二月;
             });
             $grid->filter(function ($filter) {
                 $filter->disableIdFilter();

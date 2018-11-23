@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class YearDurtRept extends Model
 {
-    protected $table = 'YearDurtRept';
+    protected $table = 'View_YearDurtRept';
     protected $primaryKey='ID';
 }
