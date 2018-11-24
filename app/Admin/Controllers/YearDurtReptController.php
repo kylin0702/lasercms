@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Models\Client;
+use App\admin\Models\DateBalance;
+use App\admin\Models\V_DateBalance;
 use App\Admin\Models\YearDurtRept;
 use App\Admin\Extensions\YearDurtExporter;
 use Encore\Admin\Form;
@@ -37,7 +39,18 @@ class YearDurtReptController extends Controller
         return Admin::content(function (Content $content) use ($id) {
 
             $content->header('任意时长查询');
-            $content->description('description');
+            $content->description('如果光源在使用期间没有联网,联网后累加在当天的使用时长上');
+            $balances=[];
+            $total=0;
+            if(request("date1")){
+            $balances=V_DateBalance::where(function($q) use ($id) {
+                $q-> where("EquId","=",$id)
+                    ->where("BalanceDate",">=",request("date1"))
+                    ->where("BalanceDate","<=",request("date2"));
+            })->get();
+            $total=$balances->sum("CostTime");
+            }
+            $content->body(view("durt",["id"=>$id,"balances"=>$balances,"total"=>$total,"date1"=>request("date1"),"date2"=>request("date2")]));
 
         });
     }
@@ -82,7 +95,7 @@ class YearDurtReptController extends Controller
                 $actions->disableDelete();
                 $actions->disableEdit();
                 $id=$actions->row->EquID;
-                $actions->append("<a href='/admin/durt/query/$id' class='btn btn-microsoft btn-xs' >时间段统计</i></a>");
+                $actions->append("<a href='/admin/durt/query/$id' class='btn btn-info btn-xs' >明细查询</i></a>");
             });
             $grid->exporter(new YearDurtExporter());
         });
