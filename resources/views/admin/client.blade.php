@@ -566,42 +566,41 @@ function formatMinutes(StatusMinute){
                         <td>上红光模组电流4</td> <td><%=sURC4%></td><td>下红光模组电流4</td><td><%=sDRC4%></td><td>上绿光模组电流4</td><td><%=sUGC4%></td><td>下绿光模组电流4</td><td><%=sDGC4%></td><td>上蓝光模组电流4</td><td><%=sUBC4%></td><td>下蓝光模组电流4</td><td><%=sDBC4%></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流5</td> <td><%=sURC5%></td><td>下红光模组电流5</td><td><%=sDRC5%></td><td>上绿光模组电流5</td><td><%=sUGC5%></td><td>下绿光模组电流5</td><td><%=sDGC5%></td><td>上蓝光模组电流5</td><td></td><td>下蓝光模组电流5</td><td></td>
+                        <td>上红光模组电流5</td> <td><%=sURC5%></td><td>下红光模组电流5</td><td><%=sDRC5%></td><td>上绿光模组电流5</td><td><%=sUGC5%></td><td>下绿光模组电流5</td><td><%=sDGC5%></td><td>振幕1</td><td><%if(sSRC1){%><%=sSRC1%><%}%></td><td>温度1</td><td><%if(sTMP1){%><%=sTMP1%><%}%></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流6</td> <td><%=sURC6%></td><td>下红光模组电流6</td><td><%=sDRC6%></td><td>上绿光模组电流6</td><td><%=sUGC6%></td><td>下绿光模组电流6</td><td><%=sDGC6%></td><td>上蓝光模组电流6</td><td></td><td>下蓝光模组电流6</td><td></td>
+                        <td>上红光模组电流6</td> <td><%=sURC6%></td><td>下红光模组电流6</td><td><%=sDRC6%></td><td>上绿光模组电流6</td><td><%=sUGC6%></td><td>下绿光模组电流6</td><td><%=sDGC6%></td><td>振幕2</td><td><%if(sSRC2){%><%=sSRC2%><%}%></td><td>温度2</td><td><%if(sTMP2){%><%=sTMP2%><%}%></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流7</td> <td><%=sURC7%></td><td>下红光模组电流7</td><td><%=sDRC7%></td><td>上绿光模组电流7</td><td><%=sUGC7%></td><td>下绿光模组电流7</td><td><%=sDGC7%></td><td>上蓝光模组电流7</td><td></td><td>下蓝光模组电流7</td><td></td>
+                        <td>上红光模组电流7</td> <td><%=sURC7%></td><td>下红光模组电流7</td><td><%=sDRC7%></td><td>上绿光模组电流7</td><td><%=sUGC7%></td><td>下绿光模组电流7</td><td><%=sDGC7%></td><td>振幕3</td><td><%if(sSRC3){%><%=sSRC3%><%}%></td><td>温度3</td><td><%if(sTMP3){%><%=sTMP1%><%}%></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流8</td> <td><%=sURC8%></td><td>下红光模组电流8</td><td><%=sDRC8%></td><td>上绿光模组电流8</td><td><%=sUGC8%></td><td>下绿光模组电流8</td><td><%=sDGC8%></td><td>上蓝光模组电流8</td><td></td><td>下蓝光模组电流8</td><td></td>
+                        <td>上红光模组电流8</td> <td><%=sURC8%></td><td>下红光模组电流8</td><td><%=sDRC8%></td><td>上绿光模组电流8</td><td><%=sUGC8%></td><td>下绿光模组电流8</td><td><%=sDGC8%></td><td>振幕4</td><td><%if(sSRC4){%><%=sSRC4%><%}%></td><td>温度4</td><td><%if(sTMP4){%><%=sTMP1%><%}%></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流9</td> <td><%=sURC9%></td><td>下红光模组电流9</td><td><%=sDRC9%></td><td>上绿光模组电流9</td><td><%=sUGC9%></td><td>下绿光模组电流9</td><td><%=sDGC9%></td><td>上蓝光模组电流9</td><td></td><td>下蓝光模组电流9</td><td></td>
+                        <td>上红光模组电流9</td> <td><%=sURC9%></td><td>下红光模组电流9</td><td><%=sDRC9%></td><td>上绿光模组电流9</td><td><%=sUGC9%></td><td>下绿光模组电流9</td><td><%=sDGC9%></td><td>振幕5</td><td></td><%if(sSRC5){%><%=sSRC5%><%}%><td>温度5</td><td><%if(sTMP5){%><%=sTMP1%><%}%></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流10</td> <td><%=sURC10%></td><td>下红光模组电流10</td><td><%=sDRC10%></td><td>上绿光模组电流10</td><td><%=sUGC10%></td><td>下绿光模组电流10</td><td><%=sDGC10%></td><td>上蓝光模组电流10</td><td></td><td>下蓝光模组电流10</td><td></td>
+                        <td>上红光模组电流10</td> <td><%=sURC10%></td><td>下红光模组电流10</td><td><%=sDRC10%></td><td>上绿光模组电流10</td><td><%=sUGC10%></td><td>下绿光模组电流10</td><td><%=sDGC10%></td><td>振幕6</td><td><%if(sSRC6){%><%=sSRC6%><%}%></td><td>温度6</td><td><%if(sTMP6){%><%=sTMP6%><%}%></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流11</td> <td><%=sURC11%></td><td>下红光模组电流11</td><td><%=sDRC11%></td><td>上绿光模组电流11</td><td><%=sUGC11%></td><td>下绿光模组电流11</td><td><%=sDGC11%></td><td>上蓝光模组电流11</td><td></td><td>下蓝光模组电流11</td><td></td>
+                        <td>上红光模组电流11</td> <td><%=sURC11%></td><td>下红光模组电流11</td><td><%=sDRC11%></td><td>上绿光模组电流11</td><td><%=sUGC11%></td><td>下绿光模组电流11</td><td><%=sDGC11%></td><td>振幕7</td><td><%if(sSRC7){%><%=sSRC7%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流12</td> <td><%=sURC12%></td><td>下红光模组电流12</td><td><%=sDRC12%></td><td>上绿光模组电流12</td><td><%=sUGC12%></td><td>下绿光模组电流12</td><td><%=sDGC12%></td><td>上蓝光模组电流12</td><td></td><td>下蓝光模组电流12</td><td></td>
+                        <td>上红光模组电流12</td> <td><%=sURC12%></td><td>下红光模组电流12</td><td><%=sDRC12%></td><td>上绿光模组电流12</td><td><%=sUGC12%></td><td>下绿光模组电流12</td><td><%=sDGC12%></td><td>振幕8</td><td><%if(sSRC8){%><%=sSRC8%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流13</td> <td><%=sURC13%></td><td>下红光模组电流13</td><td><%=sDRC13%></td><td>上绿光模组电流13</td><td><%=sUGC13%></td><td>下绿光模组电流13</td><td><%=sDGC13%></td><td>上蓝光模组电流13</td><td></td><td>下蓝光模组电流13</td><td></td>
+                        <td>上红光模组电流13</td> <td><%=sURC13%></td><td>下红光模组电流13</td><td><%=sDRC13%></td><td>上绿光模组电流13</td><td><%=sUGC13%></td><td>下绿光模组电流13</td><td><%=sDGC13%></td><td></td><td></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流14</td> <td><%=sURC14%></td><td>下红光模组电流14</td><td><%=sDRC14%></td><td>上绿光模组电流14</td><td><%=sUGC14%></td><td>下绿光模组电流14</td><td><%=sDGC14%></td><td>上蓝光模组电流14</td><td></td><td>下蓝光模组电流14</td><td></td>
+                        <td>上红光模组电流14</td> <td><%=sURC14%></td><td>下红光模组电流14</td><td><%=sDRC14%></td><td>上绿光模组电流14</td><td><%=sUGC14%></td><td>下绿光模组电流14</td><td><%=sDGC14%></td><td></td><td></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流15</td> <td><%=sURC15%></td><td>下红光模组电流15</td><td><%=sDRC15%></td><td>上绿光模组电流15</td><td><%=sUGC15%></td><td>下绿光模组电流15</td><td><%=sDGC15%></td><td>上蓝光模组电流15</td><td></td><td>下蓝光模组电流15</td><td></td>
+                        <td>上红光模组电流15</td> <td><%=sURC15%></td><td>下红光模组电流15</td><td><%=sDRC15%></td><td>上绿光模组电流15</td><td><%=sUGC15%></td><td>下绿光模组电流15</td><td><%=sDGC15%></td><td></td><td></td><td></td><td></td>
                     </tr>
                     </tbody>
                     <tfoot>
-                    <tr><th>温度1</th><th><%if(sTMP1){%><%=sTMP1%><%}%></th><th>温度2</th><th><%if(sTMP2){%><%=sTMP2%><%}%></th><th>温度3</th><th><%if(sTMP3){%><%=sTMP3%><%}%></th><th>温度4</th><th><%if(sTMP4){%><%=sTMP4%><%}%></th><th>温度5</th><th><%if(sTMP5){%><%=sTMP5%><%}%></th><th>温度6</th><th><%if(sTMP6){%><%=sTMP6%><%}%></th></tr>
-                    <tr><th>总功率</th><th colspan="11"><%sLI%></th></tr>
+                    <tr><th>总功率</th><th colspan="11"><%=sLI%></th></tr>
                     </tfoot>
 
                 </table>

@@ -13,12 +13,12 @@ class YearDurtExporter extends AbstractExporter
         Excel::create($filename, function($excel) {
             $excel->sheet('Sheetname', function($sheet) {
                 $rows = collect($this->getData())->map(function ($item) {
-                    $data=array_dot($item);
-                    $data_only=array_only($data,['has_one_client.ClientNum','has_one_client.ClientName','NumBer','has_one_equ_type.Name','EquNum','RemainTime']);
-                    return array_reverse($data_only);
+                    $item['年度合计']=$item['一月']+$item['二月']+$item['三月']+$item['四月']+$item['五月']+$item['六月']+$item['七月']+$item['八月']+$item['九月']+$item['十月']+$item['十一月']+$item['十二月'];
+                    $data=array_only($item,['ClientName','NumBer','EquNum','Years','一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月','年度合计']);
+                    return $data;
                 });
                 $sheet->row(1, array(
-                    '光源类型', '客户名称','客户编号','光源编号','剩余时间','厅号'
+                   '客户名称','厅号','光源编号','年份','一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月','年度合计'
                 ));
                 $sheet->rows($rows);
             });

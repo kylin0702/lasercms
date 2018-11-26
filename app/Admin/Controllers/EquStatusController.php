@@ -146,7 +146,8 @@ class EquStatusController extends Controller
                     'sUBL', 'sUBC1', 'sUBC2', 'sUBC3', 'sUBC4', 'sDRT1', 'sDRL', 'sDRC1', 'sDRC2', 'sDRC3', 'sDRC4', 'sDRC5', 'sDRC6', 'sDRC7',
                     'sDRC8', 'sDRC9', 'sDRC10', 'sDRC11', 'sDRC12', 'sDRC13', 'sDRC14', 'sDRC15', 'sDGT1', 'sDGL', 'sDGC1', 'sDGC2', 'sDGC3',
                     'sDGC4', 'sDGC5', 'sDGC6', 'sDGC7', 'sDGC8', 'sDGC9', 'sDGC10', 'sDGC11', 'sDGC12', 'sDGC13', 'sDGC14', 'sDGC15', 'sDBT',
-                    'sDBL', 'sDBC1', 'sDBC2', 'sDBC3', 'sDBC4', 'UpDates'
+                    'sDBL', 'sDBC1', 'sDBC2', 'sDBC3', 'sDBC4','UpDates','sTMP1','sTMP2','sTMP3','sTMP4','sTMP5','sTMP6','sSRC1','sSRC2',
+                    'sSRC3','sSRC4','sSRC5','sSRC6','sSRC7','sSRC8'
                 ));
                 $rows = collect($status)->map(function ($item) {
                     $data_only = array_only($item, [
@@ -156,7 +157,8 @@ class EquStatusController extends Controller
                         'sUBL', 'sUBC1', 'sUBC2', 'sUBC3', 'sUBC4', 'sDRT1', 'sDRL', 'sDRC1', 'sDRC2', 'sDRC3', 'sDRC4', 'sDRC5', 'sDRC6', 'sDRC7',
                         'sDRC8', 'sDRC9', 'sDRC10', 'sDRC11', 'sDRC12', 'sDRC13', 'sDRC14', 'sDRC15', 'sDGT1', 'sDGL', 'sDGC1', 'sDGC2', 'sDGC3',
                         'sDGC4', 'sDGC5', 'sDGC6', 'sDGC7', 'sDGC8', 'sDGC9', 'sDGC10', 'sDGC11', 'sDGC12', 'sDGC13', 'sDGC14', 'sDGC15', 'sDBT',
-                        'sDBL', 'sDBC1', 'sDBC2', 'sDBC3', 'sDBC4','UpDates'
+                        'sDBL', 'sDBC1', 'sDBC2', 'sDBC3', 'sDBC4','sTMP1','UpDates','sTMP1','sTMP2','sTMP3','sTMP4','sTMP5','sTMP6','sSRC1','sSRC2',
+                        'sSRC3','sSRC4','sSRC5','sSRC6','sSRC7','sSRC8'
                     ]);
                     return $data_only;
                 });

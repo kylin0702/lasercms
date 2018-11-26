@@ -89,8 +89,8 @@ class DateBalanceController extends Controller
     }
     //时间段天结算
     public  function  autocreate_all(){
-        $start=new \DateTime('2018-09-13');
-        $end=new \DateTime('2018-11-24');
+        $start=new \DateTime('2018-11-25');
+        $end=new \DateTime('2018-11-26');
         $dates=array();
         foreach(new \DatePeriod($start,new \DateInterval('P1D'),$end) as $d){
             array_push($dates,$d->format('Y-m-d'));

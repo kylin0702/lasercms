@@ -67,8 +67,9 @@ class YearDurtReptController extends Controller
             $grid->disableCreateButton();
             $grid->tools->disableBatchActions();
             $grid->model()->orderby('ClientName');
-            $grid->ClientName('客户名称');
-            $grid->NumBer('客户名称');
+            $grid->ClientName('影院名称');
+            $grid->NumBer('厅号');
+            $grid->EquNum('光源编号');
             $grid->Years('年份');
             $grid->一月('一月')->display(function($v){ return $v==0?0:$v;});
             $grid->二月('二月')->display(function($v){ return $v==0?0:$v;});
