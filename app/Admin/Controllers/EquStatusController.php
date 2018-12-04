@@ -130,6 +130,13 @@ class EquStatusController extends Controller
         return EquStatus::where('sNU',"=", $snu)->orderby('ID','desc')->first();
     }
     //通过客户ID返回光源
+    public function getShock(Request $request){
+        $snu = $request->get('s');
+        $status=EquStatus::where('sNU',"=", $snu)->orderby('ID','desc')->first();
+        $sSRC1=$status->sSRC1;
+        return $sSRC1;
+    }
+    //通过客户ID返回光源
     public function exportExcel(Request $request)
     {
         $filename = "光源状态记录(" . $request->get('snu') . ")" . rand(100, 999);//文件名:月份+月时长使用报表+当前日期+3位随机数

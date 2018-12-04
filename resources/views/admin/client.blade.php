@@ -156,6 +156,7 @@
     </div><!-- /.box -->
 @endforeach
 {!!$clients->links()!!}
+<!-- 状态Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document" style="width: 1400px;">
         <div class="modal-content" id="app">
@@ -172,7 +173,24 @@
         </div>
     </div>
 </div>
-<!-- 状态Modal -->
+<!-- 振幕Modal -->
+<div class="modal fade" id="shockModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width: 1400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="shockLabel"></h4>
+            </div>
+            <div class="modal-body" id="shock-content">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="myMiniModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document" >
         <div class="modal-content" >
@@ -279,7 +297,7 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + e.NumBer + "</td>";
                 equipment += "<td>" + e.EquNum + "</td>";
                 equipment += "<td>" + e.has_one_equ_type.Name + "</td>"
-                equipment += "<td>" +isbuy + "</td>"
+                equipment += "<td>" +e.ISBuy + "</td>"
                 equipment += "<td>" + remainTime + "</td>"
                 equipment += "<td>" + e.YearTotal + "</td>"
                 equipment += "<td>" + status + "</td>";
@@ -507,6 +525,14 @@ function formatMinutes(StatusMinute){
                 if(date2==""){alert('请输入结束日期');return false;}
                 window.open("/admin/equstatuss/exportExcel?snu="+snu+"&date1="+date1+"&date2="+date2);
             });
+        });
+    }
+    function getShock(a) {
+        var snu=$(a).attr("data-snu");
+        $.get('/admin/equstatuss/getShock?s=' + snu, function (data) {
+            var tpl = document.getElementById('test').innerHTML;
+            var html = template(tpl, data);
+            document.getElementById('shock-content').innerHTML = html;
         });
     }
     function changeEquNum(a){
