@@ -108,8 +108,13 @@ EOT;
             });
             $grid->Remark("备注");
             $grid->Serious("严重程度")->display(function($v){
+                if(!empty($v)){
                 $serios=["一般"=>"primary","严重"=>"warning","特别严重"=>"danger","否"=>"primary"];
                 return "<Label class='label label-$serios[$v]'>$v</Label>";
+                }
+                else{
+                    return "";
+                }
             });
             $grid->Solve("是否解决");
             $grid->UpdateTime("登记时间");
