@@ -40,8 +40,9 @@ class YearDurtReptController extends Controller
     public function query($id)
     {
         return Admin::content(function (Content $content) use ($id) {
-
-            $content->header('任意时长查询');
+            $equipemnt=Equipment::find($id);
+            $client=Client::find($equipemnt->ClientID);
+            $content->header("$client->ClientName"."$equipemnt->NumBer");
             $content->description('如果光源在使用期间没有联网,联网后累加在当天的使用时长上');
             $balances=[];
             $total=0;
