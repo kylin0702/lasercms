@@ -133,8 +133,17 @@ class EquStatusController extends Controller
     public function getShock(Request $request){
         $snu = $request->get('s');
         $status=EquStatus::where('sNU',"=", $snu)->orderby('ID','desc')->first();
-        $sSRC1=$status->sSRC1;
-        return $sSRC1;
+        //8个振幕字段由16进制转为2进制，全部拼接返回,第1位补"1"，防止转为二进制不足8位
+        $sSRC1=base_convert("1".$status->sSRC1,16,2);
+        $sSRC2=base_convert("1".$status->sSRC2,16,2);
+        $sSRC3=base_convert("1".$status->sSRC3,16,2);
+        $sSRC4=base_convert("1".$status->sSRC4,16,2);
+        $sSRC5=base_convert("1".$status->sSRC5,16,2);
+        $sSRC6=base_convert("1".$status->sSRC6,16,2);
+        $sSRC7=base_convert("1".$status->sSRC7,16,2);
+        $sSRC8=base_convert("1".$status->sSRC8,16,2);
+        //把左边多出的1去掉,这样便是8个32bit二进制数组
+        return array(substr($sSRC1,1),ltrim($sSRC2,1),ltrim($sSRC3,1),ltrim($sSRC4,1),ltrim($sSRC5,1),ltrim($sSRC6,1),ltrim($sSRC7,1),ltrim($sSRC8,1));
     }
     //通过客户ID返回光源
     public function exportExcel(Request $request)

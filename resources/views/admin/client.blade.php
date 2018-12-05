@@ -175,14 +175,14 @@
 </div>
 <!-- 振幕Modal -->
 <div class="modal fade" id="shockModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document" style="width: 1400px;">
+    <div class="modal-dialog" role="document" style="width: 1350px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="shockLabel"></h4>
             </div>
             <div class="modal-body" id="shock-content">
-
+                <canvas id="shock_canvas" width="1280" height="320"></canvas>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -308,6 +308,7 @@ $("[data-widget='collapse']").on('click',function(){
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-toggle='modal' data-target='#delModal' data-room='"+e.NumBer+"' data-cid='"+e.ClientID+"'  data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
                                 "<a href='/admin/equipments/"+e.ID+"/edit' class='btn btn-sm btn-microsoft' >修改</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>详细状态</a>&nbsp;&nbsp;"+
+                                "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#shockModal'  data-snu='"+e.EquNum+"' onclick='getShock(this)'>振幕状态</a>&nbsp;&nbsp;"+
                                  "<a href='javascript:void(0);' class='btn btn-sm btn-github btn-changeEqu' data-target='#myMiniModal' data-toggle='modal' data-snu='"+e.EquNum+"' data-eid='"+e.ID+"' onclick='changeEquNum(this)'>更换光源</a>@endif</td>";
                 equipment += "</tr>";
 
@@ -501,6 +502,7 @@ function formatMinutes(StatusMinute){
 
 </script>
 <script src="/vendor/templatejs/template.min.js"></script>
+<script src="/vendor/view/canvas.js"></script>
 <script>
     function getStatus(a) {
         var snu=$(a).attr("data-snu");
@@ -525,14 +527,6 @@ function formatMinutes(StatusMinute){
                 if(date2==""){alert('请输入结束日期');return false;}
                 window.open("/admin/equstatuss/exportExcel?snu="+snu+"&date1="+date1+"&date2="+date2);
             });
-        });
-    }
-    function getShock(a) {
-        var snu=$(a).attr("data-snu");
-        $.get('/admin/equstatuss/getShock?s=' + snu, function (data) {
-            var tpl = document.getElementById('test').innerHTML;
-            var html = template(tpl, data);
-            document.getElementById('shock-content').innerHTML = html;
         });
     }
     function changeEquNum(a){
