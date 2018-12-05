@@ -21,17 +21,16 @@
 
                             </tbody>
                         </table>
-                        @endif
+
                     </div>
-                    <div class="box-footer hidden">
+                    <div class="box-footer">
                         <div class="col-md-12">
                             <div class="btn-group pull-right">
                                 <button type="button" class="btn btn-info btn-export pull-right">导出</button>
                             </div>
                         </div>
-
                     </div>
-
+                @endif
             </div>
 
         </div></div>
@@ -41,8 +40,7 @@
             $('.enddate').datetimepicker({showClose:true,format:"YYYY-MM-DD",locale:"zh-CN",widgetPositioning:{horizontal: 'right',vertical:'bottom'}});
         });
         $(".btn-query").on('click',function(){
-           var date1= $('.startdate').val();
-            var date2= $('.enddate').val();
+
             if(date1==""||date2==""){
                 alert("请输入开始时间和结束时间");
                 return false;
@@ -50,6 +48,8 @@
             window.location.href="/admin/durt/query/{{$id}}?date1="+date1+"&date2="+date2;
         });
         $(".btn-export").on('click',function(){
-            alert(1);
+            var date1= $('.startdate').val();
+            var date2= $('.enddate').val();
+            window.open("/admin/durt/exportExcel?id={{$id}}&date1={{$date1}}&date2={{$date2}}");
         });
     </script>

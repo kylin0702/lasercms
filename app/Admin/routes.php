@@ -47,7 +47,8 @@ Route::group([
     #异常记录
     $router->resource('abnormas', AbnormaController::class);
     #统计报表
-    $router->get('durt/query/{ID}', "YearDurtReptController@query");
+    $router->get('durt/query/{ID}', "YearDurtReptController@query");//日结算明细
+    $router->get('durt/exportExcel', "YearDurtReptController@exportExcel");//导出EXCEL
     $router->resource('durt', YearDurtReptController::class);
     $router->resource('cost', YearCostReptController::class);
     #日结算
