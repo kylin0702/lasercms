@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Models\Equipment;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Admin\Models\Client;
 use App\admin\Models\DateBalance;
 use App\admin\Models\V_DateBalance;
@@ -13,6 +15,7 @@ use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Http\Request;
 
 class YearDurtReptController extends Controller
 {
@@ -54,7 +57,36 @@ class YearDurtReptController extends Controller
 
         });
     }
-
+    public function exportExcel(Request $request)
+    {
+        $filename = "日统计报表" . $request->get('date1') . "至" . $request->get('date2');//文件名:月份+月时长使用报表+当前日期+3位随机数
+        return Excel::create($filename, function ($excel) use ($request) {
+            $id = $request->get('id');
+            $date1 = $request->get('date1');
+            $date2 = $request->get('date2');
+            $Equipment=Equipment::find($id);
+            $Client=Client::find($Equipment->ClientID);
+            $excel->sheet($Client->ClientName.$Equipment->NumBer, function ($sheet) use ($id, $date1, $date2) {
+                $databalances= DateBalance::whereRaw("EquID='$id' and BalanceDate Between '$date1' and '$date2'")->get()->toArray();
+                $sheet->row(1, array(
+                    '日期','起始剩余时长','结束剩余时长','充值时长','使用时长'
+                ));
+                $rows = collect($databalances)->map(function ($item) {
+                    //排序
+                    $data_sort['BalanceDate']=$item['BalanceDate'];
+                    $data_sort['FirstTime']=$item['FirstTime'];
+                    $data_sort['LastTime']=$item['LastTime'];
+                    $data_sort['RechargeTime']=$item['RechargeTime'];
+                    $data_sort['CostTime']=$item['CostTime'];
+                    $data_only = array_only($data_sort, [
+                        'BalanceDate','FirstTime','LastTime','RechargeTime','CostTime'
+                    ]);
+                    return $data_only;
+                });
+                $sheet->rows($rows);
+            });
+        })->export('xlsx');
+    }
     /**
      * Make a grid builder.
      *
@@ -66,6 +98,12 @@ class YearDurtReptController extends Controller
 
             $grid->disableCreateButton();
             $grid->tools->disableBatchActions();
+            if(Admin::user()->inRoles(['client'])){
+                $grid->model()->where("Phone","=",Admin::user()->username);
+            }
+            if(Admin::user()->inRoles(['agent'])){
+                $grid->model()->where("agent","=",Admin::user()->username);
+            }
             $grid->model()->orderby('ClientName');
             $grid->ClientName('影院名称');
             $grid->NumBer('厅号');
@@ -102,19 +140,6 @@ class YearDurtReptController extends Controller
         });
     }
 
-    /**
-     * Make a form builder.
-     *
-     * @return Form
-     */
-    protected function form()
-    {
-        return Admin::form(YearDurtRept::class, function (Form $form) {
 
-            $form->display('id', 'ID');
 
-            $form->display('created_at', 'Created At');
-            $form->display('updated_at', 'Updated At');
-        });
-    }
 }
