@@ -184,6 +184,7 @@
             <div class="modal-body" id="shock-content">
                 <canvas id="shock_canvas" width="1280" height="320"></canvas>
             </div>
+            <div style="margin-left: 20px;"><i class="fa fa-circle" style="font-size: large;color: #00a65a;"></i>正常状态 <i class="fa fa-circle" style="font-size: large;color: #c7254e;"></i>异常状态 </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
