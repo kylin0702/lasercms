@@ -4,11 +4,13 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\EquipmentExporter;
 use App\Admin\Models\Client;
+use App\admin\Models\DateBalance;
 use App\Admin\Models\Equipment;
 use App\admin\Models\EquStatus;
 use App\Admin\Models\EquType;
 use App\admin\Models\Recharge;
 use App\Admin\Models\UpAndDown;
+use App\Admin\Models\YearDurtRept;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
@@ -346,10 +348,11 @@ EOT
             //取得当年使用时间长
             $year=date('Y');
             //$yeartotal=$v->upanddown()->whereRaw("TheTime>0 and Year(Date)=$year")->sum('TheTime');
-            $yeartotal=$v->date_balance()->whereRaw("Year(BalanceDate)=$year")->sum('CostTime');
+            $y=YearDurtRept::whereRaw("EquNum='$v->EquNum' and Years=$year")->first();
+            $yeartotal=$y->一月+$y->二月+$y->三月+$y->四月+$y->五月+$y->六月+$y->七月+$y->八月+$y->九月+$y->十月+$y->十一月+$y->十二月;
             //充值总时长
             //$totaltime=Recharge::all(["EquID","RechTime"])->where("EquID","=",$v['ID'])->sum('RechTime');
-            $totaltime=$v->date_balance()->whereRaw("1=1")->sum('RechargeTime');
+            $totaltime=DateBalance::whereRaw("EquID='$v->ID' and Year(BalanceDate)=$year")->sum('RechargeTime');
             $v->toArray();
             $v["YearTotal"]=$yeartotal;
             $v["TotalTime"]=$totaltime;

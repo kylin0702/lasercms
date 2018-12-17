@@ -123,7 +123,7 @@ class YearDurtReptController extends Controller
             $grid->十一月('十一月')->display(function($v){ return $v==0?0:$v;});
             $grid->十二月('十二月')->display(function($v){ return $v==0?0:$v;});
             $grid->Html('合计(小时)')->display(function(){
-                return  $this->一月+ $this->二月+$this->三月+$this->四月+$this->五月+$this->七月+$this->八月+$this->九月+$this->十月+$this->十一月+$this->十二月+$this->十二月;
+                return  $this->一月+ $this->二月+$this->三月+$this->四月+$this->五月+$this->六月+$this->七月+$this->八月+$this->九月+$this->十月+$this->十一月+$this->十二月;
             });
             $grid->filter(function ($filter) {
                 $filter->disableIdFilter();
