@@ -203,8 +203,9 @@ EOT;
         return Admin::form(Client::class, function (Form $form) {
 
             $method=request()->route()->getActionMethod();//获取路由方法,判断是增加还是修改
+            $form->text('ClientSN',"客户编码")->setWidth(2);
             $form->ignore(["Superior","MaxID"]);
-            $form->hidden('ClientNum');
+            $form->hidden('ClientNum',"客户编号");
             $form->hidden("MaxID")->default(function() {
                 return Client::max("ID");
             });

@@ -48,7 +48,7 @@
 @foreach ($clients as $v)
     <div class="box box-default collapsed-box">
         <div class="box-header with-border">
-           <h4 class="box-title" ><a data-widget="collapse" data-clientid="{{$v->ID}}" id="h4a{{$v->ID}}">{{$v->ClientName}}</a></h4>
+           <h4 class="box-title" ><a data-widget="collapse" data-clientid="{{$v->ID}}" id="h4a{{$v->ID}}">{{$v->ClientSN}}{{$v->ClientName}}</a></h4>
             @if ($v->Review!="已审核"&&Admin::user()->isRole('administrator'))
             <div class="box-tools pull-right">
                 <a href="/admin/clients/{{$v->ID}}/audit" class="btn btn-sm btn-success" type="button">审核</a>
