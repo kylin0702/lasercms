@@ -7,13 +7,16 @@ use App\Admin\Models\Equipment;
 use App\Admin\Models\EquStatus;
 use App\Admin\Models\EquStatusTemp;
 use App\admin\Models\Recharge;
+use App\Admin\Models\YearDurtRept;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Excel;
 use Symfony\Component\VarDumper\Cloner\Data;
 
 class DateBalanceController extends Controller
@@ -36,6 +39,56 @@ class DateBalanceController extends Controller
             $grid->id('ID')->sortable();
 
         });
+    }
+    //生成月度Excel报表
+    public  function  month_excel(Request $request){
+        $year=2018;
+        $month=10;
+        $timespan="";
+        if($month==1){
+            $timespan="BalanceDate Between '$year-$month-01' and '$year-$month-25'";
+        }
+        else if($month==12){
+            $month=$month-1;
+            $timespan="BalanceDate Between '$year-$month-25' and '$year-$month-31'";
+        }
+        else{
+            $timespan="BalanceDate Between '$year-$month-25' and '$year-$month-26'";
+        }
+        $month_datas=DateBalance::whereRaw($timespan)->get();
+        $export_excel_data=[];
+        foreach ($month_datas as $v){
+            $equipment=DateBalance::where("EquID","=",$v->EquID);
+            $lastmonth_remain=$equipment->first()->FirstTime;//上月剩余时间
+            $sum_recharge=$equipment->sum('RechargeTime');//本月总充值时间
+            $sum_costtime=$equipment->sum('CostTime');//本月使用时间
+            $month_remain=$equipment->orderBy("ID","desc")->first()->LastTime;//本月剩余时间
+            $month_ded=0;
+            if($sum_costtime<200){
+                $month_ded=200-$sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
+            }
+            if($sum_costtime)
+
+            $y=YearDurtRept::whereRaw("EquID='$v->EquID' and Years='$year'")->first();
+            $yeartotal=$y->一月+$y->二月+$y->三月+$y->四月+$y->五月+$y->六月+$y->七月+$y->八月+$y->九月+$y->十月+$y->十一月+$y->十二月;
+            $row=["机型"=>$v->TypeName,"光源编号"=>$v->EquNum,"上月余额小时"=>$lastmonth_remain,"本月充值小时数(含赠送)"=>$sum_recharge,	"本月使用小时数	"=>$sum_costtime,"剩余小时数"=>$month_remain,"本年累计小时数"=>$yeartotal,"本月应扣除小时数"=>$month_ded];
+        }
+        /*$filename=$year."年".$month."月月度使用时长报表";
+        Excel::create($filename, function($excel) {
+            $excel->sheet('Sheetname', function($sheet) {
+                $rows = collect($this->getData())->map(function ($item) {
+                    $item['年度合计']=$item['一月']+$item['二月']+$item['三月']+$item['四月']+$item['五月']+$item['六月']+$item['七月']+$item['八月']+$item['九月']+$item['十月']+$item['十一月']+$item['十二月'];
+                    $data=array_only($item,['ClientName','NumBer','EquNum','Years','一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月','年度合计']);
+                    return $data;
+                });
+                $sheet->row(1, array(
+                    '客户名称','厅号','光源编号','年份','一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月','年度合计'
+                ));
+                $sheet->rows($rows);
+            });
+
+        })->export('xls');*/
+
     }
      //天结算
     public  function  autocreate(){
