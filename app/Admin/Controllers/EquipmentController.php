@@ -348,8 +348,13 @@ EOT
             //取得当年使用时间长
             $year=date('Y');
             //$yeartotal=$v->upanddown()->whereRaw("TheTime>0 and Year(Date)=$year")->sum('TheTime');
-            $y=YearDurtRept::whereRaw("EquNum='$v->EquNum' and Years=$year")->first();
-            $yeartotal=$y->一月+$y->二月+$y->三月+$y->四月+$y->五月+$y->六月+$y->七月+$y->八月+$y->九月+$y->十月+$y->十一月+$y->十二月;
+            $y=YearDurtRept::whereRaw("EquNum='$v->EquNum' and Years='$year'")->first();
+            if(!empty($y)){
+              $yeartotal=$y->一月+$y->二月+$y->三月+$y->四月+$y->五月+$y->六月+$y->七月+$y->八月+$y->九月+$y->十月+$y->十一月+$y->十二月;
+            }
+            else{
+                $yeartotal=0;
+            }
             //充值总时长
             //$totaltime=Recharge::all(["EquID","RechTime"])->where("EquID","=",$v['ID'])->sum('RechTime');
             $totaltime=DateBalance::whereRaw("EquID='$v->ID' and Year(BalanceDate)=$year")->sum('RechargeTime');
