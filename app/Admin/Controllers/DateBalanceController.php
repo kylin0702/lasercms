@@ -43,8 +43,8 @@ class DateBalanceController extends Controller
     }
     //生成月度Excel报表
     public  function  month_excel(Request $request){
-        $year=2018;
-        $month=10;
+        $year=date('Y');
+        $month=$request->get("month");
         $month_array=["1"=>"一月","2"=>"二月","3"=>"三月","4"=>"四月","5"=>"五月","6"=>"六月","7"=>"七月","8"=>"八月","9"=>"九月","10"=>"十月","11"=>"十一月","12"=>"十二月"];
         $month_name=$month_array[$month];
         $timespan="";
@@ -66,7 +66,10 @@ class DateBalanceController extends Controller
         foreach ($items as $item){
             $equipment=$all_data_month->where('EquID', "$item->ID");
             if(!empty($equipment->first())) {
-                $clientsn = $equipment->first()->ClientSN;
+                $assetno = $equipment->first()->AssetNo;
+                $clientname= $equipment->first()->ClientName;
+                $clientsn= $equipment->first()->ClientSN;
+                $number= $equipment->first()->NumBer;
                 $lastmonth_remain = $equipment->first()->FirstTime;//上月剩余时间
                 $typename = $equipment->first()->TypeName;
                 $equnum = $equipment->first()->EquNum;
@@ -86,7 +89,18 @@ class DateBalanceController extends Controller
                     $month_ded = 200 - $sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
                 }
 
-                $row = ["财产编号" => $clientsn,"机型" => $typename, "光源编号" => $equnum, "上月余额小时" => $lastmonth_remain, "本月充值小时数(含赠送)" => $sum_recharge, "本月使用小时数" => $sum_costtime, "剩余小时数" => $month_remain, "本年累计小时数" => $yeartotal, "本月应扣除小时数" => $month_ded];
+                $row = ["客户编码"=>$clientsn,
+                        "客户名称"=>$clientname,
+                         "财产编号" => $assetno,
+                         "机型" => $typename,
+                        "厅号" => $number,
+                        "光源编号" => $equnum,
+                       "上月余额小时" => $lastmonth_remain,
+                       "本月充值小时数(含赠送)" => $sum_recharge,
+                       "本月使用小时数" => $sum_costtime,
+                      "剩余小时数" => $month_remain,
+                      "本年累计小时数" => $yeartotal,
+                     "本月应扣除小时数" => $month_ded];
                 array_push($export_excel_data, $row);
             }
 
@@ -95,11 +109,11 @@ class DateBalanceController extends Controller
         return Excel::create($filename, function($excel) use($export_excel_data) {
             $excel->sheet('Sheetname', function($sheet) use($export_excel_data) {
                 $rows = collect($export_excel_data)->map(function ($item) {
-                    $data=array_only($item,[ "财产编号",'机型','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数']);
+                    $data=array_only($item,[ '客户编码','客户名称','财产编号','机型','厅号','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数']);
                     return $data;
                 });
                 $sheet->row(1, array(
-                    "财产编号",'机型','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数'
+                    '客户编码','客户名称','财产编号','机型','厅号','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数'
                 ));
                 $sheet->rows($rows);
             });

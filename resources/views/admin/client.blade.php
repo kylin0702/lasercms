@@ -534,6 +534,7 @@ function formatMinutes(StatusMinute){
         var eid=$(a).attr("data-eid");
         var snu=$(a).attr("data-snu");
         $("#oldnum").html(snu);
+        $("#newnum").val('');
         $("#btn-changeEquipment").on('click',function(){
             var that=this;
             var newnum=$("#newnum").val();

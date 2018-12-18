@@ -139,6 +139,7 @@ EOT
                     }
                 }
             });
+            $grid->ReviewTime('最后通讯时间')->sortable();
             $states = [
                 'on'  => ['value' => "已审核", 'text' => '已审核', 'color' => 'primary'],
                 'off' => ['value' => "未审核", 'text' => '未审核', 'color' => 'default'],

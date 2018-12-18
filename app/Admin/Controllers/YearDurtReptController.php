@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\MonthExporter;
 use App\Admin\Models\Equipment;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Admin\Models\Client;
@@ -32,7 +33,6 @@ class YearDurtReptController extends Controller
 
             $content->header('时长统计');
             $content->description('光源放映时长统计');
-
             $content->body($this->grid());
         });
     }
@@ -96,7 +96,9 @@ class YearDurtReptController extends Controller
     protected function grid()
     {
         return Admin::grid(YearDurtRept::class, function (Grid $grid) {
-
+            $grid->tools(function ($tools) {
+                $tools->append(new MonthExporter());
+            });
             $grid->disableCreateButton();
             $grid->tools->disableBatchActions();
             if(Admin::user()->inRoles(['client'])){
