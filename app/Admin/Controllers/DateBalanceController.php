@@ -7,6 +7,7 @@ use App\Admin\Models\Equipment;
 use App\Admin\Models\EquStatus;
 use App\Admin\Models\EquStatusTemp;
 use App\admin\Models\Recharge;
+use App\admin\Models\V_DateBalance;
 use App\Admin\Models\YearDurtRept;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -16,7 +17,7 @@ use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\VarDumper\Cloner\Data;
 
 class DateBalanceController extends Controller
@@ -44,50 +45,66 @@ class DateBalanceController extends Controller
     public  function  month_excel(Request $request){
         $year=2018;
         $month=10;
+        $month_array=["1"=>"一月","2"=>"二月","3"=>"三月","4"=>"四月","5"=>"五月","6"=>"六月","7"=>"七月","8"=>"八月","9"=>"九月","10"=>"十月","11"=>"十一月","12"=>"十二月"];
+        $month_name=$month_array[$month];
         $timespan="";
         if($month==1){
-            $timespan="BalanceDate Between '$year-$month-01' and '$year-$month-25'";
+            $timespan="'$year-$month-01' and '$year-$month-25'";
         }
         else if($month==12){
-            $month=$month-1;
-            $timespan="BalanceDate Between '$year-$month-25' and '$year-$month-31'";
+
+            $timespan="'$year-$month-26' and '$year-$month-31'";
         }
         else{
-            $timespan="BalanceDate Between '$year-$month-25' and '$year-$month-26'";
+            $lastmonth=$month-1;
+            $timespan="'$year-$lastmonth-26' and '$year-$month-25'";
         }
-        $month_datas=DateBalance::whereRaw($timespan)->get();
+        $items=Equipment::where("IsBuy","<>","是")->get(["ID"]);
         $export_excel_data=[];
-        foreach ($month_datas as $v){
-            $equipment=DateBalance::where("EquID","=",$v->EquID);
-            $lastmonth_remain=$equipment->first()->FirstTime;//上月剩余时间
-            $sum_recharge=$equipment->sum('RechargeTime');//本月总充值时间
-            $sum_costtime=$equipment->sum('CostTime');//本月使用时间
-            $month_remain=$equipment->orderBy("ID","desc")->first()->LastTime;//本月剩余时间
-            $month_ded=0;
-            if($sum_costtime<200){
-                $month_ded=200-$sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
-            }
-            if($sum_costtime)
+        $all_data_month=V_DateBalance::whereRaw("BalanceDate Between  $timespan")->get();
+        $all_years= YearDurtRept::whereRaw("Years='$year'")->get();
+        foreach ($items as $item){
+            $equipment=$all_data_month->where('EquID', "$item->ID");
+            if(!empty($equipment->first())) {
+                $clientsn = $equipment->first()->ClientSN;
+                $lastmonth_remain = $equipment->first()->FirstTime;//上月剩余时间
+                $typename = $equipment->first()->TypeName;
+                $equnum = $equipment->first()->EquNum;
+                $sum_recharge = $equipment->sum('RechargeTime');//本月总充值时间
+                $sum_costtime = 0;//本月使用时间
+                $month_remain = $equipment->last()->LastTime;//本月剩余时间
+                $y = $all_years->where("EquID","$item->ID")->first();
+                if (!empty($y)) {
+                    $yeartotal = $y->一月 + $y->二月 + $y->三月 + $y->四月 + $y->五月 + $y->六月 + $y->七月 + $y->八月 + $y->九月 + $y->十月 + $y->十一月 + $y->十二月;
+                    $y_toarray=$y->toArray();
+                    $sum_costtime=$y_toarray["$month_name"];
+                } else {
+                    $yeartotal = 0;
+                }
+                $month_ded = 0;
+                if ($sum_costtime < 200) {
+                    $month_ded = 200 - $sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
+                }
 
-            $y=YearDurtRept::whereRaw("EquID='$v->EquID' and Years='$year'")->first();
-            $yeartotal=$y->一月+$y->二月+$y->三月+$y->四月+$y->五月+$y->六月+$y->七月+$y->八月+$y->九月+$y->十月+$y->十一月+$y->十二月;
-            $row=["机型"=>$v->TypeName,"光源编号"=>$v->EquNum,"上月余额小时"=>$lastmonth_remain,"本月充值小时数(含赠送)"=>$sum_recharge,	"本月使用小时数	"=>$sum_costtime,"剩余小时数"=>$month_remain,"本年累计小时数"=>$yeartotal,"本月应扣除小时数"=>$month_ded];
+                $row = ["财产编号" => $clientsn,"机型" => $typename, "光源编号" => $equnum, "上月余额小时" => $lastmonth_remain, "本月充值小时数(含赠送)" => $sum_recharge, "本月使用小时数" => $sum_costtime, "剩余小时数" => $month_remain, "本年累计小时数" => $yeartotal, "本月应扣除小时数" => $month_ded];
+                array_push($export_excel_data, $row);
+            }
+
         }
-        /*$filename=$year."年".$month."月月度使用时长报表";
-        Excel::create($filename, function($excel) {
-            $excel->sheet('Sheetname', function($sheet) {
-                $rows = collect($this->getData())->map(function ($item) {
-                    $item['年度合计']=$item['一月']+$item['二月']+$item['三月']+$item['四月']+$item['五月']+$item['六月']+$item['七月']+$item['八月']+$item['九月']+$item['十月']+$item['十一月']+$item['十二月'];
-                    $data=array_only($item,['ClientName','NumBer','EquNum','Years','一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月','年度合计']);
+        $filename=$year."年".$month."月月度使用时长报表";
+        return Excel::create($filename, function($excel) use($export_excel_data) {
+            $excel->sheet('Sheetname', function($sheet) use($export_excel_data) {
+                $rows = collect($export_excel_data)->map(function ($item) {
+                    $data=array_only($item,[ "财产编号",'机型','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数']);
                     return $data;
                 });
                 $sheet->row(1, array(
-                    '客户名称','厅号','光源编号','年份','一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月','年度合计'
+                    "财产编号",'机型','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数'
                 ));
                 $sheet->rows($rows);
             });
 
-        })->export('xls');*/
+        })->export('xls');
 
     }
      //天结算
