@@ -186,8 +186,8 @@ class RechargeController extends Controller
             }
             $form->hidden("Results")->default(1);
             $form->text("RechTime","充值小时数")->default(0)->attribute("type","number")->setWidth(2);
-            $form->html("<input class='form-control' id='phone1'/>","验证码1")->setWidth(1);
-            $form->html("<span><input class='form-control hidden' id='phone2'/></span>","验证码2")->setWidth(1);
+            $form->html("<input class='form-control' id='phone1'/>","财务验证码")->setWidth(1);
+            $form->html("<span><input class='form-control hidden' id='phone2'/></span>","经理验证码")->setWidth(1);
             $form->html("<button type='button' class='btn btn-primary sms'>发送验证码</button>","");
             $form->html("<span class='form-control no-border totle' style='color: #9f191f;font-size: 18px'>0元</span>","总计");
             $form->hidden("Amount")->default(0);
@@ -244,7 +244,7 @@ class RechargeController extends Controller
                             for(var key in data){
                                 codes.push(data[key]);
                             }
-                            //alert("验证码为"+codes[0]+","+codes[1]+","+codes[2]);
+                             //alert("验证码为"+codes[0]+","+codes[1]+","+codes[2]);
                              alert("验证码已发送");
                         }
                         else{
@@ -255,7 +255,7 @@ class RechargeController extends Controller
                 });
                  $('#phone1').on('input propertychange',function(){
                        if(!codes.length==0){
-                             codes=$.map(codes,function(n){
+                             /*codes=$.map(codes,function(n){
                                 if( $('#phone1').val()==n) {
                                     $('.check1').removeClass('hidden');
                                     $('#phone1').attr('disabled',"disabled");
@@ -266,8 +266,15 @@ class RechargeController extends Controller
                                   return n;
                                 }
                                
-                             });
+                             });*/
+                              if( $('#phone1').val()==codes[0]) {
+                                    $('.check1').removeClass('hidden');
+                                    $('#phone1').attr('disabled',"disabled");
+                                    $('#phone2').removeClass('hidden');
+                                    codes.splice(0,1); 
+                                }
                        };
+                       
                 });
                  $('#phone2').on('input propertychange',function(){
                        if(!codes.length==0){
@@ -320,8 +327,8 @@ EOT
             $form->hidden("eids","光源")->value(Input::get("eids"));
             $form->hidden("cid","客户ID")->value($cid);
             $form->text("time","充值小时数")->default(0)->attribute("type","number")->setWidth(2);
-            $form->html("<input class='form-control' id='phone1'/>","验证码1")->setWidth(1);
-            $form->html("<span><input class='form-control hidden' id='phone2'/></span>","验证码2")->setWidth(1);
+            $form->html("<input class='form-control' id='phone1'/>","财务验证码")->setWidth(1);
+            $form->html("<span><input class='form-control hidden' id='phone2'/></span>","经理验证码")->setWidth(1);
             $form->html("<button type='button' class='btn btn-primary sms'>发送验证码</button>","");
             //$form->html("<span class='form-control no-border totle' style='color: #9f191f;font-size: 18px'>0元</span>","总计");
             $form->setAction("/admin/recharges/batchRecharge");
@@ -359,7 +366,8 @@ EOT
                 });
                  $('#phone1').on('input propertychange',function(){
                        if(!codes.length==0){
-                             codes=$.map(codes,function(n){
+                             //第一个验证码可以是任何一个
+                             /*codes=$.map(codes,function(n){
                                 if( $('#phone1').val()==n) {
                                     $('.check1').removeClass('hidden');
                                     $('#phone1').attr('disabled',"disabled");
@@ -368,8 +376,14 @@ EOT
                                 }
                                 else{
                                   return n;
-                                }
-                               
+                                }*/
+                                 //第一个验证码必须是财务
+                                 if( $('#phone1').val()==codes[0]) {
+                                    $('.check1').removeClass('hidden');
+                                    $('#phone1').attr('disabled',"disabled");
+                                    $('#phone2').removeClass('hidden');
+                                    codes.splice(0,1); 
+                                }      
                              });
                        };
                 });

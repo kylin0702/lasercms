@@ -143,6 +143,12 @@ class YearDurtReptController extends Controller
                 $actions->append("<a href='/admin/durt/query/$id' class='btn btn-info btn-xs' >明细查询</i></a>");
             });
             $grid->exporter(new YearDurtExporter());
+            Admin::script(<<<EOT
+$(".table").css({"border": "1px #888 solid" });
+$(".table td").css({"border": "1px #888 solid" });
+$(".table th").css({"border": "1px #888 solid" });
+EOT
+);
         });
     }
 
