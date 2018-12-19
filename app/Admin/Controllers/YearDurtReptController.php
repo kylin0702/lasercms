@@ -96,9 +96,7 @@ class YearDurtReptController extends Controller
     protected function grid()
     {
         return Admin::grid(YearDurtRept::class, function (Grid $grid) {
-            $grid->tools(function ($tools) {
-                $tools->append(new MonthExporter());
-            });
+
             $grid->disableCreateButton();
             $grid->tools->disableBatchActions();
             if(Admin::user()->inRoles(['client'])){
@@ -106,6 +104,11 @@ class YearDurtReptController extends Controller
             }
             if(Admin::user()->inRoles(['agent'])){
                 $grid->model()->where("agent","=",Admin::user()->username);
+            }
+            if(Admin::user()->inRoles(["administrator"])){
+                $grid->tools(function ($tools) {
+                    $tools->append(new MonthExporter());
+                });
             }
             $grid->model()->orderby('ClientName');
             $grid->ClientName('影院名称');
