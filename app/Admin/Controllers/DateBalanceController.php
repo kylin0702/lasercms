@@ -59,7 +59,7 @@ class DateBalanceController extends Controller
             $lastmonth=$month-1;
             $timespan="'$year-$lastmonth-26' and '$year-$month-25'";
         }
-        $items=Equipment::where("IsBuy","<>","是")->orderBy("ClientID")->orderBy('NumBer')->get(["ID"]);
+        $items=Equipment::where("IsBuy","<>","是")->orderBy("ClientID")->get(["ID"]);
         $export_excel_data=[];
         $all_data_month=V_DateBalance::whereRaw("BalanceDate Between  $timespan")->get();
         $all_years= YearDurtRept::whereRaw("Years='$year'")->get();
