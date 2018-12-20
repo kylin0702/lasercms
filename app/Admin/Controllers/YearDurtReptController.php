@@ -112,7 +112,7 @@ class YearDurtReptController extends Controller
                 $grid->ClientSN('客户编码');
                 $grid->AssetNo('财产编码');
             }
-            $grid->model()->orderby('ClientID')->orderBy('NumBer');
+            $grid->model()->orderby('ClientID');
             $grid->ClientName('影院名称');
             $grid->NumBer('厅号');
             $grid->TypeName('型号');
