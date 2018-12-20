@@ -376,15 +376,15 @@ EOT
                                 }
                                 else{
                                   return n;
-                                }*/
-                                 //第一个验证码必须是财务
+                                }                                 
+                             });*/
+                               //第一个验证码必须是财务
                                  if( $('#phone1').val()==codes[0]) {
                                     $('.check1').removeClass('hidden');
                                     $('#phone1').attr('disabled',"disabled");
                                     $('#phone2').removeClass('hidden');
                                     codes.splice(0,1); 
-                                }      
-                             });
+                                 }   
                        };
                 });
                  $('#phone2').on('input propertychange',function(){

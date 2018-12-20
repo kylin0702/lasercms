@@ -59,7 +59,7 @@ class DateBalanceController extends Controller
             $lastmonth=$month-1;
             $timespan="'$year-$lastmonth-26' and '$year-$month-25'";
         }
-        $items=Equipment::where("IsBuy","<>","是")->get(["ID"]);
+        $items=Equipment::where("IsBuy","<>","是")->orderBy("ClientID")->orderBy('NumBer')->get(["ID"]);
         $export_excel_data=[];
         $all_data_month=V_DateBalance::whereRaw("BalanceDate Between  $timespan")->get();
         $all_years= YearDurtRept::whereRaw("Years='$year'")->get();
@@ -90,10 +90,10 @@ class DateBalanceController extends Controller
                 }
 
                 $row = ["客户编码"=>$clientsn,
+                        "财产编号" => $assetno,
                         "客户名称"=>$clientname,
-                         "财产编号" => $assetno,
+                         "厅号" => $number,
                          "机型" => $typename,
-                        "厅号" => $number,
                         "光源编号" => $equnum,
                        "上月余额小时" => $lastmonth_remain,
                        "本月充值小时数(含赠送)" => $sum_recharge,
@@ -109,11 +109,11 @@ class DateBalanceController extends Controller
         return Excel::create($filename, function($excel) use($export_excel_data) {
             $excel->sheet('Sheetname', function($sheet) use($export_excel_data) {
                 $rows = collect($export_excel_data)->map(function ($item) {
-                    $data=array_only($item,[ '客户编码','客户名称','财产编号','机型','厅号','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数']);
+                    $data=array_only($item,[ '客户编码','财产编号','客户名称','厅号','机型','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数']);
                     return $data;
                 });
                 $sheet->row(1, array(
-                    '客户编码','客户名称','财产编号','机型','厅号','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数'
+                    '客户编码','财产编号','客户名称','厅号','机型','光源编号','上月余额小时','本月充值小时数(含赠送)','本月使用小时数','剩余小时数','本年累计小时数','本月应扣除小时数'
                 ));
                 $sheet->rows($rows);
             });

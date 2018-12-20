@@ -109,10 +109,13 @@ class YearDurtReptController extends Controller
                 $grid->tools(function ($tools) {
                     $tools->append(new MonthExporter());
                 });
+                $grid->ClientSN('客户编码');
+                $grid->AssetNo('财产编码');
             }
-            $grid->model()->orderby('ClientName');
+            $grid->model()->orderby('ClientID')->orderBy('NumBer');
             $grid->ClientName('影院名称');
             $grid->NumBer('厅号');
+            $grid->TypeName('型号');
             $grid->EquNum('光源编号');
             $grid->Years('年份');
             $grid->一月('一月')->display(function($v){ return $v==0?0:$v;});
