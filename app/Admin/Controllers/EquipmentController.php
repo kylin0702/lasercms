@@ -108,12 +108,15 @@ EOT
                 $grid->disableRowSelector()->disableCreateButton();
                 $grid->tools->disableBatchActions();
                $grid->disableActions();
-               $grid->model()->orderby("RemainTime");
               $grid->hasOneClient()->ClientNum('客户编号');
                $grid->hasOneClient()->ClientName('客户名称')->sortable();
                $grid->NumBer('影厅号');
                $grid->hasOneEquType()->Name('光源类型');
-                #$grid->EquType()->Price('单价');
+               $grid->ISBuy("销售类型")->display(function ($v) {
+                   if($v=="否"){return "租赁";}
+                   elseif($v=="是"){return "销售";}
+                   else{return "测试";}
+            });
                #$grid->EquType()->GiftTime('赠送时长');
                $grid->EquNum("设备编号")->display(function ($v) {
                   return $v;
@@ -147,7 +150,7 @@ EOT
             //$grid->Review("审核状态")->switch($states);
             $grid->filter(function ($filter) {
                 $filter->disableIdFilter();
-                $filter->equal('EquTypeID', '光源类型')->select(EquType::all()->pluck('Name',"ID"));
+                $filter->in('ISBuy', '销售类型')->checkbox(['否'=>'租赁','是'=>'销售','测试'=>'测试']);
                 $filter->where(function ($query) {
                     $query->whereRaw("ClientID is {$this->input}");
                 }, '是否绑定')->select(["null"=>"未绑定","not null"=>"已绑定"]);
@@ -302,7 +305,7 @@ EOT
                 'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
             ];
             $form->switch('Review', '审核状态')->states($states)->default("已审核");
-            $form->radio('IsBuy', '销售类型');
+            $form->radio('ISBuy', '销售类型')->options(['否'=>'租赁','是'=>'销售','测试'=>'测试']);
             $form->hidden("EntryPer")->default(function (){
                return Admin::user()->id;
             });
@@ -392,6 +395,20 @@ EOT
                 }
             }
         }
+    }
+    //锁定光源
+    public  function lock($ID){
+        $equipment=Equipment::findorfail($ID);
+        $equipment->IsEnabled="N";
+        $equipment->save();
+        return json_encode(["result"=>true,"message"=>"update success"]);
+    }
+    //锁定光源
+    public function unlock($ID){
+        $equipment=Equipment::findorfail($ID);
+        $equipment->IsEnabled="Y";
+        $equipment->save();
+        return json_encode(["result"=>true,"message"=>"update success"]);
     }
     //发送删除确认短信
     public function sms(){

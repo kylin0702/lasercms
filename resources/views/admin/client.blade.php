@@ -144,6 +144,7 @@
                         <th>剩余时长</th>
                         <th>今年使用时长</th>
                         <th>光源状态</th>
+                        <th>启用/锁定</th>
                         <th>最后通讯时间</th>
                         <th>距离当前时长</th>
                         <th>操作</th>
@@ -232,7 +233,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label col-sm-3">验证码2:</label>
-                    <div class="input-group col-sm-3"> <input id="phone2"  class="form-control hidden" /></div>
+                    <div class="input-group col-sm-3 "> <input id="phone2"  class="form-control hidden" /></div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-sm-3"></label>
@@ -268,6 +269,10 @@ $("[data-widget='collapse']").on('click',function(){
                 var reviewtime=new Date(e.ReviewTime);//最后通讯时间
                 var now=new Date();
                 var assetno=" ";
+                var enable="<em class='text-success'>启用</em>";
+                if(e.IsEnabled=="N"){
+                   enable="<em class='text-danger'>锁定</em>"
+                };
                 if(e.AssetNo!=null){assetno=e.AssetNo;}
                 reviewtime=reviewtime.getTime();//转时间戳
                 now=now.getTime();
@@ -302,20 +307,40 @@ $("[data-widget='collapse']").on('click',function(){
                 equipment += "<td>" + remainTime + "</td>"
                 equipment += "<td>" + e.YearTotal + "</td>"
                 equipment += "<td>" + status + "</td>";
+                equipment += "<td class='text-center'>"+enable+"</td>";
                 equipment += "<td>" + e.ReviewTime + "</td>";
                 equipment += "<td>" +formatMinutes(overtime) + "</td>";
+
                 equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a>&nbsp;&nbsp;" +
                                 "<a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-toggle='modal' data-target='#delModal' data-room='"+e.NumBer+"' data-cid='"+e.ClientID+"'  data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
                                 "<a href='/admin/equipments/"+e.ID+"/edit' class='btn btn-sm btn-microsoft' >修改</a>&nbsp;&nbsp;"+
+                                  "<a href='javascript:void(0);' class='btn btn-sm btn-github btn-lock'  data-eid='"+e.ID+"'  >锁定</a>&nbsp;&nbsp;"+
+                                "<a href='javascript:void(0);' class='btn btn-sm btn-success btn-unlock'  data-eid='"+e.ID+"'  >启用</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>详细状态</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#shockModal'  data-snu='"+e.EquNum+"' onclick='getShock(this)'>振幕状态</a>&nbsp;&nbsp;"+
-                                 "<a href='javascript:void(0);' class='btn btn-sm btn-github btn-changeEqu' data-target='#myMiniModal' data-toggle='modal' data-snu='"+e.EquNum+"' data-eid='"+e.ID+"' onclick='changeEquNum(this)'>更换光源</a>@endif</td>";
+                                 "<a href='javascript:void(0);' class='btn btn-sm btn-adn btn-changeEqu' data-target='#myMiniModal' data-toggle='modal' data-snu='"+e.EquNum+"' data-eid='"+e.ID+"' onclick='changeEquNum(this)'>更换光源</a>@endif</td>";
                 equipment += "</tr>";
 
             });
-            equipment+="@if(Admin::user()->inRoles(['administrator']))<tr><td colspan='12'> <a href='javascript:void(0)' class='btn btn-sm btn-danger btn-batchCharge' data-cid="+ClientID+" >批量充值</a></td></tr>@endif";
+            equipment+="@if(Admin::user()->inRoles(['administrator']))<tr><td colspan='13'> <a href='javascript:void(0)' class='btn btn-sm btn-danger btn-batchCharge' data-cid="+ClientID+" >批量充值</a></td></tr>@endif";
             content.html(equipment);
+            //锁定光源操作
+            $(".btn-lock").on('click',function () {
+                var eid=$(this).attr("data-eid");
+                $.post("equipments/"+eid+"/lock",{},function(data){
+                    alert("光源已锁定!");
+                    window.location.reload();
+                });
+            });
+            //解锁光源操作
+            $(".btn-unlock").on('click',function () {
+                var eid=$(this).attr("data-eid");
+                $.post("equipments/"+eid+"/unlock",{},function(data){
+                    alert("光源已启用!");
+                    window.location.reload();
+                });
+            });
             //删除光源
             $('.btn-del').on('click',function(){
                 var that=this;
@@ -588,28 +613,28 @@ function formatMinutes(StatusMinute){
                         <td>上红光模组电流4</td> <td><%=sURC4%></td><td>下红光模组电流4</td><td><%=sDRC4%></td><td>上绿光模组电流4</td><td><%=sUGC4%></td><td>下绿光模组电流4</td><td><%=sDGC4%></td><td>上蓝光模组电流4</td><td><%=sUBC4%></td><td>下蓝光模组电流4</td><td><%=sDBC4%></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流5</td> <td><%=sURC5%></td><td>下红光模组电流5</td><td><%=sDRC5%></td><td>上绿光模组电流5</td><td><%=sUGC5%></td><td>下绿光模组电流5</td><td><%=sDGC5%></td><td>振幕1</td><td><%if(sSRC1){%><%=sSRC1%><%}%></td><td>温度1</td><td><%if(sTMP1){%><%=sTMP1%><%}%></td>
+                        <td>上红光模组电流5</td> <td><%=sURC5%></td><td>下红光模组电流5</td><td><%=sDRC5%></td><td>上绿光模组电流5</td><td><%=sUGC5%></td><td>下绿光模组电流5</td><td><%=sDGC5%></td><td>温度1</td><td><%if(sTMP1){%><%=sTMP1%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流6</td> <td><%=sURC6%></td><td>下红光模组电流6</td><td><%=sDRC6%></td><td>上绿光模组电流6</td><td><%=sUGC6%></td><td>下绿光模组电流6</td><td><%=sDGC6%></td><td>振幕2</td><td><%if(sSRC2){%><%=sSRC2%><%}%></td><td>温度2</td><td><%if(sTMP2){%><%=sTMP2%><%}%></td>
+                        <td>上红光模组电流6</td> <td><%=sURC6%></td><td>下红光模组电流6</td><td><%=sDRC6%></td><td>上绿光模组电流6</td><td><%=sUGC6%></td><td>下绿光模组电流6</td><td><%=sDGC6%></td><td>温度2</td><td><%if(sTMP2){%><%=sTMP2%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流7</td> <td><%=sURC7%></td><td>下红光模组电流7</td><td><%=sDRC7%></td><td>上绿光模组电流7</td><td><%=sUGC7%></td><td>下绿光模组电流7</td><td><%=sDGC7%></td><td>振幕3</td><td><%if(sSRC3){%><%=sSRC3%><%}%></td><td>温度3</td><td><%if(sTMP3){%><%=sTMP1%><%}%></td>
+                        <td>上红光模组电流7</td> <td><%=sURC7%></td><td>下红光模组电流7</td><td><%=sDRC7%></td><td>上绿光模组电流7</td><td><%=sUGC7%></td><td>下绿光模组电流7</td><td><%=sDGC7%></td><td>温度3</td><td><%if(sTMP3){%><%=sTMP1%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流8</td> <td><%=sURC8%></td><td>下红光模组电流8</td><td><%=sDRC8%></td><td>上绿光模组电流8</td><td><%=sUGC8%></td><td>下绿光模组电流8</td><td><%=sDGC8%></td><td>振幕4</td><td><%if(sSRC4){%><%=sSRC4%><%}%></td><td>温度4</td><td><%if(sTMP4){%><%=sTMP1%><%}%></td>
+                        <td>上红光模组电流8</td> <td><%=sURC8%></td><td>下红光模组电流8</td><td><%=sDRC8%></td><td>上绿光模组电流8</td><td><%=sUGC8%></td><td>下绿光模组电流8</td><td><%=sDGC8%></td><td>温度4</td><td><%if(sTMP4){%><%=sTMP1%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流9</td> <td><%=sURC9%></td><td>下红光模组电流9</td><td><%=sDRC9%></td><td>上绿光模组电流9</td><td><%=sUGC9%></td><td>下绿光模组电流9</td><td><%=sDGC9%></td><td>振幕5</td><td></td><%if(sSRC5){%><%=sSRC5%><%}%><td>温度5</td><td><%if(sTMP5){%><%=sTMP1%><%}%></td>
+                        <td>上红光模组电流9</td> <td><%=sURC9%></td><td>下红光模组电流9</td><td><%=sDRC9%></td><td>上绿光模组电流9</td><td><%=sUGC9%></td><td>下绿光模组电流9</td><td><%=sDGC9%></td><td>温度5</td><td><%if(sTMP5){%><%=sTMP1%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流10</td> <td><%=sURC10%></td><td>下红光模组电流10</td><td><%=sDRC10%></td><td>上绿光模组电流10</td><td><%=sUGC10%></td><td>下绿光模组电流10</td><td><%=sDGC10%></td><td>振幕6</td><td><%if(sSRC6){%><%=sSRC6%><%}%></td><td>温度6</td><td><%if(sTMP6){%><%=sTMP6%><%}%></td>
+                        <td>上红光模组电流10</td> <td><%=sURC10%></td><td>下红光模组电流10</td><td><%=sDRC10%></td><td>上绿光模组电流10</td><td><%=sUGC10%></td><td>下绿光模组电流10</td><td><%=sDGC10%></td><td>温度6</td><td><%if(sTMP6){%><%=sTMP6%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流11</td> <td><%=sURC11%></td><td>下红光模组电流11</td><td><%=sDRC11%></td><td>上绿光模组电流11</td><td><%=sUGC11%></td><td>下绿光模组电流11</td><td><%=sDGC11%></td><td>振幕7</td><td><%if(sSRC7){%><%=sSRC7%><%}%></td><td></td><td></td>
+                        <td>上红光模组电流11</td> <td><%=sURC11%></td><td>下红光模组电流11</td><td><%=sDRC11%></td><td>上绿光模组电流11</td><td><%=sUGC11%></td><td>下绿光模组电流11</td><td><%=sDGC11%></td></td><td></td><td></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流12</td> <td><%=sURC12%></td><td>下红光模组电流12</td><td><%=sDRC12%></td><td>上绿光模组电流12</td><td><%=sUGC12%></td><td>下绿光模组电流12</td><td><%=sDGC12%></td><td>振幕8</td><td><%if(sSRC8){%><%=sSRC8%><%}%></td><td></td><td></td>
+                        <td>上红光模组电流12</td> <td><%=sURC12%></td><td>下红光模组电流12</td><td><%=sDRC12%></td><td>上绿光模组电流12</td><td><%=sUGC12%></td><td>下绿光模组电流12</td><td><%=sDGC12%></td><td></td><td></td><td></td><td></td>
                     </tr>
                     <tr>
                         <td>上红光模组电流13</td> <td><%=sURC13%></td><td>下红光模组电流13</td><td><%=sDRC13%></td><td>上绿光模组电流13</td><td><%=sUGC13%></td><td>下绿光模组电流13</td><td><%=sDGC13%></td><td></td><td></td><td></td><td></td>

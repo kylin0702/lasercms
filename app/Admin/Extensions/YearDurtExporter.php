@@ -12,7 +12,8 @@ class YearDurtExporter extends AbstractExporter
 
         Excel::create($filename, function($excel) {
             $excel->sheet('Sheetname', function($sheet) {
-                $rows = collect($this->getData())->sortBy('ClientID')->map(function ($item) {
+                dd($this->getData());
+                $rows = collect($this->getData())->map(function ($item) {
                     $item['年度合计']=$item['一月']+$item['二月']+$item['三月']+$item['四月']+$item['五月']+$item['六月']+$item['七月']+$item['八月']+$item['九月']+$item['十月']+$item['十一月']+$item['十二月'];
                     $data=array_only($item,['ClientSN','AssetNo','ClientName','NumBer','TypeName','EquNum','Years','一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月','年度合计']);
                     return $data;
