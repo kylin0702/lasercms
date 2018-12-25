@@ -130,11 +130,11 @@
                 var href1="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=0";
                 var href2="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=1";
                 var remainTime=parseInt(e.RemainTime)+parseInt(e.GiftTime);//剩余时间等购买时间与赠送时间
-                var reviewtime=new Date(e.ReviewTime);//最后通讯时间
-                var now=new Date();
-                reviewtime=reviewtime.getTime();//转时间戳
-                now=now.getTime();
-                isOvertime=(reviewtime+240000)<now;//10分钟不通讯显示超时
+                var reviewtime=moment(e.ReviewTime);//最后通讯时间
+                var now=moment();
+                reviewtime=reviewtime.unix();//转时间戳
+                now=now.unix();
+                isOvertime=(reviewtime+240)<now;//10分钟不通讯显示超时
                 if(!isOvertime){
                     switch (e.EquStatus) {
                         case "LampOn":

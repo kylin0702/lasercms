@@ -266,17 +266,17 @@ $("[data-widget='collapse']").on('click',function(){
                 var href1="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=0";
                 var href2="/admin/recharges/create?cid="+e.ClientID+"&eid="+e.ID+"&method=1";
                 var remainTime=parseInt(e.RemainTime)+parseInt(e.GiftTime);//剩余时间等购买时间与赠送时间
-                var reviewtime=new Date(e.ReviewTime);//最后通讯时间
-                var now=new Date();
+                var reviewtime=moment(e.ReviewTime);//最后通讯时间
+                var now=moment();
                 var assetno=" ";
                 var enable="<em class='text-success'>启用</em>";
                 if(e.IsEnabled=="N"){
                    enable="<em class='text-danger'>锁定</em>"
                 };
                 if(e.AssetNo!=null){assetno=e.AssetNo;}
-                reviewtime=reviewtime.getTime();//转时间戳
-                now=now.getTime();
-                isOvertime=(reviewtime+240000)<now;//4分钟不通讯显示超时
+                reviewtime=reviewtime.unix();//转时间戳
+                now=now.unix();
+                isOvertime=(reviewtime+240)<now;//4分钟不通讯显示超时
                 overtime=Math.floor((now-reviewtime)/1000/60);
                 if(!isOvertime){
                     switch (e.EquStatus) {
