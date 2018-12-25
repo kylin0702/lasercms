@@ -305,7 +305,7 @@ EOT
                 'off' => ['value' => '未审核', 'text' => '未审核', 'color' => 'danger'],
             ];
             $form->switch('Review', '审核状态')->states($states)->default("已审核");
-            $form->radio('ISBuy', '销售类型')->options(['否'=>'租赁','是'=>'销售','测试'=>'测试']);
+            $form->radio('ISBuy', '销售类型')->options(['否'=>'租赁','是'=>'销售','测试'=>'测试'])->default("否");
             $form->hidden("EntryPer")->default(function (){
                return Admin::user()->id;
             });
