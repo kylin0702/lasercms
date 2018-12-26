@@ -277,7 +277,7 @@ $("[data-widget='collapse']").on('click',function(){
                 reviewtime=reviewtime.unix();//转时间戳
                 now=now.unix();
                 isOvertime=(reviewtime+240)<now;//4分钟不通讯显示超时
-                overtime=Math.floor((now-reviewtime)/1000/60);
+                overtime=Math.floor((now-reviewtime)/60);
                 if(!isOvertime){
                     switch (e.EquStatus) {
                         case "LampOn":

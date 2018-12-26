@@ -106,9 +106,9 @@ class YearDurtReptController extends Controller
                 $grid->model()->where("agent","=",Admin::user()->username);
             }
             if(Admin::user()->inRoles(["administrator"])){
-                $grid->tools(function ($tools) {
+                /*$grid->tools(function ($tools) {
                     $tools->append(new MonthExporter());
-                });
+                });*/
                 $grid->ClientSN('客户编码');
                 $grid->AssetNo('财产编码');
             }

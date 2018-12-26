@@ -48,11 +48,14 @@ Route::group([
     $router->resource('recharges', RechargeController::class);
     #异常记录
     $router->resource('abnormas', AbnormaController::class);
-    #统计报表
+    #年度报表
     $router->get('durt/query/{ID}', "YearDurtReptController@query");//日结算明细
     $router->get('durt/exportExcel', "YearDurtReptController@exportExcel");//导出EXCEL
     $router->resource('durt', YearDurtReptController::class);
     $router->resource('cost', YearCostReptController::class);
+    #月度报表
+    $router->get('month/month_excel', "MonthDurtReptController@month_excel");//导出EXCEL
+    $router->resource('month', MonthDurtReptController::class);
     #日结算
     $router->get('balances/date', "DateBalanceController@autocreate");
     $router->get('balances/month_excel', "DateBalanceController@month_excel");//月结算excel表
