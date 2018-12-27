@@ -18,13 +18,23 @@ class EquipmentExporter extends AbstractExporter
                     $data_sort['ClientName']=$item['has_one_client']['ClientName'];
                     $data_sort['NumBer']=$item['NumBer'];
                     $data_sort['TypeName']=$item['has_one_equ_type']['Name'];
+                    if($item['ISBuy']=="是"){
+                        $data_sort['ISBuy']='销售';
+                    }
+                    elseif ($item['ISBuy']=="测试"){
+                        $data_sort['ISBuy']='测试';
+                    }
+                    else{
+                        $data_sort['ISBuy']='租赁';
+                    }
                     $data_sort['EquNum']=$item['EquNum'];
                     $data_sort['RemainTime']=$item['RemainTime'];
-                    $data_only=array_only($data_sort,['ClientNum','ClientName','NumBer','TypeName','EquNum','RemainTime']);
+                    $data_sort['ReviewTime']=$item['ReviewTime'];
+                    $data_only=array_only($data_sort,['ClientNum','ClientName','NumBer','TypeName','ISBuy','EquNum','RemainTime','ReviewTime']);
                     return $data_only;
                 });
                 $sheet->row(1, array(
-                    '客户编号','客户名称','厅号','光源类型','光源编号','剩余时间',
+                    '客户编号','客户名称','厅号','光源类型','销售类型','光源编号','剩余时间','最后通讯时间'
                 ));
                 $sheet->rows($rows);
             });

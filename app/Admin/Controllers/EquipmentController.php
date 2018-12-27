@@ -414,10 +414,12 @@ EOT
     public function sms(){
         $clientname=request("clientname");
         $room=request("room");
+        $key=request("op_type");
+        $type=["del"=>"删除","lock"=>"锁定","unlock"=>"启用"];
         header('Content-Type:text/html;charset=utf-8');
         $codes = [config("phone1")=>rand(1000,9999),config("phone2")=>rand(1000,9999),config("phone3")=>rand(1000,9999)];
         foreach ($codes as $phone=>$code) {
-            $data = "删除".$clientname.$room."光源,验证码" . $code . "【中科创激光】";
+            $data = $type["$key"].$clientname.$room."光源,验证码" . $code . "【中科创激光】";
             $post_data = array(
                 'UserID' => "999595",
                 'Account' => 'admin',

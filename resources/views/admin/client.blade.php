@@ -219,20 +219,20 @@
 </div>
 <!-- 状态Modal -->
 <!-- 删除光源的短信验证Modal -->
-<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="opModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document" >
         <div class="modal-content" >
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">删除光源</h4>
+                <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body" id="equnum-form">
                 <div class="form-group">
-                    <label class=" control-label col-sm-3 ">验证码1:</label>
+                    <label class=" control-label col-sm-3 ">财务验证码:</label>
                     <div class="input-group col-sm-3"><input id="phone1" class="form-control" /></div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-sm-3">验证码2:</label>
+                    <label class="control-label col-sm-3">经理验证码:</label>
                     <div class="input-group col-sm-3 "> <input id="phone2"  class="form-control hidden" /></div>
                 </div>
                 <div class="form-group">
@@ -242,7 +242,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-danger" disabled="disabled" id="btn-confirmDel"><b>删除光源</b></button>
+                <button type="button" class="btn btn-primary" disabled="disabled" id="btn-confirm"><b>删除光源</b></button>
             </div>
         </div>
     </div>
@@ -313,10 +313,10 @@ $("[data-widget='collapse']").on('click',function(){
 
                 equipment += "<td>@if(Admin::user()->inRoles(['administrator']))<a href='"+href1+"' class='btn btn-sm btn-success '>充值</a>&nbsp;&nbsp;" +
                                 "<a href='"+href2+"' class='btn btn-sm btn-warning'>赠送</a>&nbsp;&nbsp;"+
-                                "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-toggle='modal' data-target='#delModal' data-room='"+e.NumBer+"' data-cid='"+e.ClientID+"'  data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
+                                "<a href='javascript:void(0);' class='btn btn-sm btn-danger btn-del' data-toggle='modal' data-target='#opModal' data-room='"+e.NumBer+"' data-cid='"+e.ClientID+"'  data-eid='"+e.ID+"' >删除</a>&nbsp;&nbsp;"+
                                 "<a href='/admin/equipments/"+e.ID+"/edit' class='btn btn-sm btn-microsoft' >修改</a>&nbsp;&nbsp;"+
-                                  "<a href='javascript:void(0);' class='btn btn-sm btn-github btn-lock'  data-eid='"+e.ID+"'  >锁定</a>&nbsp;&nbsp;"+
-                                "<a href='javascript:void(0);' class='btn btn-sm btn-success btn-unlock'  data-eid='"+e.ID+"'  >启用</a>&nbsp;&nbsp;"+
+                                  "<a href='javascript:void(0);' class='btn btn-sm btn-github btn-lock' data-toggle='modal' data-target='#opModal'  data-eid='"+e.ID+"'  >锁定</a>&nbsp;&nbsp;"+
+                                "<a href='javascript:void(0);' class='btn btn-sm btn-success btn-unlock' data-toggle='modal' data-target='#opModal'  data-eid='"+e.ID+"'  >启用</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#myModal'  data-snu='"+e.EquNum+"' onclick='getStatus(this)'>详细状态</a>&nbsp;&nbsp;"+
                                 "<a href='javascript:void(0);' class='btn btn-sm btn-info' data-toggle='modal' data-target='#shockModal'  data-snu='"+e.EquNum+"' onclick='getShock(this)'>振幕状态</a>&nbsp;&nbsp;"+
                                  "<a href='javascript:void(0);' class='btn btn-sm btn-adn btn-changeEqu' data-target='#myMiniModal' data-toggle='modal' data-snu='"+e.EquNum+"' data-eid='"+e.ID+"' onclick='changeEquNum(this)'>更换光源</a>@endif</td>";
@@ -327,18 +327,122 @@ $("[data-widget='collapse']").on('click',function(){
             content.html(equipment);
             //锁定光源操作
             $(".btn-lock").on('click',function () {
-                var eid=$(this).attr("data-eid");
-                $.post("equipments/"+eid+"/lock",{},function(data){
-                    alert("光源已锁定!");
-                    window.location.reload();
+                var that=this;
+                var codes=[];
+                var eid=$(that).attr("data-eid");
+                $("#opModal").find("h4").html('锁定光源');
+                $("#opModal b").html('锁定光源');
+                $('.sms').on('click',function(){
+                    var clientid=$(that).attr("data-cid");
+                    var clientname=$("#h4a"+clientid).html();
+                    var room=$(that).attr("data-room");
+                    $.get('/admin/equipments/sms',{clientname:clientname,room:room,op_type:"lock"},function(data){
+                        if(data){
+                            for(var key in data){
+                                codes.push(data[key]);
+                            }
+                            alert("验证码已发送");
+                        }
+                        else{
+                            alert("发送失败!");
+                        }
+                    });
+                    $(this).attr('disabled','disabled');
+                });
+                $('#phone1').on('input propertychange',function(){
+                    //第一个验证码必须是财务
+                    if( $('#phone1').val()==codes[0]) {
+                        $('.check1').removeClass('hidden');
+                        $('#phone1').attr('disabled',"disabled");
+                        $('#phone2').removeClass('hidden');
+                        codes.splice(0,1);
+                    }
+                });
+                $('#phone2').on('input propertychange',function(){
+                    if(!codes.length==0){
+                        codes=$.map(codes,function(n){
+                            if($('#phone2').val()==n) {
+                                $('#phone2').attr('disabled',"disabled");
+                                $("#btn-confirm").removeAttr("disabled");
+                                return null;
+                            }
+                            else{
+                                return n;
+                            }
+
+                        });
+                    }
+                });
+                $('#btn-confirm').on('click',function(){
+                    var eid=$(that).attr("data-eid");
+                    $.post("equipments/"+eid+"/lock",{},function(data){
+                        alert("光源已锁定!");
+                        $("#opModal").find(".close").trigger('click');
+                        collapse.trigger('click');
+                        window.setTimeout(function () {
+                            collapse.trigger('click');
+                        },1000);
+                    });
                 });
             });
             //解锁光源操作
             $(".btn-unlock").on('click',function () {
-                var eid=$(this).attr("data-eid");
-                $.post("equipments/"+eid+"/unlock",{},function(data){
-                    alert("光源已启用!");
-                    window.location.reload();
+                var that=this;
+                var codes=[];
+                var eid=$(that).attr("data-eid");
+                $("#opModal").find("h4").html('启用光源');
+                $("#opModal b").html('启用光源');
+                $('.sms').on('click',function(){
+                    var clientid=$(that).attr("data-cid");
+                    var clientname=$("#h4a"+clientid).html();
+                    var room=$(that).attr("data-room");
+                    $.get('/admin/equipments/sms',{clientname:clientname,room:room,op_type:"lock"},function(data){
+                        if(data){
+                            for(var key in data){
+                                codes.push(data[key]);
+                            }
+                            alert("验证码已发送");
+                        }
+                        else{
+                            alert("发送失败!");
+                        }
+                    });
+                    $(this).attr('disabled','disabled');
+                });
+                $('#phone1').on('input propertychange',function(){
+                    //第一个验证码必须是财务
+                    if( $('#phone1').val()==codes[0]) {
+                        $('.check1').removeClass('hidden');
+                        $('#phone1').attr('disabled',"disabled");
+                        $('#phone2').removeClass('hidden');
+                        codes.splice(0,1);
+                    }
+                });
+                $('#phone2').on('input propertychange',function(){
+                    if(!codes.length==0){
+                        codes=$.map(codes,function(n){
+                            if($('#phone2').val()==n) {
+                                $('#phone2').attr('disabled',"disabled");
+                                $("#btn-confirm").removeAttr("disabled");
+                                return null;
+                            }
+                            else{
+                                return n;
+                            }
+
+                        });
+                    }
+                });
+                $('#btn-confirm').on('click',function(){
+                    var eid=$(that).attr("data-eid");
+                    $.post("equipments/"+eid+"/unlock",{},function(data){
+                        alert("光源已启用!");
+                        $("#opModal").find(".close").trigger('click');
+                        collapse.trigger('click');
+                        window.setTimeout(function () {
+                            collapse.trigger('click');
+                        },1000);
+                    });
                 });
             });
             //删除光源
@@ -346,6 +450,8 @@ $("[data-widget='collapse']").on('click',function(){
                 var that=this;
                 var codes=[];
                 var eid=$(that).attr("data-eid");
+                $("#opModal").find("h4").html('删除光源');
+                $("#opModal b").html('删除光源');
                 $('.sms').on('click',function(){
                     var clientid=$(that).attr("data-cid");
                     var clientname=$("#h4a"+clientid).html();
@@ -365,27 +471,20 @@ $("[data-widget='collapse']").on('click',function(){
                     $(this).attr('disabled','disabled');
                 });
                 $('#phone1').on('input propertychange',function(){
-                    if(!codes.length==0){
-                        codes=$.map(codes,function(n){
-                            if( $('#phone1').val()==n) {
-                                $('.check1').removeClass('hidden');
-                                $('#phone1').attr('disabled',"disabled");
-                                $('#phone2').removeClass('hidden');
-                                return null;
-                            }
-                            else{
-                                return n;
-                            }
-
-                        });
-                    };
+                    //第一个验证码必须是财务
+                    if( $('#phone1').val()==codes[0]) {
+                        $('.check1').removeClass('hidden');
+                        $('#phone1').attr('disabled',"disabled");
+                        $('#phone2').removeClass('hidden');
+                        codes.splice(0,1);
+                    }
                 });
                 $('#phone2').on('input propertychange',function(){
                     if(!codes.length==0){
                         codes=$.map(codes,function(n){
                             if($('#phone2').val()==n) {
                                 $('#phone2').attr('disabled',"disabled");
-                                $("#btn-confirmDel").removeAttr("disabled");
+                                $("#btn-confirm").removeAttr("disabled");
                                 return null;
                             }
                             else{
@@ -395,14 +494,14 @@ $("[data-widget='collapse']").on('click',function(){
                         });
                     }
                 });
-                $('#btn-confirmDel').on('click',function(){
+                $('#btn-confirm').on('click',function(){
                     $.ajax({
                         url:"/admin/equipments/"+eid,
                         method:"delete",
                         success:function (data) {
                             if(data.status){
                                 alert(data.message);
-                                $("#delModal").find(".close").trigger('click');
+                                $("#opModal").find(".close").trigger('click');
                                 collapse.trigger('click');
                                 window.setTimeout(function () {
                                     collapse.trigger('click');

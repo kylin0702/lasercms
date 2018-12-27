@@ -47,13 +47,13 @@ class DateBalanceController extends Controller
         $month=$request->get("month");
         $month_array=["1"=>"一月","2"=>"二月","3"=>"三月","4"=>"四月","5"=>"五月","6"=>"六月","7"=>"七月","8"=>"八月","9"=>"九月","10"=>"十月","11"=>"十一月","12"=>"十二月"];
         $month_name=$month_array[$month];
-        $timespan="";
+
         if($month==1){
-            $timespan="'$year-$month-01' and '$year-$month-25'";
+            $timespan="'$year-01-01' and '$year-01-25'";
         }
         else if($month==12){
 
-            $timespan="'$year-$month-26' and '$year-$month-31'";
+            $timespan="'$year-11-26' and '$year-12-31'";
         }
         else{
             $lastmonth=$month-1;
