@@ -15,6 +15,8 @@ Route::group([
     $router->resource('equtypes', EquTypeController::class);
     #客户管理路由
     $router->get('clients/{ID}/audit', "ClientController@audit");//客户审核
+    $router->post('clients/sms_change_username', "ClientController@sms_change_username");//发送更换用户名短信验证码
+    $router->post('clients/change_username', "ClientController@change_username");//更换用户名
     $router->post('clients/{ID}/bindEngineer', "ClientController@bindEngineer");//客户绑定工程师
     $router->post('clients/{ID}/bindAgent', "ClientController@bindAgent");//客户绑定代理商
     $router->post('clients/{ID}/bindSeller', "ClientController@bindSeller");//客户绑定销售人员

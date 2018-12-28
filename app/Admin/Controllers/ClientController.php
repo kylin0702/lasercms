@@ -18,6 +18,7 @@ use Encore\Admin\Controllers\ModelForm;
 use Encore\Admin\Widgets\Collapse;
 use Encore\Admin\Widgets\Table;
 use Encore\Admin\Widgets\Box;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\MessageBag;
 class ClientController extends Controller
 {
@@ -299,7 +300,7 @@ EOT
                     $user->avatar = "images/591f45f3bbc80ea03adafbef2e65822c.jpg";
                     $user->save();
                     $user->roles()->attach(4);
-                    $this->sms($clientname,$user->username);
+                    $this->sms_audit($clientname,$user->username);
                     admin_toastr('已审核,用户名和密码已发送到客户手机', 'success');
                 }
                 else{
@@ -425,8 +426,8 @@ EOT
         $client->save();
         return  response()->json($client->seller);
     }
-    //发送短信
-    public function sms($clientname,$username){
+    //发送审核成功短信
+    public function sms_audit($clientname,$username){
         header('Content-Type:text/html;charset=utf-8');
         $data = "您好，您的影城".$clientname.'用户名'. $username . "密码123456,登陆网址为http://119.23.71.36:8080【中科创激光】";
         $post_data = array(
@@ -442,6 +443,49 @@ EOT
         $url = 'http://61.143.63.169:8080/Services.asmx/DirectSend';
         $result=$this->http_request($url, http_build_query($post_data));
         return $result;
+    }
+    //发送更换用户短信验证
+    public function sms_change_username(){
+        $phone=request("phone");
+        $is_exist_count=Administrator::where("username","=",$phone)->count();
+        if( $is_exist_count>0){
+            return "false";
+        }
+        else{
+            header('Content-Type:text/html;charset=utf-8');
+            $code = rand(1000,9999);
+            $data = "您正在更改登陆用户名，验证码为" . $code . "【中科创激光】";
+            $post_data = array(
+                'UserID' => "999595",
+                'Account' => 'admin',
+                'Password' => "FW9NQ9",
+                'Content' => urlencode($data),
+                'Phones' => $phone,
+                'SendType' => 1,  //true or false,
+                'SendTime' => '',
+                'PostFixNumber' => ''
+            );
+            $url = 'http://61.143.63.169:8080/Services.asmx/DirectSend';
+            $this->http_request($url, http_build_query($post_data));
+            return $code;
+        }
+    }
+    //更换用户名
+    public function change_username(){
+        $phone=request("phone");
+        $user=Administrator::find(Admin::user()->id);
+        $client=Client::where("Phone","=",Admin::user()->username);
+        DB::beginTransaction();
+        $user->update(["username"=>$phone]);
+        $client->update(["Phone"=>$phone]);
+        try{
+            DB::commit();
+            return json_encode(["result"=>true,"message"=>"update success"]);
+        }
+        catch(\Exception $e) {
+            DB::rollBack();
+            return json_encode(["result"=>false,"message"=>$e->getMessage()]);
+        }
     }
     public function http_request($url,$data = null){
         if(function_exists('curl_init')){
