@@ -18,3 +18,4 @@ yarn-error.log
 !/vendor/laravel-admin-ext/config/
 !/vendor/encore/laravel-admin/src/Grid/Exporters/CsvExporter.php
 !/config/database.php
+!vendor/encore/laravel-admin/src/Controllers/AuthController.php

@@ -76,10 +76,14 @@ $(".btn-confirm").on("click",function(){
              var phone=$("#phone").val();
             $.post("/admin/clients/change_username",{"phone":phone},function(data) {
               if(data.result){
+                    $(".close").trigger("click");
                    swal("用户名已更换,请使用重新登陆");
-                   window.location.href="/admin/auth/logout";
+                   window.setTimeout(function() {
+                     window.location.href="/admin/auth/logout";
+                   },500);
+                   
               }
-            });
+            },"json");
         }
         else{
               swal("请输入正确的验证码");
