@@ -196,6 +196,7 @@ class RechargeController extends Controller
                 return $equipment->Precharge;
             })->setElementClass("Precharge");
             $form->hidden("hasOneEqu.IsPre")->default('Y');
+            $form->hidden("hasOneEqu.IsDelay")->default('2');
             //充值后发送短信
            $form->saved(function (Form $form) use($cid,$eid) {
                 $client=Client::findOrFail($cid);
@@ -491,6 +492,7 @@ EOT
             $recharge->save();
             $equipment->Precharge=intval($precharge)+intval($time);
             $equipment->IsPre="F";
+            $equipment->IsDelay="2";
             $equipment->save();
             $rooms=$rooms. $equipment->NumBer.",";
         }
