@@ -31,19 +31,19 @@ class MonthDurtReptController extends Controller
             $content->description('');
             $output=[];
             $client=Client::all(["ID","ClientName"]);
+            $year=\request("year");
             $month=\request("month");
             $clientid=\request("client");
             $isbuy_requst=\request("isbuy");
             if($isbuy_requst==0){$isbuy="否";}else{$isbuy="测试";}
             if(!empty($month)){
-                $output=$this->month_data($month,$clientid,$isbuy);
+                $output=$this->month_data($year,$month,$clientid,$isbuy);
             }
             $content->body(view("month",["output"=>$output,"client"=>$client]));
         });
     }
     //生成月度报表显示
-    public  function  month_data($month,$clientid,$isbuy){
-        $year=date('Y');
+    public  function  month_data($year,$month,$clientid,$isbuy){
         $month_array=["1"=>"一月","2"=>"二月","3"=>"三月","4"=>"四月","5"=>"五月","6"=>"六月","7"=>"七月","8"=>"八月","9"=>"九月","10"=>"十月","11"=>"十一月","12"=>"十二月"];
         $month_name=$month_array[$month];
         if($month==1){
@@ -112,7 +112,7 @@ class MonthDurtReptController extends Controller
 
     //生成月度Excel报表
     public  function  month_excel(Request $request){
-        $year=date('Y');
+        $year=$request->get("year");
         $month=$request->get("month");
         $clientid=\request("client");
         $isbuy_requst=\request("isbuy");

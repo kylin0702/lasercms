@@ -43,7 +43,7 @@ class DateBalanceController extends Controller
     }
     //生成月度Excel报表
     public  function  month_excel(Request $request){
-        $year=date('Y');
+        $year=$request->get("year");
         $month=$request->get("month");
         $month_array=["1"=>"一月","2"=>"二月","3"=>"三月","4"=>"四月","5"=>"五月","6"=>"六月","7"=>"七月","8"=>"八月","9"=>"九月","10"=>"十月","11"=>"十一月","12"=>"十二月"];
         $month_name=$month_array[$month];

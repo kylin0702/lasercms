@@ -2,6 +2,13 @@
 <div class="row"><div class="col-md-12"><div class="box box-info">
             <div class="box-header with-border">
                 <h3 class="box-title">
+                    年份: <span>
+                            <select class="year-selecter">
+                            <option value="2017">2017年</option>
+                            <option value="2018" selected>2018年</option>
+                            <option value="2019">2019年</option>
+                            </select>
+                            </span>
                     月份: <span>
                             <select class="month-selecter">
                             <option value="1">一月</option>
@@ -65,31 +72,6 @@
   </div>
 </div>
 <script>
-    $(function () {
-        //加载客户选择
-        $(".client-selecter").select2();
-        var month=getQueryString("month");
-        var clientid=getQueryString("client");
-        var isbuy=getQueryString("isbuy");
-        console.log(isbuy);
-        if(month!=null){
-            $(".month-selecter option[value="+month+"]").attr("selected", "selected");
-            $("input[name='isbuy'][value='" + isbuy + "']").attr("checked", "checked");
-
-        }
-    });
-    $(".btn-query").on('click',function(){
-        var month=$(".month-selecter").val();
-        var clientid=$(".client-selecter").val();
-        var isbuy=$("input[name='isbuy']:checked").val();
-        window.location.href="/admin/month?month="+month+"&client="+clientid+"&isbuy="+isbuy;
-    });
-    $(".btn-export").on('click',function(){
-        var month=$(".month-selecter").val();
-       window.open("/admin/month/month_excel?month="+month);
-    });
-</script>
-<script>
     function getQueryString(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
         var reg_rewrite = new RegExp("(^|/)" + name + "/([^/]*)(/|$)", "i");
@@ -103,4 +85,29 @@
             return null;
         }
     }
+    $(function () {
+        //加载客户选择
+        $(".client-selecter").select2();
+        var month=getQueryString("month");
+        var year=getQueryString("year");
+        var clientid=getQueryString("client");
+        var isbuy=getQueryString("isbuy");
+        if(month!=null){
+            $(".month-selecter option[value="+month+"]").attr("selected", "selected");
+            $("input[name='isbuy'][value='" + isbuy + "']").attr("checked", "checked");
+
+        }
+    });
+    $(".btn-query").on('click',function(){
+        var year=$(".year-selecter").val();
+        var month=$(".month-selecter").val();
+        var clientid=$(".client-selecter").val();
+        var isbuy=$("input[name='isbuy']:checked").val();
+        window.location.href="/admin/month?year="+year+"&month="+month+"&client="+clientid+"&isbuy="+isbuy;
+    });
+    $(".btn-export").on('click',function(){
+        var year=$(".year-selecter").val();
+        var month=$(".month-selecter").val();
+       window.open("/admin/month/month_excel?year="+year+"&month="+month);
+    });
 </script>

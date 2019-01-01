@@ -10,6 +10,11 @@ class MonthExporter extends AbstractTool
 
         return <<<EOT
 <span class="col-md-offset-7">
+<select class="year-selecter">
+<option value="2017">2017年</option>
+<option value="2018">2018年</option>
+<option value="2019" selected>2019年</option>
+</select>
 <select class="month-selecter">
 <option value="1">一月</option>
 <option value="2">二月</option>
@@ -29,12 +34,13 @@ class MonthExporter extends AbstractTool
 <script>
 $(function(){
  var current=(new Date()).getMonth();
-$('.month-selecter').val(current);
+$('.month-selecter').val(current+1);
 })
 
 $(".btn-adn").on("click",function(){
+    var y=$('.year-selecter').val();
     var m=$('.month-selecter').val();
-    window.open("balances/month_excel?month="+m);
+    window.open("balances/month_excel?year="+y+"&month="+m);
 });
 </script>
 EOT;
