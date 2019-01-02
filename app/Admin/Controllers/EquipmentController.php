@@ -297,6 +297,7 @@ EOT
             $form->hidden("GiftTime")->default(0);
             $form->hidden("EquStatus")->default("Standby");
             $form->hidden("IsPre")->default("S");
+            $form->hidden("IsSend")->default("0,0,0,0");
             $form->hidden("ReviewTime")->default(function(){
                 return date("Y-m-d H:i:s");
             });
