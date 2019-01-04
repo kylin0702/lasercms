@@ -70,24 +70,39 @@ class MonthDurtReptController extends Controller
         foreach ($items as $item){
             $equipment=$all_data_month->where('EquID', "$item->ID");
             if(!empty($equipment->first())) {
+                $current_equipment=DateBalance::where("EquID","=", "$item->ID")->get();
+                $prev_data=$current_equipment->where("ID","<",$equipment->first()->BalanceID)->last();
+                //$next_data=$current_equipment->where("ID",">",$equipment->last()->BalanceID)->first();
                 $assetno = $equipment->first()->AssetNo;
                 $clientname= $equipment->first()->ClientName;
                 $clientsn= $equipment->first()->ClientSN;
                 $number= $equipment->first()->NumBer;
-                $lastmonth_remain = $equipment->first()->FirstTime;//上月剩余时间
+                if($prev_data){
+                    $lastmonth_remain=$prev_data->LastTime;//上月剩余时间
+                }
+                else{
+                    $lastmonth_remain = $equipment->first()->FirstTime;//上月剩余时间
+                }
                 $typename = $equipment->first()->TypeName;
                 $equnum = $equipment->first()->EquNum;
                 $sum_recharge = $equipment->sum('RechargeTime');//本月总充值时间
                 $sum_costtime = 0;//本月使用时间
+                /*if($next_data){
+                    $month_remain = $next_data->FirstTime;//本月剩余时间
+                }
+                else{
+                    $month_remain = $equipment->last()->LastTime;//本月剩余时间
+                }*/
                 $month_remain = $equipment->last()->LastTime;//本月剩余时间
                 $y = $all_years->where("EquID","$item->ID")->first();
                 if (!empty($y)) {
                     $yeartotal = $y->一月 + $y->二月 + $y->三月 + $y->四月 + $y->五月 + $y->六月 + $y->七月 + $y->八月 + $y->九月 + $y->十月 + $y->十一月 + $y->十二月;
-                    $y_toarray=$y->toArray();
-                    $sum_costtime=$y_toarray["$month_name"];
+                    //$y_toarray=$y->toArray();
+                    //$sum_costtime=$y_toarray["$month_name"];
                 } else {
                     $yeartotal = 0;
                 }
+                $sum_costtime=$lastmonth_remain+$sum_recharge-$month_remain;
                 $month_ded = 0;
                 if ($sum_costtime < 200) {
                     $month_ded = 200 - $sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
@@ -138,29 +153,45 @@ class MonthDurtReptController extends Controller
             $items=Equipment::where("ISBuy","=",$isbuy)->where("ClientID","=",$clientid)->get(["ID"]);
         }
         $export_excel_data=[];
-        $all_data_month=V_DateBalance::whereRaw("BalanceDate Between  $timespan")->get();
+        $all_data_month=V_DateBalance::whereRaw("BalanceDate Between  $timespan")->orderBy("BalanceDate")->get();
+
         $all_years= YearDurtRept::whereRaw("Years='$year'")->get();
         foreach ($items as $item){
             $equipment=$all_data_month->where('EquID', "$item->ID");
             if(!empty($equipment->first())) {
+                $current_equipment=DateBalance::where("EquID","=", "$item->ID")->get();
+                $prev_data=$current_equipment->where("ID","<",$equipment->first()->BalanceID)->last();
+                //$next_data=$current_equipment->where("ID",">",$equipment->last()->BalanceID)->first();
                 $assetno = $equipment->first()->AssetNo;
                 $clientname= $equipment->first()->ClientName;
                 $clientsn= $equipment->first()->ClientSN;
                 $number= $equipment->first()->NumBer;
-                $lastmonth_remain = $equipment->first()->FirstTime;//上月剩余时间
+                if($prev_data){
+                    $lastmonth_remain=$prev_data->LastTime;//上月剩余时间
+                }
+                else{
+                    $lastmonth_remain = $equipment->first()->FirstTime;//上月剩余时间
+                }
                 $typename = $equipment->first()->TypeName;
                 $equnum = $equipment->first()->EquNum;
                 $sum_recharge = $equipment->sum('RechargeTime');//本月总充值时间
                 $sum_costtime = 0;//本月使用时间
+                /*if($next_data){
+                    $month_remain = $next_data->FirstTime;//本月剩余时间
+                }
+                else{
+                    $month_remain = $equipment->last()->LastTime;//本月剩余时间
+                }*/
                 $month_remain = $equipment->last()->LastTime;//本月剩余时间
                 $y = $all_years->where("EquID","$item->ID")->first();
                 if (!empty($y)) {
                     $yeartotal = $y->一月 + $y->二月 + $y->三月 + $y->四月 + $y->五月 + $y->六月 + $y->七月 + $y->八月 + $y->九月 + $y->十月 + $y->十一月 + $y->十二月;
-                    $y_toarray=$y->toArray();
-                    $sum_costtime=$y_toarray["$month_name"];
+                    //$y_toarray=$y->toArray();
+                    //$sum_costtime=$y_toarray["$month_name"];
                 } else {
                     $yeartotal = 0;
                 }
+                $sum_costtime=$lastmonth_remain+$sum_recharge-$month_remain;
                 $month_ded = 0;
                 if ($sum_costtime < 200) {
                     $month_ded = 200 - $sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
@@ -180,7 +211,6 @@ class MonthDurtReptController extends Controller
                     "本月应扣除小时数" => $month_ded];
                 array_push($export_excel_data, $row);
             }
-
         }
         $filename=$year."年".$month."月月度使用时长报表";
         return Excel::create($filename, function($excel) use($export_excel_data) {
