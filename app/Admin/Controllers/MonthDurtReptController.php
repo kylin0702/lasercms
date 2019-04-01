@@ -85,7 +85,7 @@ class MonthDurtReptController extends Controller
                 }
                 $typename = $equipment->first()->TypeName;
                 $equnum = $equipment->first()->EquNum;
-                $sum_recharge = $equipment->sum('RechargeTime');//本月总充值时间
+                $sum_recharge = $equipment->where("RechargeTime",">",0)->sum('RechargeTime');//本月总充值时间
                 $sum_costtime = 0;//本月使用时间
                 /*if($next_data){
                     $month_remain = $next_data->FirstTime;//本月剩余时间
@@ -94,20 +94,28 @@ class MonthDurtReptController extends Controller
                     $month_remain = $equipment->last()->LastTime;//本月剩余时间
                 }*/
                 $month_remain = $equipment->last()->LastTime;//本月剩余时间
-                $y = $all_years->where("EquID","$item->ID")->first();
-                if (!empty($y)) {
-                    $yeartotal = $y->一月 + $y->二月 + $y->三月 + $y->四月 + $y->五月 + $y->六月 + $y->七月 + $y->八月 + $y->九月 + $y->十月 + $y->十一月 + $y->十二月;
-                    //$y_toarray=$y->toArray();
-                    //$sum_costtime=$y_toarray["$month_name"];
-                } else {
-                    $yeartotal = 0;
-                }
                 $sum_costtime=$lastmonth_remain+$sum_recharge-$month_remain;
                 $month_ded = 0;
                 if ($sum_costtime < 200) {
                     $month_ded = 200 - $sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
+                    $sum_costtime=200;//小于200小时直接显示200
+                    $month_remain=$lastmonth_remain+$sum_recharge-200;
                 }
-
+                $y = $all_years->where("EquID","$item->ID")->first();
+                if (!empty($y)) {
+                    $months=[1=>"一月",2=>"二月",3=>"三月",4=>"四月",5=>"五月",6=>"六月",7=>"七月",8=>"八月",9=>"九月",10=>"十月",11=>"十一月",12=>"十二月"];
+                    $yeartotal=0;
+                    for($i=1;$i<=$month;$i++){
+                        $month_name=$months[$i];
+                        $month_costtime=$y->$month_name;
+                        if($month_costtime<200){
+                            $month_costtime=200;
+                        }
+                        $yeartotal+=$month_costtime;
+                    }
+                } else {
+                    $yeartotal = 0;
+                }
                 $row = ["客户编码"=>$clientsn,
                     "财产编号" => $assetno,
                     "客户名称"=>$clientname,
@@ -174,7 +182,7 @@ class MonthDurtReptController extends Controller
                 }
                 $typename = $equipment->first()->TypeName;
                 $equnum = $equipment->first()->EquNum;
-                $sum_recharge = $equipment->sum('RechargeTime');//本月总充值时间
+                $sum_recharge = $equipment->where("RechargeTime",">",0)->sum('RechargeTime');//本月总充值时间
                 $sum_costtime = 0;//本月使用时间
                 /*if($next_data){
                     $month_remain = $next_data->FirstTime;//本月剩余时间
@@ -183,20 +191,31 @@ class MonthDurtReptController extends Controller
                     $month_remain = $equipment->last()->LastTime;//本月剩余时间
                 }*/
                 $month_remain = $equipment->last()->LastTime;//本月剩余时间
+                $sum_costtime=$lastmonth_remain+$sum_recharge-$month_remain;
+                $month_ded = 0;
+                if ($sum_costtime < 200) {
+                    $month_ded = 200 - $sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
+                    $sum_costtime=200;//小于200小时直接显示200
+                    $month_remain=$lastmonth_remain+$sum_recharge-200;
+                }
                 $y = $all_years->where("EquID","$item->ID")->first();
                 if (!empty($y)) {
-                    $yeartotal = $y->一月 + $y->二月 + $y->三月 + $y->四月 + $y->五月 + $y->六月 + $y->七月 + $y->八月 + $y->九月 + $y->十月 + $y->十一月 + $y->十二月;
+                    $months=[1=>"一月",2=>"二月",3=>"三月",4=>"四月",5=>"五月",6=>"六月",7=>"七月",8=>"八月",9=>"九月",10=>"十月",11=>"十一月",12=>"十二月"];
+                    $yeartotal=0;
+                    for($i=1;$i<=$month;$i++){
+                        $month_name=$months[$i];
+                        $month_costtime=$y->$month_name;
+                        if($month_costtime<200){
+                            $month_costtime=200;
+                        }
+                        $yeartotal+=$month_costtime;
+                    }
+                    //$yeartotal = $y->一月 + $y->二月 + $y->三月 + $y->四月 + $y->五月 + $y->六月 + $y->七月 + $y->八月 + $y->九月 + $y->十月 + $y->十一月 + $y->十二月;
                     //$y_toarray=$y->toArray();
                     //$sum_costtime=$y_toarray["$month_name"];
                 } else {
                     $yeartotal = 0;
                 }
-                $sum_costtime=$lastmonth_remain+$sum_recharge-$month_remain;
-                $month_ded = 0;
-                if ($sum_costtime < 200) {
-                    $month_ded = 200 - $sum_costtime;//使用时间不超过200小时，应扣小时数为200-使用小时数
-                }
-
                 $row = ["客户编码"=>$clientsn,
                     "财产编号" => $assetno,
                     "客户名称"=>$clientname,

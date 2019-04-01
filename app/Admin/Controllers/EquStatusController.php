@@ -133,21 +133,21 @@ class EquStatusController extends Controller
     public function getShock(Request $request){
         $snu = $request->get('s');
         $status=EquStatus::where('sNU',"=", $snu)->orderby('ID','desc')->first();
-        if(empty($status->sSRC1)){
+        if(empty($status->sSCR1)){
             return 0;
         }
         else{
             //8个振幕字段由16进制转为2进制，全部拼接返回,第1位补"1"，防止转为二进制不足8位
-            $sSRC1=base_convert("1".$status->sSRC1,16,2);
-            $sSRC2=base_convert("1".$status->sSRC2,16,2);
-            $sSRC3=base_convert("1".$status->sSRC3,16,2);
-            $sSRC4=base_convert("1".$status->sSRC4,16,2);
-            $sSRC5=base_convert("1".$status->sSRC5,16,2);
-            $sSRC6=base_convert("1".$status->sSRC6,16,2);
-            $sSRC7=base_convert("1".$status->sSRC7,16,2);
-            $sSRC8=base_convert("1".$status->sSRC8,16,2);
+            $sSCR1=base_convert("1".$status->sSCR1,16,2);
+            $sSCR2=base_convert("1".$status->sSCR2,16,2);
+            $sSCR3=base_convert("1".$status->sSCR3,16,2);
+            $sSCR4=base_convert("1".$status->sSCR4,16,2);
+            $sSCR5=base_convert("1".$status->sSCR5,16,2);
+            $sSCR6=base_convert("1".$status->sSCR6,16,2);
+            $sSCR7=base_convert("1".$status->sSCR7,16,2);
+            $sSCR8=base_convert("1".$status->sSCR8,16,2);
             //把左边多出的1去掉,这样便是8个32bit二进制数组
-            return array(substr($sSRC1,1),ltrim($sSRC2,1),ltrim($sSRC3,1),ltrim($sSRC4,1),ltrim($sSRC5,1),ltrim($sSRC6,1),ltrim($sSRC7,1),ltrim($sSRC8,1));
+            return array(substr($sSCR1,1),ltrim($sSCR2,1),ltrim($sSCR3,1),ltrim($sSCR4,1),ltrim($sSCR5,1),ltrim($sSCR6,1),ltrim($sSCR7,1),ltrim($sSCR8,1));
         }
 
     }
@@ -168,8 +168,8 @@ class EquStatusController extends Controller
                     'sUBL', 'sUBC1', 'sUBC2', 'sUBC3', 'sUBC4', 'sDRT1', 'sDRL', 'sDRC1', 'sDRC2', 'sDRC3', 'sDRC4', 'sDRC5', 'sDRC6', 'sDRC7',
                     'sDRC8', 'sDRC9', 'sDRC10', 'sDRC11', 'sDRC12', 'sDRC13', 'sDRC14', 'sDRC15', 'sDGT1', 'sDGL', 'sDGC1', 'sDGC2', 'sDGC3',
                     'sDGC4', 'sDGC5', 'sDGC6', 'sDGC7', 'sDGC8', 'sDGC9', 'sDGC10', 'sDGC11', 'sDGC12', 'sDGC13', 'sDGC14', 'sDGC15', 'sDBT',
-                    'sDBL', 'sDBC1', 'sDBC2', 'sDBC3', 'sDBC4','UpDates','sTMP1','sTMP2','sTMP3','sTMP4','sTMP5','sTMP6','sSRC1','sSRC2',
-                    'sSRC3','sSRC4','sSRC5','sSRC6','sSRC7','sSRC8'
+                    'sDBL', 'sDBC1', 'sDBC2', 'sDBC3', 'sDBC4','UpDates','sTMP1','sTMP2','sTMP3','sTMP4','sTMP5','sTMP6','sSCR1','sSCR2',
+                    'sSCR3','sSCR4','sSCR5','sSCR6','sSCR7','sSCR8'
                 ));
                 $rows = collect($status)->map(function ($item) {
                     $data_only = array_only($item, [
@@ -179,8 +179,8 @@ class EquStatusController extends Controller
                         'sUBL', 'sUBC1', 'sUBC2', 'sUBC3', 'sUBC4', 'sDRT1', 'sDRL', 'sDRC1', 'sDRC2', 'sDRC3', 'sDRC4', 'sDRC5', 'sDRC6', 'sDRC7',
                         'sDRC8', 'sDRC9', 'sDRC10', 'sDRC11', 'sDRC12', 'sDRC13', 'sDRC14', 'sDRC15', 'sDGT1', 'sDGL', 'sDGC1', 'sDGC2', 'sDGC3',
                         'sDGC4', 'sDGC5', 'sDGC6', 'sDGC7', 'sDGC8', 'sDGC9', 'sDGC10', 'sDGC11', 'sDGC12', 'sDGC13', 'sDGC14', 'sDGC15', 'sDBT',
-                        'sDBL', 'sDBC1', 'sDBC2', 'sDBC3', 'sDBC4','sTMP1','UpDates','sTMP1','sTMP2','sTMP3','sTMP4','sTMP5','sTMP6','sSRC1','sSRC2',
-                        'sSRC3','sSRC4','sSRC5','sSRC6','sSRC7','sSRC8'
+                        'sDBL', 'sDBC1', 'sDBC2', 'sDBC3', 'sDBC4','sTMP1','UpDates','sTMP1','sTMP2','sTMP3','sTMP4','sTMP5','sTMP6','sSCR1','sSCR2',
+                        'sSCR3','sSCR4','sSCR5','sSCR6','sSCR7','sSCR8'
                     ]);
                     return $data_only;
                 });

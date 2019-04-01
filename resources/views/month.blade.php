@@ -5,8 +5,8 @@
                     年份: <span>
                             <select class="year-selecter">
                             <option value="2017">2017年</option>
-                            <option value="2018" selected>2018年</option>
-                            <option value="2019">2019年</option>
+                            <option value="2018" >2018年</option>
+                            <option value="2019" selected>2019年</option>
                             </select>
                             </span>
                     月份: <span>
@@ -93,6 +93,7 @@
         var clientid=getQueryString("client");
         var isbuy=getQueryString("isbuy");
         if(month!=null){
+            $(".year-selecter option[value="+year+"]").attr("selected", "selected");
             $(".month-selecter option[value="+month+"]").attr("selected", "selected");
             $("input[name='isbuy'][value='" + isbuy + "']").attr("checked", "checked");
 

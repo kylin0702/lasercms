@@ -718,13 +718,13 @@ function formatMinutes(StatusMinute){
                         <td>上红光模组电流6</td> <td><%=sURC6%></td><td>下红光模组电流6</td><td><%=sDRC6%></td><td>上绿光模组电流6</td><td><%=sUGC6%></td><td>下绿光模组电流6</td><td><%=sDGC6%></td><td>温度2</td><td><%if(sTMP2){%><%=sTMP2%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流7</td> <td><%=sURC7%></td><td>下红光模组电流7</td><td><%=sDRC7%></td><td>上绿光模组电流7</td><td><%=sUGC7%></td><td>下绿光模组电流7</td><td><%=sDGC7%></td><td>温度3</td><td><%if(sTMP3){%><%=sTMP1%><%}%></td><td></td><td></td>
+                        <td>上红光模组电流7</td> <td><%=sURC7%></td><td>下红光模组电流7</td><td><%=sDRC7%></td><td>上绿光模组电流7</td><td><%=sUGC7%></td><td>下绿光模组电流7</td><td><%=sDGC7%></td><td>温度3</td><td><%if(sTMP3){%><%=sTMP3%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流8</td> <td><%=sURC8%></td><td>下红光模组电流8</td><td><%=sDRC8%></td><td>上绿光模组电流8</td><td><%=sUGC8%></td><td>下绿光模组电流8</td><td><%=sDGC8%></td><td>温度4</td><td><%if(sTMP4){%><%=sTMP1%><%}%></td><td></td><td></td>
+                        <td>上红光模组电流8</td> <td><%=sURC8%></td><td>下红光模组电流8</td><td><%=sDRC8%></td><td>上绿光模组电流8</td><td><%=sUGC8%></td><td>下绿光模组电流8</td><td><%=sDGC8%></td><td>温度4</td><td><%if(sTMP4){%><%=sTMP4%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
-                        <td>上红光模组电流9</td> <td><%=sURC9%></td><td>下红光模组电流9</td><td><%=sDRC9%></td><td>上绿光模组电流9</td><td><%=sUGC9%></td><td>下绿光模组电流9</td><td><%=sDGC9%></td><td>温度5</td><td><%if(sTMP5){%><%=sTMP1%><%}%></td><td></td><td></td>
+                        <td>上红光模组电流9</td> <td><%=sURC9%></td><td>下红光模组电流9</td><td><%=sDRC9%></td><td>上绿光模组电流9</td><td><%=sUGC9%></td><td>下绿光模组电流9</td><td><%=sDGC9%></td><td>温度5</td><td><%if(sTMP5){%><%=sTMP5%><%}%></td><td></td><td></td>
                     </tr>
                     <tr>
                         <td>上红光模组电流10</td> <td><%=sURC10%></td><td>下红光模组电流10</td><td><%=sDRC10%></td><td>上绿光模组电流10</td><td><%=sUGC10%></td><td>下绿光模组电流10</td><td><%=sDGC10%></td><td>温度6</td><td><%if(sTMP6){%><%=sTMP6%><%}%></td><td></td><td></td>
