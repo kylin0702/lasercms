@@ -142,12 +142,9 @@ EOT
                     }
                 }
             });
+            $grid->ContractHour("合同小时数")->display(function($v){return $v."h/m";});
+            $grid->HourPrice("每小时单价");
             $grid->ReviewTime('最后通讯时间')->sortable();
-            $states = [
-                'on'  => ['value' => "已审核", 'text' => '已审核', 'color' => 'primary'],
-                'off' => ['value' => "未审核", 'text' => '未审核', 'color' => 'default'],
-            ];
-            //$grid->Review("审核状态")->switch($states);
             $grid->filter(function ($filter) {
                 $filter->disableIdFilter();
                 $filter->in('ISBuy', '销售类型')->checkbox(['否'=>'租赁','是'=>'销售','测试'=>'测试']);
@@ -191,6 +188,7 @@ EOT
             });
 
             $grid->ISBuy('是否购买');
+            $grid->ContractHour("合同小时数")->display(function($v){return $v."h/m";});
             $grid->ReviewTime('审核时间')->display(function($v){return date("Y-m-d H:i:s",strtotime($v)); });
             #$grid->Precharge('是否预充值');
             #$grid->PreGift('是否预赠送时长');
@@ -307,6 +305,8 @@ EOT
             ];
             $form->switch('Review', '审核状态')->states($states)->default("已审核");
             $form->radio('ISBuy', '销售类型')->options(['否'=>'租赁','是'=>'销售','测试'=>'测试'])->default("否");
+            $form->number("ContractHour","合同小时数")->default(200);
+            $form->currency("HourPrice","每小时单价")->symbol('￥');
             $form->hidden("EntryPer")->default(function (){
                return Admin::user()->id;
             });

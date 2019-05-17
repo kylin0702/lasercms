@@ -57,7 +57,7 @@ Route::group([
     $router->resource('cost', YearCostReptController::class);
     #月度报表
     $router->get('month/month_excel', "MonthDurtReptController@month_excel");//导出EXCEL
-    $router->resource('month', MonthDurtReptController::class);
+    $router->get('month', "MonthDurtReptController@index");
     #日结算
     $router->get('balances/date', "DateBalanceController@autocreate");
     $router->get('balances/month_excel', "DateBalanceController@month_excel");//月结算excel表
@@ -70,4 +70,5 @@ Route::group([
 ], function (Router $router) {
     $router->get('balances/date', "DateBalanceController@autocreate");
     $router->get('balances/date_all', "DateBalanceController@autocreate_all");
+    $router->get('month/auto_recharge', "MonthDurtReptController@auto_recharge");
 });

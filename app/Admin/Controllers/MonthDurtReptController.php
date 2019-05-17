@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Models\Equipment;
+use App\Admin\Models\EquType;
+use App\admin\Models\Recharge;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Admin\Models\Client;
 use App\admin\Models\DateBalance;
@@ -85,7 +87,8 @@ class MonthDurtReptController extends Controller
                 }
                 $typename = $equipment->first()->TypeName;
                 $equnum = $equipment->first()->EquNum;
-                $sum_recharge = $equipment->where("RechargeTime",">",0)->sum('RechargeTime');//本月总充值时间
+                //$sum_recharge = $equipment->where("RechargeTime",">",0)->sum('RechargeTime');//本月总充值时间
+                $sum_recharge=Recharge::where("EquID",$item->ID)->where("RechTime",">",0)->whereRaw("UpdateTime Between  $timespan")->sum("RechTime");//本月总充值时间
                 $sum_costtime = 0;//本月使用时间
                 /*if($next_data){
                     $month_remain = $next_data->FirstTime;//本月剩余时间
@@ -182,7 +185,8 @@ class MonthDurtReptController extends Controller
                 }
                 $typename = $equipment->first()->TypeName;
                 $equnum = $equipment->first()->EquNum;
-                $sum_recharge = $equipment->where("RechargeTime",">",0)->sum('RechargeTime');//本月总充值时间
+                //$sum_recharge = $equipment->where("RechargeTime",">",0)->sum('RechargeTime');
+                $sum_recharge=Recharge::where("EquID",$item->ID)->where("RechTime",">",0)->whereRaw("UpdateTime Between  $timespan")->sum("RechTime");//本月总充值时间
                 $sum_costtime = 0;//本月使用时间
                 /*if($next_data){
                     $month_remain = $next_data->FirstTime;//本月剩余时间
@@ -246,6 +250,71 @@ class MonthDurtReptController extends Controller
 
         })->export('xls');
 
+    }
+
+    //自动扣费
+    public  function  auto_recharge(){
+        //$year=date('Y');
+        //$month=date('m');
+        $year='2018';
+        $month='11';
+        if($month==1){
+            $timespan="'$year-1-01' and '$year-1-25'";
+        }
+        else if($month==12){
+
+            $timespan="'$year-11-26' and '$year-12-31'";
+        }
+        else{
+            $lastmonth=$month-1;
+            $timespan="'$year-$lastmonth-26' and '$year-$month-25'";
+        }
+        $items=Equipment::where("ISBuy","=",'否')->orderBy("ClientID")->get(["ID","ClientID","EquTypeID"]);
+        $all_data_month=V_DateBalance::whereRaw("BalanceDate Between  $timespan")->orderBy("BalanceDate")->get();
+        foreach ($items as $item){
+            $equipment=$all_data_month->where('EquID', "$item->ID");
+            if(!empty($equipment->first())) {
+                $current_equipment=DateBalance::where("EquID","=", "$item->ID")->get();
+                $prev_data=$current_equipment->where("ID","<",$equipment->first()->BalanceID)->last();
+                if($prev_data){
+                    $lastmonth_remain=$prev_data->LastTime;//上月剩余时间
+                }
+                else{
+                    $lastmonth_remain = $equipment->first()->FirstTime;//上月剩余时间
+                }
+                //$sum_recharge = $equipment->where("RechargeTime",">",0)->sum('RechargeTime');//本月总充值时间
+                $sum_recharge=Recharge::where("EquID",$item->ID)->where("RechTime",">",0)->whereRaw("UpdateTime Between  $timespan")->sum("RechTime");//本月总充值时间
+                $month_remain = $equipment->last()->LastTime;//本月剩余时间
+                $sum_costtime=$lastmonth_remain+$sum_recharge-$month_remain;
+                $contract_hour=$item->ContractHour;
+                if ($sum_costtime < 200) {
+                    $month_ded = 200 - $sum_costtime;//使用时间不超过合同时间小时，应扣小时数为合同时间-使用小时数
+                    $equtype=EquType::find($item->EquTypeID);
+                    $price=$equtype->Price;
+                    //更新充值标记
+                    $item->Precharge=-$month_ded;
+                    $item->IsPre='Y';
+                    $item->IsDelay=2;
+                    $item->update();
+                    //写入充值记录
+                    $recharge=new Recharge;
+                    $recharge->ClientID=$item->ClientID;
+                    $recharge->EquID=$item->ID;
+                    $recharge->SerialNumber=date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+                    $recharge->Method=0;
+                    $recharge->Amount=$month_ded*$price;
+                    $recharge->UnitPrice=$price;
+                    $recharge->Rechtime=-$month_ded;
+                    $recharge->IP=\Illuminate\Support\Facades\Request::ip();
+                    $recharge->UpdateTime=date("Y-m-d h:i:s.000");
+                    $recharge->Results=1;
+                    $recharge->AccountID=0;
+                    $recharge->save();
+                }
+
+            }
+        }
+        return "Auto Recharge Finish";
     }
 
 
